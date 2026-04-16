@@ -39,20 +39,20 @@ export default function Navbar() {
   const additionalLinks = user ? roleNav[user.role] ?? [] : [];
 
   return (
-    <nav className="fixed w-full z-50 transition-all duration-300 bg-dark/90 backdrop-blur-md border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="fixed w-full z-50 transition-all duration-300 bg-ink/80 backdrop-blur-xl border-b border-white/10">
+      <div className="lux-container">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded bg-gradient-to-br from-primary to-accent flex items-center justify-center transform group-hover:rotate-12 transition-transform">
-              <span className="font-black text-white text-lg">G</span>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-copper flex items-center justify-center transform group-hover:rotate-12 transition-transform shadow-[0_0_0_1px_rgba(214,178,110,0.25)]">
+              <span className="font-black text-ink text-lg">G</span>
             </div>
-            <span className="font-black text-xl tracking-widest text-white">GEARNIX</span>
+            <span className="font-black text-xl tracking-[0.28em] text-pearl">GEARNIX</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
             <div className="flex items-center gap-6">
               {baseLinks.map(link => (
-                <Link key={link.to} to={link.to} className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+                <Link key={link.to} to={link.to} className="text-gray-200/90 hover:text-pearl transition-colors text-xs font-semibold tracking-[0.18em] uppercase">
                   {link.label}
                 </Link>
               ))}
@@ -60,7 +60,7 @@ export default function Navbar() {
 
             <div className="flex items-center gap-4">
               {additionalLinks.map(link => (
-                <Link key={link.to} to={link.to} className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+                <Link key={link.to} to={link.to} className="text-gray-200/80 hover:text-pearl transition-colors text-xs font-semibold tracking-[0.12em] uppercase">
                   {link.label}
                 </Link>
               ))}
@@ -68,14 +68,14 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-300 hover:text-primary transition-colors" aria-label="Recherche">
+            <button className="text-gray-200/80 hover:text-gold transition-colors" aria-label="Recherche">
               <Search size={20} />
             </button>
 
-            <Link to="/panier" className="text-gray-300 hover:text-accent transition-colors relative" aria-label="Panier">
+            <Link to="/panier" className="text-gray-200/80 hover:text-gold transition-colors relative" aria-label="Panier">
               <ShoppingCart size={20} />
               {count > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-black">
                   {count}
                 </span>
               )}
@@ -85,47 +85,47 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center gap-2 text-gray-200/80 hover:text-pearl transition-colors"
                   aria-label="Menu utilisateur"
                 >
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-primary/30">
-                    <User size={16} className="text-primary" />
+                  <div className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center border border-white/10 hover:border-gold/30 transition-colors">
+                    <User size={16} className="text-gold" />
                   </div>
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-56 rounded-xl bg-darker border border-white/10 shadow-xl overflow-hidden py-2" onClick={() => setDropdownOpen(false)}>
-                    <div className="px-4 py-2 border-b border-white/5 mb-2">
-                      <p className="text-sm font-bold text-white truncate">{user.nom}</p>
+                  <div className="absolute right-0 mt-3 w-64 rounded-xl2 bg-graphite/95 border border-white/10 shadow-soft overflow-hidden py-2" onClick={() => setDropdownOpen(false)}>
+                    <div className="px-4 py-3 border-b border-white/10 mb-2">
+                      <p className="text-sm font-black text-pearl truncate tracking-wide">{user.nom}</p>
                       <p className="text-xs text-gray-400 capitalize">{user.role}</p>
                     </div>
 
                     {user.role === 'ADMIN' && (
-                      <Link to="/admin" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-primary">
+                      <Link to="/admin" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-gold">
                         <LayoutDashboard size={16} /> Panneau Admin
                       </Link>
                     )}
 
                     {user.role === 'FOURNISSEUR' && (
-                      <Link to="/fournisseur" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-primary">
+                      <Link to="/fournisseur" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-gold">
                         <Package size={16} /> Espace Fournisseur
                       </Link>
                     )}
 
                     {user.role === 'CLIENT' && (
-                      <Link to="/mes-commandes" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-primary">
+                      <Link to="/mes-commandes" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-gold">
                         <Package size={16} /> Mes commandes
                       </Link>
                     )}
 
-                    <button onClick={logout} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 mt-2">
+                    <button onClick={logout} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-300 hover:bg-red-500/10 mt-2">
                       <LogOut size={16} /> Déconnexion
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <Link to="/login" className="text-sm font-semibold text-white/80 hover:text-white border border-white/20 hover:border-white/50 px-4 py-2 rounded-lg transition-all">
+              <Link to="/login" className="text-xs font-semibold tracking-[0.18em] uppercase text-gray-200 hover:text-pearl border border-white/15 hover:border-gold/35 px-5 py-2.5 rounded-full transition-all bg-white/[0.02] hover:bg-white/[0.04]">
                 Connexion
               </Link>
             )}
@@ -135,7 +135,7 @@ export default function Navbar() {
             <Link to="/panier" className="text-white relative" aria-label="Panier">
               <ShoppingCart size={20} />
               {count > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-black">
                   {count}
                 </span>
               )}
@@ -148,18 +148,18 @@ export default function Navbar() {
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-darker border-b border-white/10 px-4 pt-2 pb-4 space-y-2">
+        <div className="md:hidden bg-graphite/95 border-b border-white/10 px-4 pt-3 pb-5 space-y-2">
           {[...baseLinks, ...additionalLinks].map(link => (
-            <Link key={link.to} to={link.to} className="block px-3 py-2 text-base font-medium text-white hover:bg-white/5 rounded-md">
+            <Link key={link.to} to={link.to} className="block px-3 py-2 text-sm font-semibold tracking-[0.14em] uppercase text-pearl/90 hover:bg-white/[0.06] rounded-lg">
               {link.label}
             </Link>
           ))}
           {user ? (
-            <button onClick={logout} className="w-full text-left px-3 py-2 text-base font-medium text-red-400 hover:bg-red-500/10 rounded-md">
+            <button onClick={logout} className="w-full text-left px-3 py-2 text-sm font-semibold tracking-[0.14em] uppercase text-red-300 hover:bg-red-500/10 rounded-lg">
               Déconnexion
             </button>
           ) : (
-            <Link to="/login" className="block px-3 py-2 text-base font-medium text-primary hover:bg-white/5 rounded-md">Connexion</Link>
+            <Link to="/login" className="block px-3 py-2 text-sm font-semibold tracking-[0.14em] uppercase text-gold hover:bg-white/[0.06] rounded-lg">Connexion</Link>
           )}
         </div>
       )}

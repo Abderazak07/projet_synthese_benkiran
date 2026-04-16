@@ -21,53 +21,56 @@ export default function FournisseurDashboard() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-black mb-8 uppercase text-primary">Mon Espace Fournisseur</h1>
+    <div>
+      <div className="mb-4">
+        <h1 className="dash-title">Tableau de bord</h1>
+        <p className="dash-muted text-sm">Synthèse rapide de votre catalogue.</p>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-primary">
-          <div className="p-3 bg-primary/20 rounded-lg text-primary">
+        <div className="dash-card p-6 flex items-center gap-4 border-l-4 border-l-[#2f7a78]">
+          <div className="p-3 bg-[#2f7a78]/10 rounded-lg text-[#2f7a78] border border-[#2f7a78]/15">
             <Package size={24} />
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Mes Produits</p>
-            <p className="text-2xl font-bold">{stats.produits}</p>
+            <p className="text-slate-500 text-sm">Mes Produits</p>
+            <p className="text-2xl font-semibold text-slate-900">{stats.produits}</p>
           </div>
         </div>
         
-        <div className="glass-card p-6 flex items-center gap-4 border-l-4 border-l-accent">
-          <div className="p-3 bg-accent/20 rounded-lg text-accent">
+        <div className="dash-card p-6 flex items-center gap-4 border-l-4 border-l-[#2f7a78]">
+          <div className="p-3 bg-[#2f7a78]/10 rounded-lg text-[#2f7a78] border border-[#2f7a78]/15">
             <TrendingUp size={24} />
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Stock Total</p>
-            <p className="text-2xl font-bold">{stats.stockTotal}</p>
+            <p className="text-slate-500 text-sm">Stock Total</p>
+            <p className="text-2xl font-semibold text-slate-900">{stats.stockTotal}</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-card p-6">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <AlertTriangle className="text-yellow-500" size={20}/> Alertes Stock Faible
+        <div className="dash-card p-6">
+          <h2 className="text-sm font-semibold mb-4 flex items-center gap-2 text-slate-900">
+            <AlertTriangle className="text-amber-500" size={18}/> Alertes Stock faible
           </h2>
           {stats.alertesStock.length > 0 ? (
             <ul className="space-y-3">
               {stats.alertesStock.map(p => (
-                <li key={p.id} className="flex justify-between items-center bg-white/5 p-3 rounded">
-                  <span className="font-semibold text-sm">{p.nom}</span>
-                  <span className="text-red-400 font-bold bg-red-500/20 px-2 rounded">Stock: {p.stock}</span>
+                <li key={p.id} className="flex justify-between items-center bg-white p-4 rounded-lg border border-slate-200">
+                  <span className="font-semibold text-sm text-slate-900">{p.nom}</span>
+                  <span className="text-red-700 font-semibold bg-red-50 border border-red-200 px-3 py-1 rounded-lg text-xs">Stock: {p.stock}</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-gray-400">Tous vos produits ont un stock suffisant.</p>
+            <p className="text-slate-500">Tous vos produits ont un stock suffisant.</p>
           )}
         </div>
         
-        <div className="glass-card p-6 flex flex-col justify-center items-center gap-4">
-           <Link to="/fournisseur/produits" className="w-full text-center glow-btn py-3 rounded-lg font-bold">Gérer mon catalogue</Link>
-           <Link to="/fournisseur/commandes" className="w-full text-center border border-primary text-primary hover:bg-primary/20 transition-colors py-3 rounded-lg font-bold">Voir les commandes reçues</Link>
+        <div className="dash-card p-6 flex flex-col justify-center items-center gap-4">
+           <Link to="/fournisseur/produits" className="w-full text-center dash-btn py-3">Gérer mon catalogue</Link>
+           <Link to="/fournisseur/commandes" className="w-full text-center dash-btn-ghost py-3">Voir les commandes reçues</Link>
         </div>
       </div>
     </div>

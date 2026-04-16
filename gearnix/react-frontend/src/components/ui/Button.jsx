@@ -1,20 +1,36 @@
-export default function Button({ children, className = '', variant = 'primary', ...props }) {
-    const base = 'px-4 py-2 font-medium rounded-lg transition-all duration-300';
-    
-    let style = '';
-    if (variant === 'primary') {
-      style = 'glow-btn text-white';
-    } else if (variant === 'outline') {
-      style = 'border border-primary text-primary hover:bg-primary/20';
-    } else if (variant === 'danger') {
-      style = 'bg-red-500 hover:bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.5)]';
-    } else if (variant === 'ghost') {
-      style = 'text-gray-300 hover:text-white hover:bg-white/10';
-    }
-  
-    return (
-      <button className={`${base} ${style} ${className}`} {...props}>
-        {children}
-      </button>
-    );
-  }
+export default function Button({
+  children,
+  className = '',
+  variant = 'primary',
+  size = 'md',
+  ...props
+}) {
+  const base =
+    'inline-flex items-center justify-center gap-2 select-none whitespace-nowrap font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:ring-offset-0 disabled:opacity-50 disabled:pointer-events-none';
+
+  const sizes = {
+    sm: 'px-4 py-2 text-sm rounded-full',
+    md: 'px-6 py-3 text-sm md:text-base rounded-full',
+    lg: 'px-7 py-4 text-base rounded-full',
+  };
+
+  const variants = {
+    primary: 'glow-btn text-ink',
+    outline:
+      'border border-stroke2 text-pearl hover:border-gold/40 hover:bg-white/[0.04]',
+    danger:
+      'bg-red-500/90 hover:bg-red-500 text-white shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_18px_60px_rgba(0,0,0,0.55)]',
+    ghost: 'text-gray-200 hover:text-pearl hover:bg-white/[0.06]',
+  };
+
+  return (
+    <button
+      className={`${base} ${sizes[size] ?? sizes.md} ${
+        variants[variant] ?? variants.primary
+      } ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}

@@ -4,41 +4,110 @@
 
 @layer base {
   body {
-    @apply bg-dark text-white font-sans antialiased;
-    background-color: #0a0a0a;
+    @apply bg-ink text-pearl font-sans antialiased;
+    background-color: #070709;
+  }
+
+  ::selection {
+    background: rgba(214,178,110,0.25);
   }
 }
 
 @layer components {
+  .lux-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .lux-section {
+    @apply py-20;
+  }
+
+  .lux-card {
+    @apply rounded-xl2 bg-surface border border-stroke backdrop-blur-md;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+  }
+
+  .lux-card-hover {
+    @apply transition-all duration-300;
+  }
+  .lux-card-hover:hover {
+    transform: translateY(-6px);
+  }
+
+  .lux-pill {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold tracking-wide transition-all duration-300;
+  }
+
   .glow-btn {
-    background: linear-gradient(135deg, #7c3aed, #ec4899);
-    box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    background: linear-gradient(135deg, rgba(214,178,110,1), rgba(196,107,53,1));
+    box-shadow: 0 0 0 1px rgba(214,178,110,0.18), 0 18px 60px rgba(0,0,0,0.55);
     transition: all 0.3s ease;
   }
-  
   .glow-btn:hover {
-    box-shadow: 0 0 40px rgba(124, 58, 237, 0.8);
+    box-shadow: 0 0 0 1px rgba(214,178,110,0.28), 0 22px 70px rgba(0,0,0,0.62);
     transform: translateY(-2px);
+    filter: saturate(1.05);
   }
-  
+
   .glass-card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(124,58,237,0.2);
-    border-radius: 12px;
+    @apply rounded-xl2 bg-surface border border-stroke backdrop-blur-md;
   }
-  
+
   .product-card {
-    transition: all 0.3s ease;
+    @apply lux-card lux-card-hover;
   }
-  
+
   .product-card:hover {
-    border-color: rgba(124,58,237,0.6);
-    box-shadow: 0 0 30px rgba(124,58,237,0.2);
-    transform: translateY(-5px);
+    border-color: rgba(214,178,110,0.30);
+    box-shadow: 0 0 0 1px rgba(214,178,110,0.18), 0 18px 60px rgba(0,0,0,0.60);
   }
-  
+
   .neon-text {
-    text-shadow: 0 0 10px rgba(124,58,237,0.8);
+    text-shadow: 0 0 18px rgba(214,178,110,0.25);
+  }
+
+  .lux-hairline {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+  }
+
+  /* Dashboard (admin/fournisseur) */
+  .dash-shell {
+    @apply min-h-[calc(100vh-4rem)] bg-[#f6f8fb] text-slate-900;
+  }
+
+  .dash-sidebar {
+    @apply bg-[#2f7a78] text-white;
+  }
+
+  .dash-topbar {
+    @apply h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6;
+  }
+
+  .dash-card {
+    @apply bg-white border border-slate-200 rounded-xl shadow-sm;
+  }
+
+  .dash-muted {
+    @apply text-slate-500;
+  }
+
+  .dash-title {
+    @apply text-lg font-semibold text-slate-900;
+  }
+
+  .dash-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-white/90 hover:bg-white/10 hover:text-white transition-colors;
+  }
+
+  .dash-link-active {
+    @apply bg-white/20 text-white;
+  }
+
+  .dash-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold bg-[#2f7a78] text-white hover:bg-[#2a6c6a] transition-colors;
+  }
+
+  .dash-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors;
   }
 }

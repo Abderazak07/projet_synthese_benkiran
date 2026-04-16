@@ -18,29 +18,33 @@ export default function AdminPayments() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-black mb-6 uppercase text-primary">Paiements</h1>
-      <div className="glass-card overflow-hidden">
+    <div>
+      <div className="mb-4">
+        <h1 className="dash-title">Paiements</h1>
+        <p className="dash-muted text-sm">Suivez et validez les paiements associés aux commandes.</p>
+      </div>
+
+      <div className="dash-card overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-white/5 border-b border-white/10">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="p-4 text-gray-400">ID</th>
-              <th className="p-4 text-gray-400">Commande</th>
-              <th className="p-4 text-gray-400">Montant</th>
-              <th className="p-4 text-gray-400">Statut</th>
-              <th className="p-4 text-gray-400 text-right">Actions</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">ID</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Commande</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Montant</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Statut</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-slate-200">
              {paiements.map(p => (
-              <tr key={p.id}>
-                <td className="p-4">#{p.id}</td>
-                <td className="p-4 text-white font-medium">#{p.commande_id}</td>
-                <td className="p-4 font-bold text-accent">{p.montant} €</td>
+              <tr key={p.id} className="hover:bg-slate-50">
+                <td className="p-4 text-slate-700 font-semibold">#{p.id}</td>
+                <td className="p-4 text-slate-900 font-semibold">#{p.commande_id}</td>
+                <td className="p-4 font-bold text-slate-900">{p.montant} €</td>
                 <td className="p-4"><Badge variant={p.statut === 'Validé' ? 'success' : 'warning'}>{p.statut}</Badge></td>
                 <td className="p-4 text-right">
                   <select 
-                    className="bg-dark border border-white/20 text-white rounded p-1 text-sm outline-none"
+                    className="bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#2f7a78] focus:ring-1 focus:ring-[#2f7a78]/25"
                     value={p.statut}
                     onChange={(e) => changeStatus(p.id, e.target.value)}
                   >

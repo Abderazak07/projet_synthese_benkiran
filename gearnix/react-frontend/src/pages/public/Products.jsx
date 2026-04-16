@@ -4,6 +4,7 @@ import api from '../../services/api';
 import ProductCard from '../../components/common/ProductCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { Search, Filter } from 'lucide-react';
+import Button from '../../components/ui/Button';
 
 export default function Products() {
   const [params, setParams] = useSearchParams();
@@ -32,85 +33,110 @@ export default function Products() {
   }, [selectedCat, searchTerm]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* En-tête */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-black mb-2 uppercase">Équipements gaming</h1>
-        <p className="text-gray-400">Trouvez le meilleur équipement pour votre setup.</p>
+    <div className="lux-container py-8">
+      {/* Header */}
+      <div className="relative overflow-hidden rounded-xl2 border border-white/10 bg-white/[0.03] shadow-soft mb-10">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?w=1600&q=80')] bg-cover bg-center opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/60 to-transparent" />
+        <div className="relative z-10 p-8 md:p-10">
+          <p className="text-xs font-semibold tracking-[0.28em] uppercase text-gray-300">Catalogue</p>
+          <h1 className="text-3xl md:text-5xl font-black mt-3 text-pearl">Équipements gaming</h1>
+          <p className="text-gray-400 mt-4 max-w-2xl">
+            Trouvez le meilleur équipement pour votre setup. Filtrez par collection et recherchez en temps réel.
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Filtre latéral */}
-        <div className="w-full md:w-64 flex-shrink-0">
-          <div className="glass-card p-6 sticky top-24">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Filter size={18} className="text-primary"/> Filtres
+      {/* Top filters bar */}
+      <div className="lux-card p-5 md:p-6 mb-8">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-xs font-black tracking-[0.26em] uppercase flex items-center gap-2 text-pearl">
+              <Filter size={16} className="text-gold" /> Filtres
             </h3>
-            
-            <div className="mb-6 relative">
-              <input 
-                type="text" 
-                placeholder="Rechercher..." 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedCat('');
+              }}
+            >
+              Réinitialiser
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="md:col-span-7 relative">
+              <input
+                type="text"
+                placeholder="Rechercher un produit..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary text-white placeholder-gray-500"
+                className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-gold/40 text-pearl placeholder-gray-500"
               />
-              <Search size={16} className="absolute left-3 top-2.5 text-gray-500" />
+              <Search size={16} className="absolute left-3 top-3.5 text-gray-500" />
             </div>
-            
-            <div>
-              <h4 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Categories</h4>
-              <ul className="space-y-2">
-                <li>
-                  <button 
-                    onClick={() => setSelectedCat('')}
-                    className={`block w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${selectedCat === '' ? 'bg-primary/20 text-white font-medium border border-primary/30' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                  >
-                    Tous les produits
-                  </button>
-                </li>
-                {categories.map((cat, i) => (
-                  <li key={i}>
-                    <button 
-                      onClick={() => setSelectedCat(cat)}
-                      className={`block w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${selectedCat === cat ? 'bg-primary/20 text-white font-medium border border-primary/30' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                    >
-                      {cat}
-                    </button>
-                  </li>
+
+            <div className="md:col-span-5">
+              <select
+                value={selectedCat}
+                onChange={(e) => setSelectedCat(e.target.value)}
+                className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-pearl focus:outline-none focus:border-gold/40 focus:ring-1 focus:ring-gold/30"
+              >
+                <option className="bg-graphite text-pearl" value="">
+                  Toutes les collections
+                </option>
+                {categories.map((cat) => (
+                  <option key={cat} className="bg-graphite text-pearl" value={cat}>
+                    {cat}
+                  </option>
                 ))}
-              </ul>
+              </select>
             </div>
           </div>
         </div>
-
-        {/* Grille de produits */}
-        <div className="flex-1">
-          {loading ? (
-            <LoadingSpinner />
-          ) : (
-            <>
-              <div className="mb-4 text-sm text-gray-400">
-                {products.length} {products.length === 1 ? 'produit trouvé' : 'produits trouvés'}
-              </div>
-              
-              {products.length === 0 ? (
-                <div className="text-center py-20 bg-white/5 rounded-xl border border-white/10">
-                  <h3 className="text-xl font-bold text-white mb-2">Aucun produit trouvé</h3>
-                  <p className="text-gray-400">Essayez de modifier vos filtres.</p>
-                  <button onClick={() => {setSearchTerm(''); setSelectedCat('');}} className="mt-4 text-primary hover:text-accent">Réinitialiser les filtres</button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map(product => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </div>
       </div>
+
+      {/* Products grid */}
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-sm text-gray-400">
+              {products.length} {products.length === 1 ? 'produit trouvé' : 'produits trouvés'}
+            </div>
+            <div className="text-xs text-gray-500 tracking-[0.22em] uppercase">
+              {selectedCat ? `Collection: ${selectedCat}` : 'Toutes les collections'}
+            </div>
+          </div>
+
+          {products.length === 0 ? (
+            <div className="text-center py-20 bg-white/[0.03] rounded-xl2 border border-white/10">
+              <h3 className="text-xl font-black text-pearl mb-2 tracking-wide">Aucun produit trouvé</h3>
+              <p className="text-gray-400">Essayez de modifier vos filtres.</p>
+              <div className="mt-6 flex justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCat('');
+                  }}
+                >
+                  Réinitialiser les filtres
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

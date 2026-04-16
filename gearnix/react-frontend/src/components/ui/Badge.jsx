@@ -1,15 +1,18 @@
-export default function Badge({ children, variant = 'primary' }) {
-    const variants = {
-      primary: 'bg-primary/20 text-primary border-primary/50',
-      success: 'bg-green-500/20 text-green-400 border-green-500/50',
-      warning: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50',
-      danger: 'bg-red-500/20 text-red-400 border-red-500/50',
-      info: 'bg-blue-500/20 text-blue-400 border-blue-500/50'
-    };
-  
-    return (
-      <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${variants[variant] || variants.primary}`}>
-        {children}
-      </span>
-    );
-  }
+export default function Badge({ children, variant = 'primary', className = '' }) {
+  const variants = {
+    primary: 'bg-gold/10 text-gold border-gold/25',
+    success: 'bg-green-500/15 text-green-300 border-green-500/30',
+    warning: 'bg-yellow-500/15 text-yellow-200 border-yellow-500/30',
+    danger: 'bg-red-500/15 text-red-200 border-red-500/30',
+    info: 'bg-blue-500/15 text-blue-200 border-blue-500/30',
+    neutral: 'bg-white/[0.06] text-gray-200 border-white/10',
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide ${variants[variant] || variants.primary} ${className}`}
+    >
+      {children}
+    </span>
+  );
+}

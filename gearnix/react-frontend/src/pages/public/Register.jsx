@@ -29,15 +29,17 @@ export default function Register() {
 
   return (
     <div className="min-h-[calc(100vh-6rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg h-[400px] bg-accent/20 blur-[100px] rounded-full pointer-events-none"></div>
+      <div className="absolute inset-0 opacity-25 bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&q=80')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-lux-hero" />
+      <div className="absolute inset-0 opacity-[0.06] bg-lux-grid bg-[size:60px_60px]" />
 
-      <div className="max-w-md w-full relative z-10 glass-card p-8 rounded-2xl border-white/10">
+      <div className="max-w-md w-full relative z-10 lux-card p-8">
         <div className="text-center mb-10">
-           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(236,72,153,0.4)]">
-            <Gamepad2 size={32} className="text-white" />
+           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gold to-copper rounded-full flex items-center justify-center mb-6 shadow-[0_0_0_1px_rgba(214,178,110,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
+            <Gamepad2 size={30} className="text-ink" />
           </div>
-          <h2 className="text-3xl font-black text-white tracking-widest uppercase">Rejoignez-nous</h2>
-          <p className="mt-2 text-sm text-gray-400">Créez votre compte GEARNIX</p>
+          <h2 className="text-3xl font-black text-pearl tracking-[0.22em] uppercase">Rejoignez-nous</h2>
+          <p className="mt-3 text-sm text-gray-400">Créez votre compte GEARNIX</p>
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -49,7 +51,7 @@ export default function Register() {
               <input
                 type="text"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-lg bg-darker/50 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
                 placeholder="Nom complet"
                 value={formData.nom}
                 onChange={(e) => setFormData({...formData, nom: e.target.value})}
@@ -63,7 +65,7 @@ export default function Register() {
               <input
                 type="email"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-lg bg-darker/50 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
                 placeholder="Adresse email"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -78,7 +80,7 @@ export default function Register() {
                 type="password"
                 required
                 minLength={6}
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-lg bg-darker/50 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
                 placeholder="Mot de passe (min 6 caractères)"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -86,15 +88,15 @@ export default function Register() {
             </div>
 
             <div className="relative pt-2">
-              <label className="text-sm text-gray-400 block mb-2">Je suis un :</label>
+              <label className="text-xs font-semibold tracking-[0.22em] uppercase text-gray-400 block mb-3">Je suis un :</label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
                   onClick={() => setFormData({...formData, role: 'CLIENT'})}
-                  className={`py-2 px-4 rounded-lg flex items-center justify-center gap-2 border transition-all ${
+                  className={`py-3 px-4 rounded-xl flex items-center justify-center gap-2 border transition-all text-sm font-semibold ${
                     formData.role === 'CLIENT' 
-                      ? 'bg-primary/20 border-primary text-white shadow-[0_0_10px_rgba(124,58,237,0.3)]' 
-                      : 'bg-darker/50 border-white/10 text-gray-400 hover:border-white/20'
+                      ? 'bg-gold/10 border-gold/25 text-pearl shadow-[0_0_0_1px_rgba(214,178,110,0.12),0_18px_60px_rgba(0,0,0,0.45)]' 
+                      : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-gold/20 hover:bg-white/[0.04]'
                   }`}
                 >
                   <User size={16} /> Client
@@ -102,10 +104,10 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setFormData({...formData, role: 'FOURNISSEUR'})}
-                   className={`py-2 px-4 rounded-lg flex items-center justify-center gap-2 border transition-all ${
+                   className={`py-3 px-4 rounded-xl flex items-center justify-center gap-2 border transition-all text-sm font-semibold ${
                     formData.role === 'FOURNISSEUR' 
-                      ? 'bg-accent/20 border-accent text-white shadow-[0_0_10px_rgba(236,72,153,0.3)]' 
-                      : 'bg-darker/50 border-white/10 text-gray-400 hover:border-white/20'
+                      ? 'bg-gold/10 border-gold/25 text-pearl shadow-[0_0_0_1px_rgba(214,178,110,0.12),0_18px_60px_rgba(0,0,0,0.45)]' 
+                      : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-gold/20 hover:bg-white/[0.04]'
                   }`}
                 >
                   <Briefcase size={16} /> Fournisseur
@@ -119,6 +121,7 @@ export default function Register() {
               type="submit"
               disabled={loading}
               className="w-full py-3 mt-4"
+              size="lg"
             >
               {loading ? 'Création...' : 'S\'inscrire'}
             </Button>
@@ -128,7 +131,7 @@ export default function Register() {
         <div className="mt-8 text-center text-sm">
           <p className="text-gray-400">
             Déjà un compte ?{' '}
-            <Link to="/login" className="font-medium text-primary hover:text-accent transition-colors">
+            <Link to="/login" className="font-semibold text-gold hover:text-pearl transition-colors">
               Se connecter
             </Link>
           </p>

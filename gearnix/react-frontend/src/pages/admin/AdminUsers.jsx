@@ -38,38 +38,42 @@ export default function AdminUsers() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-black mb-6 uppercase text-primary">Gestion Utilisateurs</h1>
-      <div className="glass-card overflow-hidden">
+    <div>
+      <div className="mb-4">
+        <h1 className="dash-title">Utilisateurs</h1>
+        <p className="dash-muted text-sm">Gérez les rôles et supprimez les comptes si besoin.</p>
+      </div>
+
+      <div className="dash-card overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-white/5 border-b border-white/10">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="p-4 text-gray-400 font-semibold">ID</th>
-              <th className="p-4 text-gray-400 font-semibold">Nom</th>
-              <th className="p-4 text-gray-400 font-semibold">Email</th>
-              <th className="p-4 text-gray-400 font-semibold">Rôle</th>
-              <th className="p-4 text-gray-400 font-semibold text-right">Actions</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">ID</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Nom</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Email</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Rôle</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-slate-200">
             {users.map(u => (
-              <tr key={u.id} className="hover:bg-white/[0.02]">
-                <td className="p-4">#{u.id}</td>
-                <td className="p-4 font-medium text-white">{u.nom}</td>
-                <td className="p-4 text-gray-300">{u.email}</td>
+              <tr key={u.id} className="hover:bg-slate-50">
+                <td className="p-4 text-slate-700 font-semibold">#{u.id}</td>
+                <td className="p-4 font-semibold text-slate-900">{u.nom}</td>
+                <td className="p-4 text-slate-600">{u.email}</td>
                 <td className="p-4">
                   <select 
-                    className="bg-transparent border border-white/20 text-white rounded p-1 text-sm outline-none focus:border-primary px-2"
+                    className="bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#2f7a78] focus:ring-1 focus:ring-[#2f7a78]/25"
                     value={u.role}
                     onChange={(e) => changeRole(u.id, e.target.value)}
                   >
-                    <option className="bg-dark text-white" value="CLIENT">Client</option>
-                    <option className="bg-dark text-white" value="FOURNISSEUR">Fournisseur</option>
-                    <option className="bg-dark text-white" value="ADMIN">Admin</option>
+                    <option value="CLIENT">Client</option>
+                    <option value="FOURNISSEUR">Fournisseur</option>
+                    <option value="ADMIN">Admin</option>
                   </select>
                 </td>
                 <td className="p-4 text-right">
-                  <button onClick={() => deleteUser(u.id)} className="text-red-400 hover:text-red-300 p-2 border border-red-500/20 rounded-lg bg-red-500/10 transition-colors" title="Supprimer l'utilisateur">
+                  <button onClick={() => deleteUser(u.id)} className="text-red-600 hover:text-red-700 p-2 border border-red-200 rounded-lg bg-red-50 transition-colors" title="Supprimer l'utilisateur">
                      <Trash2 size={16}/>
                   </button>
                 </td>

@@ -18,29 +18,33 @@ export default function AdminDeliveries() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-black mb-6 uppercase text-primary">Livraisons</h1>
-      <div className="glass-card overflow-hidden">
+    <div>
+      <div className="mb-4">
+        <h1 className="dash-title">Livraisons</h1>
+        <p className="dash-muted text-sm">Suivez l’avancement des livraisons et mettez à jour les statuts.</p>
+      </div>
+
+      <div className="dash-card overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-white/5 border-b border-white/10">
+          <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="p-4 text-gray-400">ID</th>
-              <th className="p-4 text-gray-400">Commande</th>
-              <th className="p-4 text-gray-400">Adresse</th>
-              <th className="p-4 text-gray-400">Statut</th>
-              <th className="p-4 text-gray-400 text-right">Actions</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">ID</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Commande</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Adresse</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Statut</th>
+              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-slate-200">
              {livraisons.map(l => (
-              <tr key={l.id}>
-                <td className="p-4">#{l.id}</td>
-                <td className="p-4 text-white font-medium">#{l.commande_id}</td>
-                <td className="p-4 text-gray-300 text-sm max-w-[200px] truncate" title={l.adresse}>{l.adresse}</td>
+              <tr key={l.id} className="hover:bg-slate-50">
+                <td className="p-4 text-slate-700 font-semibold">#{l.id}</td>
+                <td className="p-4 text-slate-900 font-semibold">#{l.commande_id}</td>
+                <td className="p-4 text-slate-600 text-sm max-w-[260px] truncate" title={l.adresse}>{l.adresse}</td>
                 <td className="p-4"><Badge variant={l.statut === 'Livré' ? 'success' : 'warning'}>{l.statut}</Badge></td>
                 <td className="p-4 text-right">
                   <select 
-                    className="bg-dark border border-white/20 text-white rounded p-1 text-sm outline-none"
+                    className="bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#2f7a78] focus:ring-1 focus:ring-[#2f7a78]/25"
                     value={l.statut}
                     onChange={(e) => changeStatus(l.id, e.target.value)}
                   >

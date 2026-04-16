@@ -44,28 +44,28 @@ export default function Footer() {
   const categoryLinks = categories.length > 0 ? categories.map((cat) => ({ label: cat, to: `/produits?categorie=${encodeURIComponent(cat)}` })) : defaultCategoryLinks;
 
   return (
-    <footer className="bg-darker border-t border-white/10 pt-14 pb-10 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-ink border-t border-white/10 pt-16 pb-10 mt-auto">
+      <div className="lux-container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           <div>
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-3xl bg-gradient-to-br from-primary to-accent text-lg font-black text-white shadow-lg shadow-primary/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gold to-copper text-lg font-black text-ink shadow-[0_0_0_1px_rgba(214,178,110,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
                 G
               </div>
               <div>
-                <p className="text-lg font-black uppercase tracking-[0.32em] text-white">GEARNIX</p>
-                <p className="text-sm text-gray-400">Une expérience gaming haut de gamme et intuitive.</p>
+                <p className="text-lg font-black uppercase tracking-[0.32em] text-pearl">GEARNIX</p>
+                <p className="text-sm text-gray-400">Équipement gaming au rendu premium.</p>
               </div>
             </Link>
             <p className="text-sm text-gray-400">Support 24/7 · contact@gearnix.com · +33 1 23 45 67 89</p>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">Boutique</h4>
+            <h4 className="text-pearl font-black mb-4 tracking-[0.18em] uppercase text-xs">Boutique</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               {categoryLinks.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className="hover:text-primary transition-colors">
+                  <Link to={link.to} className="hover:text-gold transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -74,11 +74,11 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">Support</h4>
+            <h4 className="text-pearl font-black mb-4 tracking-[0.18em] uppercase text-xs">Support</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               {supportLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.to} className="hover:text-primary transition-colors">
+                  <a href={link.to} className="hover:text-gold transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -87,19 +87,19 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">Mon espace</h4>
+            <h4 className="text-pearl font-black mb-4 tracking-[0.18em] uppercase text-xs">Mon espace</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               {user ? (
                 userLinks.map((link) => (
                   <li key={link.to}>
-                    <Link to={link.to} className="hover:text-primary transition-colors">
+                    <Link to={link.to} className="hover:text-gold transition-colors">
                       {link.label}
                     </Link>
                   </li>
                 ))
               ) : (
                 <li>
-                  <Link to="/login" className="hover:text-primary transition-colors">
+                  <Link to="/login" className="hover:text-gold transition-colors">
                     Connexion
                   </Link>
                 </li>
