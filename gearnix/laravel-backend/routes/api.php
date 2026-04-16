@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProduitController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\LivraisonController;
@@ -16,7 +17,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Produits publics (lecture)
 Route::get('/produits', [ProduitController::class, 'index']);
 Route::get('/produits/{id}', [ProduitController::class, 'show']);
-Route::get('/categories', [ProduitController::class, 'categories']);
+Route::get('/categories', [CategoryController::class, 'index']);
 
 // Routes protégées
 Route::middleware('auth:sanctum')->group(function () {
@@ -57,6 +58,11 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::get('/admin/livraisons', [AdminController::class, 'livraisons']);
         Route::put('/admin/livraisons/{id}/statut', [AdminController::class, 'updateLivraisonStatut']);
+
+        Route::get('/admin/categories', [CategoryController::class, 'adminIndex']);
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::put('/categories/{id}', [CategoryController::class, 'update']);
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
         
         Route::get('/admin/stats', [AdminController::class, 'stats']);
     });

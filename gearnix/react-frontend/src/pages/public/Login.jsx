@@ -39,8 +39,8 @@ export default function Login() {
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(124,58,237,0.4)]">
             <Gamepad2 size={32} className="text-white" />
           </div>
-          <h2 className="text-3xl font-black text-white tracking-widest uppercase">Sign In</h2>
-          <p className="mt-2 text-sm text-gray-400">Access your GEARNIX account</p>
+          <h2 className="text-3xl font-black text-white tracking-widest uppercase">Connexion</h2>
+          <p className="mt-2 text-sm text-gray-400">Accédez à votre compte GEARNIX</p>
         </div>
         
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -53,7 +53,7 @@ export default function Login() {
                 type="email"
                 required
                 className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-lg bg-darker/50 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                placeholder="Email address"
+                placeholder="Adresse email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -67,7 +67,7 @@ export default function Login() {
                 type="password"
                 required
                 className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-lg bg-darker/50 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                placeholder="Password"
+                placeholder="Mot de passe"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />

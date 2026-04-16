@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Produit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProduitController extends Controller
 {
@@ -42,10 +43,16 @@ class ProduitController extends Controller
         $request->validate([
             'nom' => 'required|string',
             'prix' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0'
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|max:2048',
         ]);
         
         $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $data['image'] = url(Storage::url($request->file('image')->store('produits', 'public')));
+        }
+
         // Si c'est un fournisseur, on force son ID
         if ($request->user()->role === 'FOURNISSEUR') {
             $data['fournisseur_id'] = $request->user()->id;
@@ -64,7 +71,14 @@ class ProduitController extends Controller
             return response()->json(['message' => 'Non autorisé'], 403);
         }
         
-        $produit->update($request->all());
+        if ($request->hasFile('image')) {
+            $request->validate(['image' => 'image|max:2048']);
+            $produit->image = url(Storage::url($request->file('image')->store('produits', 'public')));
+        }
+
+        $produit->update($request->except('image'));
+        $produit->save();
+
         return response()->json($produit);
     }
 

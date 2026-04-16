@@ -33,18 +33,18 @@ export default function Products() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
+      {/* En-tête */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black mb-2 uppercase">Collectibles & Gears</h1>
-        <p className="text-gray-400">Find the perfect weapon for your setup.</p>
+        <h1 className="text-3xl font-black mb-2 uppercase">Équipements gaming</h1>
+        <p className="text-gray-400">Trouvez le meilleur équipement pour votre setup.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar Filters */}
+        {/* Filtre latéral */}
         <div className="w-full md:w-64 flex-shrink-0">
           <div className="glass-card p-6 sticky top-24">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Filter size={18} className="text-primary"/> Filters
+              <Filter size={18} className="text-primary"/> Filtres
             </h3>
             
             <div className="mb-6 relative">
@@ -66,7 +66,7 @@ export default function Products() {
                     onClick={() => setSelectedCat('')}
                     className={`block w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${selectedCat === '' ? 'bg-primary/20 text-white font-medium border border-primary/30' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
                   >
-                    All Products
+                    Tous les produits
                   </button>
                 </li>
                 {categories.map((cat, i) => (
@@ -84,7 +84,7 @@ export default function Products() {
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Grille de produits */}
         <div className="flex-1">
           {loading ? (
             <LoadingSpinner />

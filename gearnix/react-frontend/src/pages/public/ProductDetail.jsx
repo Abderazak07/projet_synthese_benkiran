@@ -39,7 +39,11 @@ export default function ProductDetail() {
         <div className="glass-card p-4 rounded-2xl">
            <div className="aspect-square rounded-xl overflow-hidden bg-darker flex items-center justify-center relative">
              {product.image ? (
-               <img src={product.image} alt={product.nom} className="w-full h-full object-cover" />
+               <img
+                 src={/^(https?:)?\/\//.test(product.image) ? product.image : `http://localhost:8000${product.image}`}
+                 alt={product.nom}
+                 className="w-full h-full object-cover"
+               />
              ) : (
                <span className="text-gray-600">Pas d'image</span>
              )}

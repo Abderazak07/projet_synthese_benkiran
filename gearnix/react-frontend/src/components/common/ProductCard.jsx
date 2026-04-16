@@ -22,7 +22,11 @@ export default function ProductCard({ product }) {
       <Link to={`/produits/${product.id}`} className="flex-grow flex flex-col">
         <div className="h-48 w-full rounded-lg overflow-hidden bg-white/5 mb-4 relative">
           {product.image ? (
-             <img src={product.image} alt={product.nom} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+             <img
+               src={/^(https?:)?\/\//.test(product.image) ? product.image : `http://localhost:8000${product.image}`}
+               alt={product.nom}
+               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-white/20">Pas d'image</div>
           )}

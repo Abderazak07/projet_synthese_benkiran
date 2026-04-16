@@ -11,6 +11,19 @@ class Produit extends Model
     public function fournisseur() { 
         return $this->belongsTo(User::class, 'fournisseur_id'); 
     }
+
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        if (preg_match('/^https?:\/\//', $value)) {
+            return $value;
+        }
+
+        return url($value);
+    }
     
     public function commandes() { 
         return $this->belongsToMany(Commande::class, 'Commande_Produit', 'produit_id', 'commande_id')

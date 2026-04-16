@@ -7,14 +7,20 @@ import { Edit, Trash2, Plus } from 'lucide-react';
 
 export default function FournisseurProducts() {
   const [produits, setProduits] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ nom: '', description: '', prix: 0, stock: 0, categorie: '', image: '' });
+  const [formData, setFormData] = useState({ nom: '', description: '', prix: 0, stock: 0, categorie: '', imageFile: null });
   const { user } = useAuth();
 
   useEffect(() => {
     fetchProduits();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = () => {
+    api.get('/categories').then(res => setCategories(res.data)).catch(() => setCategories([]));
+  };
 
   const fetchProduits = () => {
     api.get('/produits').then(res => {
@@ -25,26 +31,39 @@ export default function FournisseurProducts() {
 
   const openAddModal = () => {
     setEditingId(null);
-    setFormData({ nom: '', description: '', prix: 0, stock: 0, categorie: '', image: '' });
+    setFormData({ nom: '', description: '', prix: 0, stock: 0, categorie: '', imageFile: null });
     setIsModalOpen(true);
   };
 
   const openEditModal = (p) => {
     setEditingId(p.id);
-    setFormData({ nom: p.nom, description: p.description || '', prix: p.prix, stock: p.stock, categorie: p.categorie, image: p.image || '' });
+    setFormData({ nom: p.nom, description: p.description || '', prix: p.prix, stock: p.stock, categorie: p.categorie, imageFile: null });
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = new FormData();
+      payload.append('nom', formData.nom);
+      payload.append('description', formData.description);
+      payload.append('prix', formData.prix);
+      payload.append('stock', formData.stock);
+      payload.append('categorie', formData.categorie);
+      if (formData.imageFile) payload.append('image', formData.imageFile);
+
       if (editingId) {
-        await api.put(`/produits/${editingId}`, formData);
+        await api.put(`/produits/${editingId}`, payload, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         toast.success('Produit modifié avec succès');
       } else {
-        await api.post('/produits', formData);
+        await api.post('/produits', payload, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         toast.success('Produit ajouté');
       }
+
       setIsModalOpen(false);
       fetchProduits();
     } catch (err) {
@@ -110,19 +129,94 @@ export default function FournisseurProducts() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="glass-card p-6 w-full max-w-md bg-darker">
             <h2 className="text-xl font-bold mb-4">{editingId ? 'Modifier le Produit' : 'Nouveau Produit'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="text" placeholder="Nom" required className="w-full bg-dark p-2 border border-white/10 rounded focus:border-primary outline-none" value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
-              <textarea placeholder="Description" rows="2" className="w-full bg-dark p-2 border border-white/10 rounded focus:border-primary outline-none" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}></textarea>
-              <input type="text" placeholder="Catégorie" required className="w-full bg-dark p-2 border border-white/10 rounded focus:border-primary outline-none" value={formData.categorie} onChange={e => setFormData({...formData, categorie: e.target.value})} />
-              <div className="grid grid-cols-2 gap-4">
-                <input type="number" placeholder="Prix" required step="0.01" className="w-full bg-dark p-2 border border-white/10 rounded focus:border-primary outline-none" value={formData.prix} onChange={e => setFormData({...formData, prix: e.target.value})} />
-                <input type="number" placeholder="Stock" required className="w-full bg-dark p-2 border border-white/10 rounded focus:border-primary outline-none" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid gap-4">
+                <label className="space-y-2 text-sm text-gray-300">
+                  <span className="font-semibold">Nom du produit</span>
+                  <input
+                    type="text"
+                    placeholder="Nom"
+                    required
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    value={formData.nom}
+                    onChange={e => setFormData({...formData, nom: e.target.value})}
+                  />
+                </label>
+
+                <label className="space-y-2 text-sm text-gray-300">
+                  <span className="font-semibold">Description</span>
+                  <textarea
+                    placeholder="Description"
+                    rows="3"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    value={formData.description}
+                    onChange={e => setFormData({...formData, description: e.target.value})}
+                  />
+                </label>
+
+                <label className="space-y-2 text-sm text-gray-300">
+                  <span className="font-semibold">Catégorie</span>
+                  <select
+                    required
+                    value={formData.categorie}
+                    onChange={e => setFormData({...formData, categorie: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                  >
+                    <option value="" disabled>Choisissez une catégorie</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="space-y-2 text-sm text-gray-300">
+                    <span className="font-semibold">Prix (€)</span>
+                    <input
+                      type="number"
+                      placeholder="Prix"
+                      required
+                      step="0.01"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                      value={formData.prix}
+                      onChange={e => setFormData({...formData, prix: e.target.value})}
+                    />
+                  </label>
+
+                  <label className="space-y-2 text-sm text-gray-300">
+                    <span className="font-semibold">Stock</span>
+                    <input
+                      type="number"
+                      placeholder="Stock"
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                      value={formData.stock}
+                      onChange={e => setFormData({...formData, stock: e.target.value})}
+                    />
+                  </label>
+                </div>
+
+                <label className="space-y-2 text-sm text-gray-300">
+                  <span className="font-semibold">Image du produit</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full text-sm text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/80 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    onChange={e => setFormData({...formData, imageFile: e.target.files[0] || null})}
+                  />
+                  {formData.imageFile && (
+                    <p className="text-xs text-gray-400">Fichier sélectionné : {formData.imageFile.name}</p>
+                  )}
+                </label>
               </div>
-              <input type="url" placeholder="URL Image" className="w-full bg-dark p-2 border border-white/10 rounded focus:border-primary outline-none" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
-              
-              <div className="flex gap-4 mt-6">
-                <Button type="button" variant="ghost" className="flex-1" onClick={() => setIsModalOpen(false)}>Annuler</Button>
-                <Button type="submit" className="flex-1">{editingId ? 'Sauvegarder' : 'Créer'}</Button>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button type="button" variant="ghost" className="flex-1 border border-white/10 bg-white/5 text-white hover:bg-white/10" onClick={() => setIsModalOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" className="flex-1 bg-gradient-to-r from-primary to-accent text-white hover:opacity-95">
+                  {editingId ? 'Sauvegarder' : 'Créer'}
+                </Button>
               </div>
             </form>
           </div>

@@ -18,8 +18,10 @@ import OrderDetail from './pages/client/OrderDetail';
 
 // Pages admin
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLayout from './pages/admin/AdminLayout';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminProducts from './pages/admin/AdminProducts';
+import AdminCategories from './pages/admin/AdminCategories';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminDeliveries from './pages/admin/AdminDeliveries';
@@ -28,6 +30,7 @@ import AdminDeliveries from './pages/admin/AdminDeliveries';
 import FournisseurDashboard from './pages/fournisseur/FournisseurDashboard';
 import FournisseurProducts from './pages/fournisseur/FournisseurProducts';
 import FournisseurOrders from './pages/fournisseur/FournisseurOrders';
+import FournisseurLayout from './pages/fournisseur/FournisseurLayout';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -54,24 +57,29 @@ function AppRoutes() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Client */}
-          <Route path="/panier" element={<ProtectedRoute roles={['CLIENT']}><Cart /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute roles={['CLIENT']}><Checkout /></ProtectedRoute>} />
-          <Route path="/mes-commandes" element={<ProtectedRoute roles={['CLIENT']}><Orders /></ProtectedRoute>} />
-          <Route path="/mes-commandes/:id" element={<ProtectedRoute roles={['CLIENT']}><OrderDetail /></ProtectedRoute>} />
+          {/* Client, Fournisseur et Admin peuvent passer des commandes */}
+          <Route path="/panier" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/mes-commandes" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+          <Route path="/mes-commandes/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
 
           {/* Admin */}
-          <Route path="/admin" element={<ProtectedRoute roles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin/utilisateurs" element={<ProtectedRoute roles={['ADMIN']}><AdminUsers /></ProtectedRoute>} />
-          <Route path="/admin/produits" element={<ProtectedRoute roles={['ADMIN']}><AdminProducts /></ProtectedRoute>} />
-          <Route path="/admin/commandes" element={<ProtectedRoute roles={['ADMIN']}><AdminOrders /></ProtectedRoute>} />
-          <Route path="/admin/paiements" element={<ProtectedRoute roles={['ADMIN']}><AdminPayments /></ProtectedRoute>} />
-          <Route path="/admin/livraisons" element={<ProtectedRoute roles={['ADMIN']}><AdminDeliveries /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute roles={['ADMIN']}><AdminLayout /></ProtectedRoute>}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="utilisateurs" element={<AdminUsers />} />
+            <Route path="produits" element={<AdminProducts />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="commandes" element={<AdminOrders />} />
+            <Route path="paiements" element={<AdminPayments />} />
+            <Route path="livraisons" element={<AdminDeliveries />} />
+          </Route>
 
           {/* Fournisseur */}
-          <Route path="/fournisseur" element={<ProtectedRoute roles={['FOURNISSEUR']}><FournisseurDashboard /></ProtectedRoute>} />
-          <Route path="/fournisseur/produits" element={<ProtectedRoute roles={['FOURNISSEUR']}><FournisseurProducts /></ProtectedRoute>} />
-          <Route path="/fournisseur/commandes" element={<ProtectedRoute roles={['FOURNISSEUR']}><FournisseurOrders /></ProtectedRoute>} />
+          <Route path="/fournisseur" element={<ProtectedRoute roles={['FOURNISSEUR']}><FournisseurLayout /></ProtectedRoute>}>
+            <Route index element={<FournisseurDashboard />} />
+            <Route path="produits" element={<FournisseurProducts />} />
+            <Route path="commandes" element={<FournisseurOrders />} />
+          </Route>
         </Routes>
       </main>
       <Footer />

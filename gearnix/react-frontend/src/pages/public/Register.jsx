@@ -36,8 +36,8 @@ export default function Register() {
            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(236,72,153,0.4)]">
             <Gamepad2 size={32} className="text-white" />
           </div>
-          <h2 className="text-3xl font-black text-white tracking-widest uppercase">Join Us</h2>
-          <p className="mt-2 text-sm text-gray-400">Create your GEARNIX account</p>
+          <h2 className="text-3xl font-black text-white tracking-widest uppercase">Rejoignez-nous</h2>
+          <p className="mt-2 text-sm text-gray-400">Créez votre compte GEARNIX</p>
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
