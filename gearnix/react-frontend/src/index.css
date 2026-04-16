@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark text-white font-sans antialiased;
+    background-color: #0a0a0a;
+  }
+}
+
+@layer components {
+  .glow-btn {
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    transition: all 0.3s ease;
+  }
+  
+  .glow-btn:hover {
+    box-shadow: 0 0 40px rgba(124, 58, 237, 0.8);
+    transform: translateY(-2px);
+  }
+  
+  .glass-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(124,58,237,0.2);
+    border-radius: 12px;
+  }
+  
+  .product-card {
+    transition: all 0.3s ease;
+  }
+  
+  .product-card:hover {
+    border-color: rgba(124,58,237,0.6);
+    box-shadow: 0 0 30px rgba(124,58,237,0.2);
+    transform: translateY(-5px);
+  }
+  
+  .neon-text {
+    text-shadow: 0 0 10px rgba(124,58,237,0.8);
+  }
+}
