@@ -10,6 +10,10 @@ class ProduitController extends Controller
     public function index(Request $request)
     {
         $query = Produit::query();
+        // Only show approved products to non-admin users
+        if (!($request->user() && $request->user()->role === 'ADMIN')) {
+            $query->where('is_approved', true);
+        }
         
         if ($request->has('categorie')) {
             $query->where('categorie', $request->categorie);
@@ -30,9 +34,19 @@ class ProduitController extends Controller
         return response()->json($query->orderBy('id', 'desc')->get());
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
-        return response()->json(Produit::findOrFail($id));
+        $produit = Produit::findOrFail($id);
+
+        // If not approved, only ADMIN or the fournisseur owner may view
+        if (!$produit->is_approved) {
+            $user = $request->user();
+            if (!($user && ($user->role === 'ADMIN' || ($user->role === 'FOURNISSEUR' && $produit->fournisseur_id === $user->id)))) {
+                return response()->json(['message' => 'Produit introuvable.'], 404);
+            }
+        }
+
+        return response()->json($produit);
     }
 
     public function categories()
@@ -60,6 +74,11 @@ class ProduitController extends Controller
         // Si c'est un fournisseur, on force son ID
         if ($request->user()->role === 'FOURNISSEUR') {
             $data['fournisseur_id'] = $request->user()->id;
+            // Supplier products require admin approval
+            $data['is_approved'] = false;
+        } else if ($request->user()->role === 'ADMIN') {
+            // Admin products are auto-approved
+            $data['is_approved'] = true;
         }
 
         $produit = Produit::create($data);
@@ -87,7 +106,20 @@ class ProduitController extends Controller
         }
 
         // On exclut les champs techniques et l'image déjà traitée
-        $produit->update($request->except(['image', '_method']));
+        $updateData = $request->except(['image', '_method']);
+
+        // Prevent a fournisseur from changing approval state
+        if ($request->user()->role === 'FOURNISSEUR') {
+            unset($updateData['is_approved']);
+        }
+
+        $produit->update($updateData);
+
+        // If a fournisseur edits a product, mark it as unapproved (requires re-approval)
+        if ($request->user()->role === 'FOURNISSEUR') {
+            $produit->is_approved = false;
+        }
+
         $produit->save();
 
         return response()->json($produit);
@@ -119,5 +151,14 @@ class ProduitController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    // ADMIN: approve a product so it becomes visible publicly
+    public function approve(Request $request, $id)
+    {
+        $produit = Produit::findOrFail($id);
+        $produit->is_approved = true;
+        $produit->save();
+        return response()->json($produit);
     }
 }

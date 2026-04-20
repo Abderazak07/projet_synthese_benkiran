@@ -6,10 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 class Produit extends Model
 {
     protected $table = 'Produit';
-    protected $fillable = ['nom', 'description', 'prix', 'stock', 'image', 'categorie', 'fournisseur_id'];
+    protected $fillable = ['nom', 'description', 'prix', 'stock', 'image', 'categorie', 'fournisseur_id', 'is_approved'];
+    protected $casts = [
+        'is_approved' => 'boolean',
+    ];
     
     public function fournisseur() { 
         return $this->belongsTo(User::class, 'fournisseur_id'); 
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
     }
 
     public function getImageAttribute($value)

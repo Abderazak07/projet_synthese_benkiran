@@ -3,7 +3,7 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { 
   Package, Plus, Search, Filter, Trash2, Edit, X, 
-  ArrowRight, Image as ImageIcon, Tag, Hash, DollarSign, Layers
+  ArrowRight, Image as ImageIcon, Tag, Hash, DollarSign, Layers, Check, Clock
 } from 'lucide-react';
 
 export default function AdminProducts() {
@@ -30,7 +30,7 @@ export default function AdminProducts() {
   const fetchData = async () => {
     try {
       const [pRes, cRes] = await Promise.all([
-        api.get('/produits'),
+        api.get('/admin/produits'),
         api.get('/admin/categories')
       ]);
       setProduits(pRes.data);
@@ -94,6 +94,24 @@ export default function AdminProducts() {
     } catch (e) { toast.error('Erreur', { id: loadingToast }); }
   };
 
+  const approveProduit = async (id) => {
+    const loadingToast = toast.loading('Approbation en cours...');
+    try {
+      await api.put(`/admin/produits/${id}/approve`);
+      toast.success('Produit approuvé et publié!', { id: loadingToast });
+      fetchData();
+    } catch (e) { toast.error('Erreur lors de l\'approbation', { id: loadingToast }); }
+  };
+
+  const rejectProduit = async (id) => {
+    const loadingToast = toast.loading('Rejet en cours...');
+    try {
+      await api.delete(`/admin/produits/${id}/reject`);
+      toast.success('Produit rejeté', { id: loadingToast });
+      fetchData();
+    } catch (e) { toast.error('Erreur lors du rejet', { id: loadingToast }); }
+  };
+
   return (
     <>
       <div className="dash-table-container shadow-2xl rounded-2xl bg-white border border-slate-200 overflow-hidden">
@@ -105,7 +123,10 @@ export default function AdminProducts() {
                 <div className="bullet"><Package size={20} /></div>
                 Catalogue Produits
               </h1>
-              <p className="section-description">{filteredProduits.length} articles disponibles dans votre catalogue.</p>
+              <p className="section-description">
+                {filteredProduits.length} articles · 
+                <span className="ml-2 font-bold text-amber-600">{filteredProduits.filter(p => !p.is_approved).length} en attente d'approbation</span>
+              </p>
             </div>
 
             <div className="flex items-center gap-4">
@@ -159,6 +180,7 @@ export default function AdminProducts() {
                 <th>Catégorie</th>
                 <th>Prix</th>
                 <th>Stock</th>
+                <th>Statut</th>
                 <th className="text-right">Actions</th>
               </tr>
             </thead>
@@ -197,14 +219,34 @@ export default function AdminProducts() {
                       <span className="badge-accepted">{p.stock} unités</span>
                     )}
                   </td>
+                  <td>
+                    {p.is_approved ? (
+                      <span className="badge-accepted flex items-center gap-1"><Check size={14} /> Approuvé</span>
+                    ) : (
+                      <span className="badge-review flex items-center gap-1"><Clock size={14} /> En attente</span>
+                    )}
+                  </td>
                   <td className="text-right">
                     <div className="flex justify-end items-center gap-2">
-                      <button onClick={() => handleEdit(p)} className="p-2.5 text-[#2c767c] hover:text-white hover:bg-[#2c767c] rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
-                         <Edit size={16} />
-                      </button>
-                      <button onClick={() => setDeleteId(p.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
-                         <Trash2 size={16} />
-                      </button>
+                      {!p.is_approved ? (
+                        <>
+                          <button onClick={() => approveProduit(p.id)} className="p-2.5 text-emerald-600 hover:text-white hover:bg-emerald-600 rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50 tooltip" title="Approuver">
+                            <Check size={16} />
+                          </button>
+                          <button onClick={() => rejectProduit(p.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50 tooltip" title="Rejeter">
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => handleEdit(p)} className="p-2.5 text-[#2c767c] hover:text-white hover:bg-[#2c767c] rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => setDeleteId(p.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

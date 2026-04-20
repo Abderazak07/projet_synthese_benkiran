@@ -61,6 +61,27 @@ class AdminController extends Controller
         return response()->json($livraison);
     }
     
+    public function produits()
+    {
+        // Admin sees ALL products (approved and unapproved)
+        return response()->json(Produit::with('fournisseur')->orderBy('id', 'desc')->get());
+    }
+
+    public function approveProduit(Request $request, $id)
+    {
+        $produit = Produit::findOrFail($id);
+        $produit->is_approved = true;
+        $produit->save();
+        return response()->json($produit);
+    }
+
+    public function rejectProduit($id)
+    {
+        $produit = Produit::findOrFail($id);
+        $produit->delete();
+        return response()->json(['message' => 'Produit rejeté et supprimé']);
+    }
+
     public function stats() {
         // Revenu des 7 derniers jours
         $revenueData = [];

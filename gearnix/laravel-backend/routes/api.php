@@ -51,6 +51,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
         Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
         
+        Route::get('/admin/produits', [AdminController::class, 'produits']);
+        Route::put('/admin/produits/{id}/approve', [AdminController::class, 'approveProduit']);
+        Route::delete('/admin/produits/{id}/reject', [AdminController::class, 'rejectProduit']);
+        
         Route::get('/admin/commandes', [AdminController::class, 'commandes']);
         Route::get('/admin/commandes/{id}', [AdminController::class, 'showCommande']);
         Route::put('/admin/commandes/{id}/statut', [AdminController::class, 'updateStatut']);
