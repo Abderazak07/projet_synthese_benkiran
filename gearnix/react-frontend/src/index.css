@@ -218,3 +218,199 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #2c767c44;
 }
+
+/* =============================================
+   Admin Mode Banner — Sticky top bar on public site
+   ============================================= */
+.admin-mode-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-bottom: 1px solid rgba(44, 118, 124, 0.35);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(44, 118, 124, 0.25) inset;
+  backdrop-filter: blur(16px);
+  animation: bannerSlideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes bannerSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.admin-mode-banner-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  gap: 16px;
+}
+
+.admin-mode-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-mode-icon-wrapper {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2c767c, #1e5a5f);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(44, 118, 124, 0.35);
+}
+
+.admin-pulse-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid #1a1a2e;
+  animation: adminPulse 2s ease-in-out infinite;
+}
+
+@keyframes adminPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+.admin-mode-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-mode-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.03em;
+}
+
+.admin-mode-sublabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.admin-mode-return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2c767c, #1e5a5f);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(44, 118, 124, 0.25);
+}
+
+.admin-mode-return-btn:hover {
+  background: linear-gradient(135deg, #35898f, #247a80);
+  transform: translateX(-3px);
+  box-shadow: 0 4px 20px rgba(44, 118, 124, 0.4);
+}
+
+/* =============================================
+   Sidebar — "Mode Client" Live Button
+   ============================================= */
+.sidebar-live-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(44, 118, 124, 0.3));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebar-live-btn:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(44, 118, 124, 0.45));
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 32px rgba(16, 185, 129, 0.2),
+    0 0 0 1px rgba(16, 185, 129, 0.15);
+}
+
+.sidebar-live-btn-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(16, 185, 129, 0.12) 0%,
+    transparent 60%
+  );
+  animation: sidebarGlowRotate 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sidebarGlowRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sidebar-live-btn-badge {
+  position: relative;
+  z-index: 10;
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  animation: liveBadgePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes liveBadgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+

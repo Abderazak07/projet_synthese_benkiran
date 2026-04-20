@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import { Search, UserCircle, LogOut } from 'lucide-react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { Search, UserCircle, LogOut, Eye } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function DashboardShell({
@@ -55,7 +55,19 @@ export default function DashboardShell({
           })}
         </nav>
 
-        <div className="mt-auto px-4 py-6 border-t border-white/10">
+        <div className="mt-auto px-4 py-6 space-y-3 border-t border-white/10">
+          {/* Mode Client — View Live Site Button */}
+          <Link
+            to="/"
+            id="sidebar-view-live-site"
+            className="sidebar-live-btn group"
+          >
+            <div className="sidebar-live-btn-glow" />
+            <Eye size={18} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
+            <span className="relative z-10 tracking-wide">Mode Client</span>
+            <span className="sidebar-live-btn-badge">LIVE</span>
+          </Link>
+
           <button 
             onClick={handleLogout}
             className="flex items-center gap-4 w-full px-5 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm hover:bg-red-500/20 hover:text-red-200 transition-all border border-white/5 group"

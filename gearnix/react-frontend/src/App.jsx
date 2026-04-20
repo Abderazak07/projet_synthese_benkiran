@@ -34,6 +34,7 @@ import FournisseurLayout from './pages/fournisseur/FournisseurLayout';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import AdminModeBanner from './components/layout/AdminModeBanner';
 
 // Route protégée par rôle
 const ProtectedRoute = ({ children, roles }) => {
@@ -44,9 +45,12 @@ const ProtectedRoute = ({ children, roles }) => {
   return children;
 };
 
+
 function AppRoutes() {
   const location = useLocation();
+  const { user } = useAuth();
   const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
+  const isAdminOnPublicSite = user?.role === 'ADMIN' && !isDashboard;
 
   if (isDashboard) {
     return (
@@ -77,8 +81,9 @@ function AppRoutes() {
 
   return (
     <div className="flex flex-col min-h-screen bg-dark text-white">
+      {isAdminOnPublicSite && <AdminModeBanner />}
       <Navbar />
-      <main className="flex-grow pt-16">
+      <main className={`flex-grow ${isAdminOnPublicSite ? 'pt-28' : 'pt-16'}`}>
         <Routes>
           {/* Public */}
           <Route path="/" element={<Home />} />
