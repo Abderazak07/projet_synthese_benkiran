@@ -9,6 +9,7 @@ use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\LivraisonController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HomepageController;
 
 // Auth publiques
 Route::post('/register', [AuthController::class, 'register']);
@@ -18,6 +19,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/produits', [ProduitController::class, 'index']);
 Route::get('/produits/{id}', [ProduitController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
+
+// Homepage data (public)
+Route::get('/homepage', [HomepageController::class, 'index']);
 
 // Routes protégées
 Route::middleware('auth:sanctum')->group(function () {
@@ -63,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);
+        Route::put('/categories/{id}/featured', [CategoryController::class, 'toggleFeatured']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
         
         Route::get('/admin/stats', [AdminController::class, 'stats']);
