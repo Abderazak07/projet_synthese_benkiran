@@ -52,7 +52,7 @@ export default function Products() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-xs font-black tracking-[0.26em] uppercase flex items-center gap-2 text-pearl">
-              <Filter size={16} className="text-gold" /> Filtres
+              <Filter size={16} className="text-sky-500" /> Filtres
             </h3>
             <Button
               variant="outline"
@@ -68,21 +68,14 @@ export default function Products() {
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             <div className="md:col-span-7 relative">
-              <input
-                type="text"
-                placeholder="Rechercher un produit..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-gold/40 text-pearl placeholder-gray-500"
-              />
-              <Search size={16} className="absolute left-3 top-3.5 text-gray-500" />
+              {/* Search bar removed as per request */}
             </div>
 
             <div className="md:col-span-5">
               <select
                 value={selectedCat}
                 onChange={(e) => setSelectedCat(e.target.value)}
-                className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-pearl focus:outline-none focus:border-gold/40 focus:ring-1 focus:ring-gold/30"
+                className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-pearl focus:outline-none focus:border-sky-500/40 focus:ring-1 focus:ring-sky-500/30"
               >
                 <option className="bg-graphite text-pearl" value="">
                   Toutes les collections

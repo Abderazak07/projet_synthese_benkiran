@@ -6,7 +6,7 @@ export default function Button({
   ...props
 }) {
   const base =
-    'inline-flex items-center justify-center gap-2 select-none whitespace-nowrap font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:ring-offset-0 disabled:opacity-50 disabled:pointer-events-none';
+    'inline-flex items-center justify-center gap-2 select-none whitespace-nowrap font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 focus-visible:ring-offset-0 disabled:opacity-50 disabled:pointer-events-none';
 
   const sizes = {
     sm: 'px-4 py-2 text-sm rounded-full',
@@ -17,7 +17,7 @@ export default function Button({
   const variants = {
     primary: 'glow-btn text-ink',
     outline:
-      'border border-stroke2 text-pearl hover:border-gold/40 hover:bg-white/[0.04]',
+      'border border-stroke2 text-pearl hover:border-sky-500/40 hover:bg-white/[0.04]',
     danger:
       'bg-red-500/90 hover:bg-red-500 text-white shadow-[0_0_0_1px_rgba(239,68,68,0.25),0_18px_60px_rgba(0,0,0,0.55)]',
     ghost: 'text-gray-200 hover:text-pearl hover:bg-white/[0.06]',

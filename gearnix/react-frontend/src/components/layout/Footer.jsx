@@ -49,7 +49,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           <div>
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gold to-copper text-lg font-black text-ink shadow-[0_0_0_1px_rgba(214,178,110,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-sky-600 text-lg font-black text-ink shadow-[0_0_0_1px_rgba(14,165,233,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
                 G
               </div>
               <div>
@@ -65,7 +65,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gray-400">
               {categoryLinks.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className="hover:text-gold transition-colors">
+                  <Link to={link.to} className="hover:text-sky-500 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -78,7 +78,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gray-400">
               {supportLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.to} className="hover:text-gold transition-colors">
+                  <a href={link.to} className="hover:text-sky-500 transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -92,14 +92,14 @@ export default function Footer() {
               {user ? (
                 userLinks.map((link) => (
                   <li key={link.to}>
-                    <Link to={link.to} className="hover:text-gold transition-colors">
+                    <Link to={link.to} className="hover:text-sky-500 transition-colors">
                       {link.label}
                     </Link>
                   </li>
                 ))
               ) : (
                 <li>
-                  <Link to="/login" className="hover:text-gold transition-colors">
+                  <Link to="/login" className="hover:text-sky-500 transition-colors">
                     Connexion
                   </Link>
                 </li>

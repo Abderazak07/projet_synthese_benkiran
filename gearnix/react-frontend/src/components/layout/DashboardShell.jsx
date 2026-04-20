@@ -22,11 +22,11 @@ export default function DashboardShell({
       {/* Sidebar - Design Identique au projet de référence */}
       <aside className="dash-sidebar shrink-0 hidden lg:flex flex-col shadow-2xl z-40">
         <div className="h-20 flex items-center px-6 mb-4">
-          <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center font-black text-xl border border-white/20 shadow-inner">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#38bdf8] flex items-center justify-center font-black text-xl text-ink border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
             {brand?.slice?.(0, 1) ?? 'G'}
           </div>
           <div className="ml-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 leading-none mb-1">Espace</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 leading-none mb-1">Espace</p>
             <p className="text-lg font-black tracking-tight text-white leading-none">{brand}</p>
           </div>
         </div>
@@ -42,8 +42,8 @@ export default function DashboardShell({
                 className={({ isActive }) =>
                   `flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 group
                   ${isActive 
-                    ? 'bg-white shadow-xl shadow-[#1e4e52]/40 text-[#2c767c]' 
-                    : 'text-white/70 hover:bg-white/10 hover:text-white'}`
+                    ? 'bg-white/10 shadow-lg shadow-black/20 text-sky border border-sky/20' 
+                    : 'text-white/60 hover:bg-white/[0.06] hover:text-white'}`
                 }
               >
                 {Icon ? <Icon size={20} className={`transition-transform duration-300 group-hover:scale-110`} /> : null}
@@ -78,29 +78,22 @@ export default function DashboardShell({
         </div>
       </aside>
 
-      <div className="dash-main flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="dash-main flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Topbar - Design Identique */}
         <header className="dash-topbar flex-shrink-0">
           <div className="flex flex-col min-w-0">
             {headerTitle ? (
-              <h2 className="text-xl font-black text-slate-900 tracking-tight truncate">{headerTitle}</h2>
+              <h2 className="text-xl font-black text-white tracking-tight truncate">{headerTitle}</h2>
             ) : null}
             {headerSubtitle ? (
-              <p className="text-xs text-slate-400 font-semibold tracking-wide truncate">{headerSubtitle}</p>
+              <p className="text-xs text-gray-500 font-semibold tracking-wide truncate">{headerSubtitle}</p>
             ) : null}
           </div>
 
           <div className="flex items-center gap-6">
             {actions ? <div className="flex items-center gap-3">{actions}</div> : null}
             
-            <button className="flex items-center gap-3 group">
-              <div className="relative">
-                <div className="h-10 w-10 rounded-2xl bg-[#2c767c]/10 flex items-center justify-center text-[#2c767c] font-black border border-[#2c767c]/20 group-hover:bg-[#2c767c] group-hover:text-white transition-all shadow-sm">
-                   A
-                </div>
-                <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 border-2 border-white shadow-sm" title="En ligne" />
-              </div>
-            </button>
+
           </div>
         </header>
 

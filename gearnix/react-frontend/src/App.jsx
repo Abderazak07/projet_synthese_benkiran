@@ -50,7 +50,7 @@ function AppRoutes() {
   const location = useLocation();
   const { user } = useAuth();
   const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
-  const isAdminOnPublicSite = user?.role === 'ADMIN' && !isDashboard;
+  const isSpecialUserOnPublicSite = (user?.role === 'ADMIN' || user?.role === 'FOURNISSEUR') && !isDashboard;
 
   if (isDashboard) {
     return (
@@ -81,9 +81,9 @@ function AppRoutes() {
 
   return (
     <div className="flex flex-col min-h-screen bg-dark text-white">
-      {isAdminOnPublicSite && <AdminModeBanner />}
+      {isSpecialUserOnPublicSite && <AdminModeBanner />}
       <Navbar />
-      <main className={`flex-grow ${isAdminOnPublicSite ? 'pt-28' : 'pt-16'}`}>
+      <main className={`flex-grow ${isSpecialUserOnPublicSite ? 'pt-28' : 'pt-16'}`}>
         <Routes>
           {/* Public */}
           <Route path="/" element={<Home />} />

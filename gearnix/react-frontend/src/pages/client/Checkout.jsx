@@ -65,7 +65,7 @@ export default function Checkout() {
           {/* Email & Shipping */}
           <div className="lux-card p-7">
             <h2 className="text-xs font-black tracking-[0.26em] uppercase mb-5 flex items-center gap-2 text-pearl">
-              <MapPin size={16} className="text-gold"/> Adresse de livraison
+              <MapPin size={16} className="text-sky-500"/> Adresse de livraison
             </h2>
             <div className="space-y-4">
               <div>
@@ -73,7 +73,7 @@ export default function Checkout() {
                 <textarea
                   required
                   rows={3}
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-pearl focus:outline-none focus:border-gold/40 focus:ring-1 focus:ring-gold/30 resize-none"
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl p-3 text-pearl focus:outline-none focus:border-sky-500/40 focus:ring-1 focus:ring-sky-500/30 resize-none"
                   placeholder="123 rue de la victoire, 75001 Paris"
                   value={adresse}
                   onChange={(e) => setAdresse(e.target.value)}
@@ -85,11 +85,11 @@ export default function Checkout() {
           {/* Payment Method */}
           <div className="lux-card p-7">
             <h2 className="text-xs font-black tracking-[0.26em] uppercase mb-5 flex items-center gap-2 text-pearl">
-              <CreditCard size={16} className="text-gold"/> Mode de paiement
+              <CreditCard size={16} className="text-sky-500"/> Mode de paiement
             </h2>
             <div className="space-y-3">
               {['Carte bancaire', 'PayPal', 'Virement bancaire'].map((m) => (
-                <label key={m} className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all ${methode === m ? 'border-gold/30 bg-gold/10' : 'border-white/10 bg-white/[0.02] hover:border-gold/20 hover:bg-white/[0.04]'}`}>
+                <label key={m} className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all ${methode === m ? 'border-sky-500/30 bg-sky-500/10' : 'border-white/10 bg-white/[0.02] hover:border-sky-500/20 hover:bg-white/[0.04]'}`}>
                   <input
                     type="radio"
                     name="methode"
@@ -131,7 +131,7 @@ export default function Checkout() {
                    <div className="flex-grow">
                      <p className="text-sm font-black text-pearl line-clamp-1">{item.nom}</p>
                      <p className="text-xs text-gray-400">Qté: {item.quantite}</p>
-                     <p className="text-sm font-semibold text-gold mt-1">{(item.prix * item.quantite).toFixed(2)} €</p>
+                     <p className="text-sm font-semibold text-sky-500 mt-1">{(item.prix * item.quantite).toFixed(2)} €</p>
                    </div>
                  </div>
               ))}

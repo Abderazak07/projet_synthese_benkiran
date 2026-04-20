@@ -44,8 +44,8 @@ export default function AdminUsers() {
 
   return (
     <>
-      <div className="dash-table-container bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
-        <div className="p-8 border-b border-slate-100 bg-white">
+      <div className="dash-table-container bg-white/[0.03] rounded-2xl border border-white/[0.07] shadow-xl overflow-hidden">
+        <div className="p-8 border-b border-white/5 bg-white/[0.03]">
           <div className="section-header">
             <div className="section-title-group">
               <h1 className="section-title">
@@ -72,16 +72,16 @@ export default function AdminUsers() {
             </thead>
             <tbody>
               {users.map(u => (
-                <tr key={u.id} className="hover:bg-slate-50 transition-colors group">
+                <tr key={u.id} className="hover:bg-white/[0.04] transition-colors group">
                   <td>
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-500 border border-slate-200 uppercase">
+                      <div className="h-10 w-10 rounded-xl bg-white/[0.05] flex items-center justify-center font-bold text-gray-400 border border-white/10 uppercase">
                         {u.nom.slice(0, 2)}
                       </div>
-                      <p className="font-bold text-slate-900">{u.nom}</p>
+                      <p className="font-bold text-white">{u.nom}</p>
                     </div>
                   </td>
-                  <td className="text-slate-500 font-medium">{u.email}</td>
+                  <td className="text-gray-400 font-medium">{u.email}</td>
                   <td>
                     <select 
                       className="dash-input !py-1.5 !px-3 font-bold !text-[11px] uppercase tracking-wider w-auto"
@@ -94,7 +94,7 @@ export default function AdminUsers() {
                     </select>
                   </td>
                   <td className="text-right">
-                    <button onClick={() => setDeleteId(u.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
+                    <button onClick={() => setDeleteId(u.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-white/5 bg-white/[0.04]">
                       <Trash2 size={16} />
                     </button>
                   </td>
@@ -107,9 +107,9 @@ export default function AdminUsers() {
 
       {showForm && (
         <div className="dash-side-form-container">
-          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-            <h2 className="text-lg font-black text-slate-900 tracking-tight">Utilisateur</h2>
-            <button onClick={() => setShowForm(false)} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+          <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+            <h2 className="text-lg font-black text-white tracking-tight">Utilisateur</h2>
+            <button onClick={() => setShowForm(false)} className="p-2 text-pearl/40 hover:text-red-500 transition-colors">
               <X size={20} />
             </button>
           </div>
@@ -135,7 +135,7 @@ export default function AdminUsers() {
               </select>
             </label>
 
-            <div className="pt-6 border-t border-slate-100 flex gap-3">
+            <div className="pt-6 border-t border-white/5 flex gap-3">
               <button type="button" onClick={() => setShowForm(false)} className="dash-btn-outline flex-1">Fermer</button>
               <button type="submit" className="dash-btn flex-1">
                 Créer compte <ArrowRight size={16} className="ml-2" />
@@ -146,13 +146,13 @@ export default function AdminUsers() {
       )}
 
       {deleteId && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
-           <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-200 animate-in zoom-in-95">
-              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-100">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+           <div className="bg-[#12121a] rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-white/10 animate-in zoom-in-95">
+              <div className="w-16 h-16 bg-red-500/10 text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-500/20">
                  <Trash2 size={32} />
               </div>
-              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Supprimer l'utilisateur ?</h3>
-              <p className="text-slate-500 text-center text-sm font-medium mb-8 leading-relaxed">Cette action supprimera également toutes les données liées à ce compte.</p>
+              <h3 className="text-xl font-black text-white text-center mb-2 tracking-tight">Supprimer l'utilisateur ?</h3>
+              <p className="text-gray-400 text-center text-sm font-medium mb-8 leading-relaxed">Cette action supprimera également toutes les données liées à ce compte.</p>
               <div className="flex gap-4">
                  <button onClick={() => setDeleteId(null)} className="dash-btn-outline flex-1 rounded-2xl">Annuler</button>
                  <button onClick={executeDelete} className="dash-btn bg-red-600 hover:bg-red-700 flex-1 rounded-2xl">Supprimer</button>

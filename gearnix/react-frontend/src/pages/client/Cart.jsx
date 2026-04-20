@@ -47,8 +47,8 @@ export default function Cart() {
                </div>
                
                <div className="flex-grow">
-                 <p className="text-[11px] text-gold mb-2 font-semibold uppercase tracking-[0.22em]">{item.categorie}</p>
-                 <Link to={`/produits/${item.id}`} className="text-lg font-black text-pearl hover:text-gold transition-colors line-clamp-1">
+                 <p className="text-[11px] text-sky-500 mb-2 font-semibold uppercase tracking-[0.22em]">{item.categorie}</p>
+                 <Link to={`/produits/${item.id}`} className="text-lg font-black text-pearl hover:text-sky-500 transition-colors line-clamp-1">
                    {item.nom}
                  </Link>
                  <p className="font-black text-pearl mt-3">{item.prix} €</p>

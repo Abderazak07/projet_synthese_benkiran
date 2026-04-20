@@ -35,7 +35,7 @@ export default function Register() {
 
       <div className="max-w-md w-full relative z-10 lux-card p-8">
         <div className="text-center mb-10">
-           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gold to-copper rounded-full flex items-center justify-center mb-6 shadow-[0_0_0_1px_rgba(214,178,110,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
+           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-full flex items-center justify-center mb-6 shadow-[0_0_0_1px_rgba(14,165,233,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
             <Gamepad2 size={30} className="text-ink" />
           </div>
           <h2 className="text-3xl font-black text-pearl tracking-[0.22em] uppercase">Rejoignez-nous</h2>
@@ -51,7 +51,7 @@ export default function Register() {
               <input
                 type="text"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40 focus:border-sky-500/40 transition-colors"
                 placeholder="Nom complet"
                 value={formData.nom}
                 onChange={(e) => setFormData({...formData, nom: e.target.value})}
@@ -65,7 +65,7 @@ export default function Register() {
               <input
                 type="email"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40 focus:border-sky-500/40 transition-colors"
                 placeholder="Adresse email"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -80,7 +80,7 @@ export default function Register() {
                 type="password"
                 required
                 minLength={6}
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40 focus:border-sky-500/40 transition-colors"
                 placeholder="Mot de passe (min 6 caractères)"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -95,8 +95,8 @@ export default function Register() {
                   onClick={() => setFormData({...formData, role: 'CLIENT'})}
                   className={`py-3 px-4 rounded-xl flex items-center justify-center gap-2 border transition-all text-sm font-semibold ${
                     formData.role === 'CLIENT' 
-                      ? 'bg-gold/10 border-gold/25 text-pearl shadow-[0_0_0_1px_rgba(214,178,110,0.12),0_18px_60px_rgba(0,0,0,0.45)]' 
-                      : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-gold/20 hover:bg-white/[0.04]'
+                      ? 'bg-sky-500/10 border-sky-500/25 text-pearl shadow-[0_0_0_1px_rgba(14,165,233,0.12),0_18px_60px_rgba(0,0,0,0.45)]' 
+                      : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
                   }`}
                 >
                   <User size={16} /> Client
@@ -106,8 +106,8 @@ export default function Register() {
                   onClick={() => setFormData({...formData, role: 'FOURNISSEUR'})}
                    className={`py-3 px-4 rounded-xl flex items-center justify-center gap-2 border transition-all text-sm font-semibold ${
                     formData.role === 'FOURNISSEUR' 
-                      ? 'bg-gold/10 border-gold/25 text-pearl shadow-[0_0_0_1px_rgba(214,178,110,0.12),0_18px_60px_rgba(0,0,0,0.45)]' 
-                      : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-gold/20 hover:bg-white/[0.04]'
+                      ? 'bg-sky-500/10 border-sky-500/25 text-pearl shadow-[0_0_0_1px_rgba(14,165,233,0.12),0_18px_60px_rgba(0,0,0,0.45)]' 
+                      : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
                   }`}
                 >
                   <Briefcase size={16} /> Fournisseur
@@ -131,7 +131,7 @@ export default function Register() {
         <div className="mt-8 text-center text-sm">
           <p className="text-gray-400">
             Déjà un compte ?{' '}
-            <Link to="/login" className="font-semibold text-gold hover:text-pearl transition-colors">
+            <Link to="/login" className="font-semibold text-sky-500 hover:text-pearl transition-colors">
               Se connecter
             </Link>
           </p>

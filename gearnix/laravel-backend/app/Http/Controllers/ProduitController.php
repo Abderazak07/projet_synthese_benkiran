@@ -63,12 +63,21 @@ class ProduitController extends Controller
             'prix' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
+            'image2' => 'nullable|image|max:2048',
+            'image3' => 'nullable|image|max:2048',
+            'image4' => 'nullable|image|max:2048',
         ]);
         
         $data = $request->all();
 
-        if ($request->hasFile('image')) {
-            $data['image'] = url(Storage::url($request->file('image')->store('produits', 'public')));
+        // Handle all 4 images
+        for ($i = 1; $i <= 4; $i++) {
+            $fieldName = $i === 1 ? 'image' : 'image' . $i;
+            if ($request->hasFile($fieldName)) {
+                $data[$fieldName] = url(Storage::url($request->file($fieldName)->store('produits', 'public')));
+            } else {
+                unset($data[$fieldName]);
+            }
         }
 
         // Si c'est un fournisseur, on force son ID
@@ -99,14 +108,21 @@ class ProduitController extends Controller
             'prix' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
             'image' => 'nullable|image|max:2048',
+            'image2' => 'nullable|image|max:2048',
+            'image3' => 'nullable|image|max:2048',
+            'image4' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('image')) {
-            $produit->image = url(Storage::url($request->file('image')->store('produits', 'public')));
+        // Handle all 4 images
+        for ($i = 1; $i <= 4; $i++) {
+            $fieldName = $i === 1 ? 'image' : 'image' . $i;
+            if ($request->hasFile($fieldName)) {
+                $produit->$fieldName = url(Storage::url($request->file($fieldName)->store('produits', 'public')));
+            }
         }
 
-        // On exclut les champs techniques et l'image déjà traitée
-        $updateData = $request->except(['image', '_method']);
+        // On exclut les champs techniques et les images déjà traitées
+        $updateData = $request->except(['image', 'image2', 'image3', 'image4', '_method']);
 
         // Prevent a fournisseur from changing approval state
         if ($request->user()->role === 'FOURNISSEUR') {

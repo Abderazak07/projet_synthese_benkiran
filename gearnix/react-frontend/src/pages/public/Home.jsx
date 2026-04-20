@@ -61,7 +61,7 @@ export default function Home() {
               <h1 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tight">
                 Upgrade ton
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-copper neon-text">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-sky-600 neon-text">
                   setup gaming
                 </span>
               </h1>
@@ -77,7 +77,7 @@ export default function Home() {
                 {categories.length > 0 && (
                   <Link
                     to={`/produits?categorie=${encodeURIComponent(categories[0].nom)}`}
-                    className="lux-pill border border-white/15 bg-white/[0.02] text-pearl hover:bg-white/[0.05] hover:border-gold/35"
+                    className="lux-pill border border-white/15 bg-white/[0.02] text-pearl hover:bg-white/[0.05] hover:border-sky-500/35"
                   >
                     {categories[0].nom}
                   </Link>
@@ -121,7 +121,7 @@ export default function Home() {
                         {heroProduct.nom}
                       </h2>
                       <p className="text-gray-300 mt-3 text-sm line-clamp-2">{heroProduct.description}</p>
-                      <span className="mt-6 inline-flex items-center gap-2 text-gold text-sm font-semibold tracking-wide">
+                      <span className="mt-6 inline-flex items-center gap-2 text-sky-500 text-sm font-semibold tracking-wide">
                         {parseFloat(heroProduct.prix).toFixed(2)} € <span aria-hidden>→</span>
                       </span>
                     </div>
@@ -142,14 +142,14 @@ export default function Home() {
                         className="absolute inset-0 h-full w-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-[1.05] transition-all duration-700"
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#2c767c]/30 to-ink/80" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9]/30 to-ink/80" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                     <div className="relative z-10 p-6">
                       <p className="text-xs uppercase tracking-[0.22em] text-gray-300">Collection</p>
                       <h3 className="mt-2 text-xl font-black text-pearl">{cat.nom}</h3>
                       <p className="mt-1 text-xs text-gray-400">{cat.product_count} produit{cat.product_count !== 1 ? 's' : ''}</p>
-                      <span className="mt-4 inline-flex items-center gap-2 text-gold text-xs font-semibold tracking-[0.18em] uppercase opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="mt-4 inline-flex items-center gap-2 text-sky-500 text-xs font-semibold tracking-[0.18em] uppercase opacity-0 group-hover:opacity-100 transition-opacity">
                         Explorer <span aria-hidden>→</span>
                       </span>
                     </div>
@@ -160,10 +160,10 @@ export default function Home() {
                 {categories.length > 4 && (
                   <Link
                     to="/produits"
-                    className="md:col-span-3 relative overflow-hidden rounded-xl2 border border-gold/20 bg-gold/[0.04] shadow-soft group min-h-[170px] flex items-center justify-center"
+                    className="md:col-span-3 relative overflow-hidden rounded-xl2 border border-sky-500/20 bg-sky-500/[0.04] shadow-soft group min-h-[170px] flex items-center justify-center"
                   >
                     <div className="text-center p-6">
-                      <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-3 text-gold border border-gold/20 group-hover:bg-gold/20 transition-colors">
+                      <div className="w-12 h-12 rounded-full bg-sky-500/10 flex items-center justify-center mx-auto mb-3 text-sky-500 border border-sky-500/20 group-hover:bg-sky-500/20 transition-colors">
                         <ArrowRight size={22} />
                       </div>
                       <p className="text-pearl font-black">Voir toutes</p>
@@ -190,7 +190,7 @@ export default function Home() {
               const Icon = it.icon;
               return (
                 <div key={it.title} className="flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-4 text-gold border border-gold/15 shadow-[0_0_0_1px_rgba(214,178,110,0.10)]">
+                  <div className="w-14 h-14 rounded-full bg-sky-500/10 flex items-center justify-center mb-4 text-sky-500 border border-sky-500/15 shadow-[0_0_0_1px_rgba(14,165,233,0.10)]">
                     <Icon size={26} />
                   </div>
                   <h3 className="text-pearl font-black mb-2 tracking-wide">{it.title}</h3>
@@ -233,7 +233,7 @@ export default function Home() {
                         className="h-full w-full object-cover opacity-55 group-hover:opacity-70 group-hover:scale-[1.03] transition-all duration-700"
                       />
                     ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-[#2c767c]/40 via-ink/60 to-ink" />
+                      <div className="h-full w-full bg-gradient-to-br from-[#0ea5e9]/40 via-ink/60 to-ink" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent" />
                   </div>
@@ -248,7 +248,7 @@ export default function Home() {
                     {cat.description && (
                       <p className="text-sm text-gray-300/70 mt-2 line-clamp-2">{cat.description}</p>
                     )}
-                    <span className="mt-5 inline-flex items-center gap-2 text-gold text-xs font-semibold tracking-[0.18em] uppercase">
+                    <span className="mt-5 inline-flex items-center gap-2 text-sky-500 text-xs font-semibold tracking-[0.18em] uppercase">
                       Explorer <span aria-hidden>→</span>
                     </span>
                   </div>
@@ -270,7 +270,7 @@ export default function Home() {
             </div>
             <Link
               to="/produits"
-              className="lux-pill border border-white/15 bg-white/[0.02] text-pearl hover:bg-white/[0.05] hover:border-gold/35 self-start md:self-auto"
+              className="lux-pill border border-white/15 bg-white/[0.02] text-pearl hover:bg-white/[0.05] hover:border-sky-500/35 self-start md:self-auto"
             >
               Voir tous les produits
             </Link>
