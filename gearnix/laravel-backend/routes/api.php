@@ -36,12 +36,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/paiements', [PaiementController::class, 'store']);
     Route::get('/paiements/{commandeId}', [PaiementController::class, 'show']);
     
-    // FOURNISSEUR - Gestion produits
+    // FOURNISSEUR & ADMIN - Partage des ressources
     Route::middleware('role:FOURNISSEUR,ADMIN')->group(function () {
         Route::post('/produits', [ProduitController::class, 'store']);
         Route::put('/produits/{id}', [ProduitController::class, 'update']);
         Route::delete('/produits/{id}', [ProduitController::class, 'destroy']);
         Route::get('/fournisseur/commandes', [CommandeController::class, 'fournisseurCommandes']);
+        Route::get('/admin/categories', [CategoryController::class, 'adminIndex']);
     });
     
     // ADMIN - Gestion globale
@@ -51,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
         
         Route::get('/admin/commandes', [AdminController::class, 'commandes']);
+        Route::get('/admin/commandes/{id}', [AdminController::class, 'showCommande']);
         Route::put('/admin/commandes/{id}/statut', [AdminController::class, 'updateStatut']);
         
         Route::get('/admin/paiements', [AdminController::class, 'paiements']);
@@ -59,7 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/livraisons', [AdminController::class, 'livraisons']);
         Route::put('/admin/livraisons/{id}/statut', [AdminController::class, 'updateLivraisonStatut']);
 
-        Route::get('/admin/categories', [CategoryController::class, 'adminIndex']);
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);

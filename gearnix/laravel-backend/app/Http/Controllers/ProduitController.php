@@ -23,6 +23,10 @@ class ProduitController extends Controller
             });
         }
         
+        if ($request->has('limit')) {
+            $query->limit($request->limit);
+        }
+        
         return response()->json($query->orderBy('id', 'desc')->get());
     }
 
@@ -67,16 +71,23 @@ class ProduitController extends Controller
         $produit = Produit::findOrFail($id);
         
         // Check permission if Fournisseur
-        if ($request->user()->role === 'FOURNISSEUR' && $produit->fournisseur_id !== $request->user()->id) {
-            return response()->json(['message' => 'Non autorisé'], 403);
+        if ($request->user()->role === 'FOURNISSEUR' && $produit->fournisseur_id && $produit->fournisseur_id !== $request->user()->id) {
+            return response()->json(['message' => 'Non autorisé : ce produit ne vous appartient pas.'], 403);
         }
         
+        $request->validate([
+            'nom' => 'sometimes|string',
+            'prix' => 'sometimes|numeric|min:0',
+            'stock' => 'sometimes|integer|min:0',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
         if ($request->hasFile('image')) {
-            $request->validate(['image' => 'image|max:2048']);
             $produit->image = url(Storage::url($request->file('image')->store('produits', 'public')));
         }
 
-        $produit->update($request->except('image'));
+        // On exclut les champs techniques et l'image déjà traitée
+        $produit->update($request->except(['image', '_method']));
         $produit->save();
 
         return response()->json($produit);
@@ -84,11 +95,29 @@ class ProduitController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        $produit = Produit::findOrFail($id);
-        if ($request->user()->role === 'FOURNISSEUR' && $produit->fournisseur_id !== $request->user()->id) {
-            return response()->json(['message' => 'Non autorisé'], 403);
+        \Log::info("Request to delete product ID: " . $id);
+        
+        $produit = Produit::find($id);
+        
+        if (!$produit) {
+            return response()->json(['message' => 'Produit déjà supprimé ou introuvable.'], 404);
         }
-        $produit->delete();
-        return response()->json(['message' => 'Produit supprimé']);
+
+        // Check permission if Fournisseur
+        if ($request->user()->role === 'FOURNISSEUR' && $produit->fournisseur_id) {
+            if ($produit->fournisseur_id !== $request->user()->id) {
+                return response()->json(['message' => 'Non autorisé : vous n\'êtes pas le propriétaire de ce produit.'], 403);
+            }
+        }
+        
+        try {
+            $produit->delete();
+            return response()->json(['message' => 'Produit supprimé avec succès']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur technique lors de la suppression',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

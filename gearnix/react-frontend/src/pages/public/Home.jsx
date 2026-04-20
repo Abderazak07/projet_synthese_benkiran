@@ -10,8 +10,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/produits').then(res => {
-      setFeaturedProducts(res.data.slice(0, 6)); // Les 6 premiers produits
+    api.get('/produits?limit=6').then(res => {
+      setFeaturedProducts(res.data);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 

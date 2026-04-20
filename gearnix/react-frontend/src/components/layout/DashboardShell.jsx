@@ -1,28 +1,37 @@
-import { NavLink } from 'react-router-dom';
-import { Search, UserCircle } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Search, UserCircle, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function DashboardShell({
-  brand = 'Dashboard',
+  brand = 'GEARNIX',
   navItems = [],
   headerTitle,
   headerSubtitle,
   actions,
   children,
 }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
   return (
-    <div className="dash-shell flex">
-      <aside className="dash-sidebar w-[260px] shrink-0 hidden lg:flex flex-col">
-        <div className="h-14 flex items-center px-5 border-b border-white/10">
-          <div className="h-9 w-9 rounded-lg bg-white/10 flex items-center justify-center font-black">
-            {brand?.slice?.(0, 1) ?? 'D'}
+    <div className="dash-shell">
+      {/* Sidebar - Design Identique au projet de référence */}
+      <aside className="dash-sidebar shrink-0 hidden lg:flex flex-col shadow-2xl z-40">
+        <div className="h-20 flex items-center px-6 mb-4">
+          <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center font-black text-xl border border-white/20 shadow-inner">
+            {brand?.slice?.(0, 1) ?? 'G'}
           </div>
-          <div className="ml-3">
-            <p className="text-xs uppercase tracking-[0.24em] text-white/70">Espace</p>
-            <p className="text-sm font-black tracking-[0.18em] uppercase">{brand}</p>
+          <div className="ml-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 leading-none mb-1">Espace</p>
+            <p className="text-lg font-black tracking-tight text-white leading-none">{brand}</p>
           </div>
         </div>
 
-        <nav className="px-3 py-4 space-y-1">
+        <nav className="flex-1 px-4 space-y-2">
           {navItems.map((it) => {
             const Icon = it.icon;
             return (
@@ -31,54 +40,63 @@ export default function DashboardShell({
                 to={it.to}
                 end={it.end}
                 className={({ isActive }) =>
-                  `${isActive ? 'dash-link dash-link-active' : 'dash-link'}`
+                  `flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 group
+                  ${isActive 
+                    ? 'bg-white shadow-xl shadow-[#1e4e52]/40 text-[#2c767c]' 
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'}`
                 }
               >
-                {Icon ? (
-                  <span className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Icon size={18} />
-                  </span>
-                ) : null}
-                <span className="font-semibold">{it.label}</span>
+                {Icon ? <Icon size={20} className={`transition-transform duration-300 group-hover:scale-110`} /> : null}
+                <span className="tracking-wide">{it.label}</span>
+                {/* Petit indicateur pour l'actif */}
+                {/* <div className={`ml-auto w-1.5 h-1.5 rounded-full bg-white opacity-0 transition-opacity`} /> */}
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="mt-auto px-5 py-4 border-t border-white/10">
-          <button className="w-full dash-btn-ghost bg-white/10 border-white/10 text-white hover:bg-white/15">
+        <div className="mt-auto px-4 py-6 border-t border-white/10">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-4 w-full px-5 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm hover:bg-red-500/20 hover:text-red-200 transition-all border border-white/5 group"
+          >
+            <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
             Se déconnecter
           </button>
         </div>
       </aside>
 
-      <div className="flex-1 min-w-0">
-        <header className="dash-topbar">
-          <div className="min-w-0">
-            {headerTitle ? <p className="dash-title truncate">{headerTitle}</p> : null}
+      <div className="dash-main flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        {/* Topbar - Design Identique */}
+        <header className="dash-topbar flex-shrink-0">
+          <div className="flex flex-col min-w-0">
+            {headerTitle ? (
+              <h2 className="text-xl font-black text-slate-900 tracking-tight truncate">{headerTitle}</h2>
+            ) : null}
             {headerSubtitle ? (
-              <p className="text-xs text-slate-500 truncate">{headerSubtitle}</p>
+              <p className="text-xs text-slate-400 font-semibold tracking-wide truncate">{headerSubtitle}</p>
             ) : null}
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-              <Search size={16} className="text-slate-500" />
-              <input
-                placeholder="Rechercher..."
-                className="bg-transparent outline-none text-sm w-56"
-              />
-            </div>
-            {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
-            <button className="rounded-full text-slate-600 hover:text-slate-900">
-              <UserCircle size={28} />
+          <div className="flex items-center gap-6">
+            {actions ? <div className="flex items-center gap-3">{actions}</div> : null}
+            
+            <button className="flex items-center gap-3 group">
+              <div className="relative">
+                <div className="h-10 w-10 rounded-2xl bg-[#2c767c]/10 flex items-center justify-center text-[#2c767c] font-black border border-[#2c767c]/20 group-hover:bg-[#2c767c] group-hover:text-white transition-all shadow-sm">
+                   A
+                </div>
+                <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 border-2 border-white shadow-sm" title="En ligne" />
+              </div>
             </button>
           </div>
         </header>
 
-        <main className="p-6">{children}</main>
+        {/* Dynamic Content Area */}
+        <div className="dash-content-area custom-scrollbar">
+          {children}
+        </div>
       </div>
     </div>
   );
 }
-

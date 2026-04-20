@@ -1,65 +1,182 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import Badge from '../../components/ui/Badge';
 import toast from 'react-hot-toast';
+import { ShoppingCart, Eye, X, Package, User, MapPin, CreditCard, Truck } from 'lucide-react';
 
 export default function AdminOrders() {
   const [commandes, setCommandes] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => { fetchCommandes(); }, []);
   const fetchCommandes = () => api.get('/admin/commandes').then(res => setCommandes(res.data));
 
+  const viewDetails = async (id) => {
+    try {
+      const res = await api.get(`/admin/commandes/${id}`);
+      setSelectedOrder(res.data);
+      setIsModalOpen(true);
+    } catch (e) { toast.error('Erreur de chargement des détails'); }
+  };
+
   const changeStatus = async (id, statut) => {
+    const loadingToast = toast.loading('Mise à jour du statut...');
     try {
       await api.put(`/admin/commandes/${id}/statut`, { statut });
-      toast.success('Statut mis à jour');
+      toast.success('Statut mis à jour', { id: loadingToast });
       fetchCommandes();
-    } catch (e) { toast.error('Erreur'); }
+    } catch (e) { toast.error('Erreur', { id: loadingToast }); }
+  };
+
+  const getStatusBadge = (statut) => {
+    switch (statut) {
+      case 'Livrée': return <span className="badge-accepted">Livrée</span>;
+      case 'Annulée': return <span className="badge-rejected">Annulée</span>;
+      case 'En attente': return <span className="badge-review">En attente</span>;
+      default: return <span className="badge-new">{statut}</span>;
+    }
   };
 
   return (
-    <div>
-      <div className="mb-4">
-        <h1 className="dash-title">Commandes</h1>
-        <p className="dash-muted text-sm">Consultez et mettez à jour le statut des commandes.</p>
+    <>
+      <div className="dash-table-container bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+        <div className="p-8 border-b border-slate-100 bg-white">
+          <div className="section-header">
+            <div className="section-title-group">
+              <h1 className="section-title">
+                <div className="bullet"><ShoppingCart size={20} /></div>
+                Gestion des Commandes
+              </h1>
+              <p className="section-description">Suivi et mise à jour du cycle de vente.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="dash-table">
+            <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Client</th>
+                <th>Montant Total</th>
+                <th>Statut</th>
+                <th className="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commandes.map(c => (
+                <tr key={c.id} className="hover:bg-slate-50 transition-colors group">
+                  <td className="font-mono text-xs text-slate-400 font-black tracking-widest leading-none">
+                     #{c.id.toString().padStart(5, '0')}
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-3">
+                       <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                          <User size={14} />
+                       </div>
+                       <p className="font-bold text-slate-900">{c.client?.nom}</p>
+                    </div>
+                  </td>
+                  <td>
+                    <p className="font-black text-slate-900">{parseFloat(c.total).toFixed(2)} €</p>
+                  </td>
+                  <td>{getStatusBadge(c.statut)}</td>
+                  <td className="text-right">
+                    <div className="flex justify-end items-center gap-3">
+                      <button onClick={() => viewDetails(c.id)} className="p-2.5 text-[#2c767c] hover:text-white hover:bg-[#2c767c] rounded-xl shadow-sm border border-slate-100 bg-slate-50 transition-all">
+                         <Eye size={18} />
+                      </button>
+                      <select 
+                        className="dash-input !py-1.5 !px-3 font-bold !text-[11px] uppercase tracking-wider w-auto"
+                        value={c.statut}
+                        onChange={(e) => changeStatus(c.id, e.target.value)}
+                      >
+                        <option value="En attente">En attente</option>
+                        <option value="Payée">Payée</option>
+                        <option value="Confirmée">Confirmée</option>
+                        <option value="En livraison">En livraison</option>
+                        <option value="Livrée">Livrée</option>
+                        <option value="Annulée">Annulée</option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div className="dash-card overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">ID</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Client</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Total</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Statut</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200">
-             {commandes.map(c => (
-              <tr key={c.id} className="hover:bg-slate-50">
-                <td className="p-4 text-slate-700 font-semibold">#{c.id}</td>
-                <td className="p-4 text-slate-900 font-semibold">{c.client?.nom}</td>
-                <td className="p-4 font-bold text-slate-900">{c.total} €</td>
-                <td className="p-4"><Badge variant={c.statut==='Livrée' ? 'success' : 'primary'}>{c.statut}</Badge></td>
-                <td className="p-4 text-right">
-                  <select 
-                    className="bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#2f7a78] focus:ring-1 focus:ring-[#2f7a78]/25"
-                    value={c.statut}
-                    onChange={(e) => changeStatus(c.id, e.target.value)}
-                  >
-                    <option value="En attente">En attente</option>
-                    <option value="Payée">Payée</option>
-                    <option value="Confirmée">Confirmée</option>
-                    <option value="Livrée">Livrée</option>
-                    <option value="Annulée">Annulée</option>
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      {/* Détails Commande (Utilise dash-side-form-container pour la cohérence) */}
+      {isModalOpen && selectedOrder && (
+        <div className="dash-side-form-container !w-[450px]">
+          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between sticky top-0 bg-white z-10">
+            <h2 className="text-lg font-black text-slate-900 tracking-tight">Détails de la Commande</h2>
+            <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="p-8 space-y-8 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
+             <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">REFERENCE</p>
+                  <p className="font-mono text-xl text-slate-900 font-black">#{selectedOrder.id}</p>
+                </div>
+                {getStatusBadge(selectedOrder.statut)}
+             </div>
+
+             <div className="grid grid-cols-2 gap-6 bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-[10px] font-black text-[#2c767c] uppercase tracking-widest">
+                    <User size={12}/> Client
+                  </div>
+                  <p className="text-sm font-bold text-slate-700">{selectedOrder.client?.nom}</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-[10px] font-black text-[#2c767c] uppercase tracking-widest">
+                    <CreditCard size={12}/> Total
+                  </div>
+                  <p className="text-sm font-bold text-slate-700">{parseFloat(selectedOrder.total).toFixed(2)} €</p>
+                </div>
+             </div>
+
+             <div className="space-y-3">
+                <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <MapPin size={12}/> Adresse de livraison
+                </div>
+                <div className="bg-white border border-slate-200 p-4 rounded-xl text-sm font-medium text-slate-600 shadow-sm leading-relaxed">
+                   {selectedOrder.livraison?.adresse || 'Aucune adresse spécifiée'}
+                </div>
+             </div>
+
+             <div className="space-y-4">
+               <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Articles commandés</p>
+                  <div className="h-px flex-1 bg-slate-100 mx-4" />
+                  <Package size={14} className="text-slate-300"/>
+               </div>
+               <div className="space-y-2">
+                 {selectedOrder.produits?.map(p => (
+                   <div key={p.id} className="flex items-center gap-4 p-3 border border-slate-100 rounded-xl bg-white shadow-sm hover:border-[#2c767c]/20 transition-colors">
+                      <div className="h-10 w-10 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100 shrink-0">
+                         {p.image ? <img src={p.image} className="h-full w-full object-cover" /> : <Package size={16} className="text-slate-300" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                         <p className="font-bold text-slate-900 text-xs truncate">{p.nom}</p>
+                         <p className="text-[10px] text-slate-400 font-mono tracking-tighter">{p.pivot?.prix_unitaire} € × {p.pivot?.quantite}</p>
+                      </div>
+                   </div>
+                 ))}
+               </div>
+             </div>
+          </div>
+          
+          <div className="p-6 border-t border-slate-100 bg-white">
+             <button onClick={() => setIsModalOpen(false)} className="dash-btn w-full">Fermer les détails</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

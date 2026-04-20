@@ -28,7 +28,11 @@ class AdminController extends Controller
     }
 
     public function commandes() {
-        return response()->json(Commande::with('client', 'produits', 'paiement', 'livraison')->orderBy('id', 'desc')->get());
+        return response()->json(Commande::with('client')->orderBy('id', 'desc')->get());
+    }
+
+    public function showCommande($id) {
+        return response()->json(Commande::with('client', 'produits', 'paiement', 'livraison')->findOrFail($id));
     }
 
     public function updateStatut(Request $request, $id) {
@@ -38,7 +42,7 @@ class AdminController extends Controller
     }
 
     public function paiements() {
-        return response()->json(Paiement::with('commande.client')->orderBy('id', 'desc')->get());
+        return response()->json(Paiement::orderBy('id', 'desc')->get());
     }
 
     public function updatePaiementStatut(Request $request, $id) {
@@ -48,7 +52,7 @@ class AdminController extends Controller
     }
 
     public function livraisons() {
-        return response()->json(Livraison::with('commande.client')->orderBy('id', 'desc')->get());
+        return response()->json(Livraison::orderBy('id', 'desc')->get());
     }
 
     public function updateLivraisonStatut(Request $request, $id) {
@@ -58,11 +62,29 @@ class AdminController extends Controller
     }
     
     public function stats() {
+        // Revenu des 7 derniers jours
+        $revenueData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dayName = now()->subDays($i)->translatedFormat('D');
+            $sum = Paiement::where('statut', 'Validé')
+                ->whereDate('created_at', $date)
+                ->sum('montant');
+            $revenueData[] = ['name' => ucfirst($dayName), 'revenue' => $sum];
+        }
+
         return response()->json([
             'total_users' => User::count(),
             'total_produits' => Produit::count(),
             'total_commandes' => Commande::count(),
-            'revenue_total' => Paiement::where('statut', 'Validé')->sum('montant')
+            'revenue_total' => Paiement::where('statut', 'Validé')->sum('montant'),
+            'revenue_chart' => $revenueData,
+            'user_breakdown' => [
+                'admin' => User::where('role', 'ADMIN')->count(),
+                'fournisseur' => User::where('role', 'FOURNISSEUR')->count(),
+                'client' => User::where('role', 'CLIENT')->count(),
+            ],
+            'recent_users' => User::orderBy('id', 'desc')->take(5)->get()
         ]);
     }
 }

@@ -1,55 +1,91 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import Badge from '../../components/ui/Badge';
 import toast from 'react-hot-toast';
+import { CreditCard, DollarSign, Wallet, ArrowRight, ShieldCheck, Clock, CheckCircle } from 'lucide-react';
 
 export default function AdminPayments() {
-  const [paiements, setPaiements] = useState([]);
+  const [payments, setPayments] = useState([]);
 
-  useEffect(() => { fetchPaiements(); }, []);
-  const fetchPaiements = () => api.get('/admin/paiements').then(res => setPaiements(res.data));
+  useEffect(() => { fetchPayments(); }, []);
+  const fetchPayments = () => api.get('/admin/paiements').then(res => setPayments(res.data));
 
   const changeStatus = async (id, statut) => {
+    const loadingToast = toast.loading('Validation du paiement...');
     try {
       await api.put(`/admin/paiements/${id}/statut`, { statut });
-      toast.success('Statut mis à jour');
-      fetchPaiements();
-    } catch (e) { toast.error('Erreur'); }
+      toast.success('Paiement mis à jour', { id: loadingToast });
+      fetchPayments();
+    } catch (e) { toast.error('Erreur', { id: loadingToast }); }
+  };
+
+  const getStatusIcon = (statut) => {
+    if (statut === 'Validé') return <CheckCircle size={14} className="text-emerald-500" />;
+    if (statut === 'En attente') return <Clock size={14} className="text-amber-500" />;
+    return <ShieldCheck size={14} className="text-slate-400" />;
   };
 
   return (
-    <div>
-      <div className="mb-4">
-        <h1 className="dash-title">Paiements</h1>
-        <p className="dash-muted text-sm">Suivez et validez les paiements associés aux commandes.</p>
+    <div className="dash-table-container bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+      <div className="p-8 border-b border-slate-100 bg-white">
+        <div className="section-header">
+          <div className="section-title-group">
+            <h1 className="section-title">
+              <div className="bullet"><CreditCard size={20} /></div>
+              Transactions & Paiements
+            </h1>
+            <p className="section-description">Contrôlez les encaissements et validez les règlements clients.</p>
+          </div>
+        </div>
       </div>
 
-      <div className="dash-card overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200">
+      <div className="overflow-x-auto">
+        <table className="dash-table">
+          <thead>
             <tr>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">ID</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Commande</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Montant</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Statut</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider text-right">Actions</th>
+              <th>ID Paiement</th>
+              <th>Commande</th>
+              <th>Date</th>
+              <th>Méthode</th>
+              <th>Montant</th>
+              <th>Statut</th>
+              <th className="text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
-             {paiements.map(p => (
-              <tr key={p.id} className="hover:bg-slate-50">
-                <td className="p-4 text-slate-700 font-semibold">#{p.id}</td>
-                <td className="p-4 text-slate-900 font-semibold">#{p.commande_id}</td>
-                <td className="p-4 font-bold text-slate-900">{p.montant} €</td>
-                <td className="p-4"><Badge variant={p.statut === 'Validé' ? 'success' : 'warning'}>{p.statut}</Badge></td>
-                <td className="p-4 text-right">
+          <tbody>
+            {payments.map(p => (
+              <tr key={p.id} className="hover:bg-slate-50 transition-colors group">
+                <td className="font-mono text-[10px] text-slate-400">#{p.id}</td>
+                <td>
+                  <div className="flex items-center gap-2 font-bold text-slate-700">
+                    <span className="text-slate-400"><DollarSign size={14}/></span> #{p.commande_id}
+                  </div>
+                </td>
+                <td className="text-slate-500 text-xs">{new Date(p.created_at).toLocaleDateString()}</td>
+                <td>
+                  <div className="flex items-center gap-2">
+                    <Wallet size={14} className="text-slate-400" />
+                    <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">{p.methode || 'Carte'}</span>
+                  </div>
+                </td>
+                <td>
+                  <p className="font-black text-slate-900">{parseFloat(p.montant).toFixed(2)} €</p>
+                </td>
+                <td>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(p.statut)}
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${p.statut === 'Validé' ? 'text-emerald-600' : 'text-slate-500'}`}>
+                      {p.statut}
+                    </span>
+                  </div>
+                </td>
+                <td className="text-right">
                   <select 
-                    className="bg-white border border-slate-200 text-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:border-[#2f7a78] focus:ring-1 focus:ring-[#2f7a78]/25"
+                    className="dash-input !py-1.5 !px-3 font-bold !text-[11px] uppercase tracking-wider w-auto border-emerald-100 bg-emerald-50/30 text-emerald-700 group-hover:border-[#2c767c] transition-colors"
                     value={p.statut}
                     onChange={(e) => changeStatus(p.id, e.target.value)}
                   >
                     <option value="En attente">En attente</option>
-                    <option value="Validé">Validé</option>
+                    <option value="Validé">Valider</option>
                     <option value="Échoué">Échoué</option>
                   </select>
                 </td>

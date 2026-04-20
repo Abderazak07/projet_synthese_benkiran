@@ -1,116 +1,152 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
-import Button from '../../components/ui/Button';
-import { Edit, Trash2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Tag, Plus, Trash2, Edit, X, ArrowRight, FolderPlus, Hash } from 'lucide-react';
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
-  const [nom, setNom] = useState('');
-  const [editingId, setEditingId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [formData, setFormData] = useState({ nom: '' });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  useEffect(() => { fetchCategories(); }, []);
+  const fetchCategories = () => api.get('/admin/categories').then(res => setCategories(res.data));
 
-  const fetchCategories = () => {
-    api.get('/admin/categories').then(res => setCategories(res.data)).catch(() => {});
+  const handleEdit = (c) => {
+    setEditingCategory(c);
+    setFormData({ nom: c.nom });
+    setShowForm(true);
+  };
+
+  const resetForm = () => {
+    setEditingCategory(null);
+    setFormData({ nom: '' });
+    setShowForm(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const loadingToast = toast.loading('Enregistrement...');
     try {
-      if (editingId) {
-        await api.put(`/categories/${editingId}`, { nom });
-        toast.success('Catégorie mise à jour');
+      if (editingCategory) {
+        await api.put(`/categories/${editingCategory.id}`, formData);
+        toast.success('Catégorie modifiée', { id: loadingToast });
       } else {
-        await api.post('/categories', { nom });
-        toast.success('Catégorie ajoutée');
+        await api.post('/categories', formData);
+        toast.success('Catégorie ajoutée', { id: loadingToast });
       }
-      setNom('');
-      setEditingId(null);
+      resetForm();
       fetchCategories();
-    } catch (err) {
-      toast.error('Impossible d’enregistrer la catégorie');
-    }
+    } catch (err) { toast.error('Erreur', { id: loadingToast }); }
   };
 
-  const handleEdit = (index) => {
-    setEditingId(index.id);
-    setNom(index.nom);
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm('Supprimer cette catégorie ?')) return;
+  const [deleteId, setDeleteId] = useState(null);
+  const executeDelete = async () => {
+    const loadingToast = toast.loading('Suppression...');
     try {
-      await api.delete(`/categories/${id}`);
-      toast.success('Catégorie supprimée');
+      await api.delete(`/categories/${deleteId}`);
+      toast.success('Catégorie supprimée', { id: loadingToast });
+      setDeleteId(null);
       fetchCategories();
-    } catch (err) {
-      toast.error('Impossible de supprimer la catégorie');
-    }
+    } catch (e) { toast.error('Erreur', { id: loadingToast }); }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="dash-card p-6">
-        <div className="mb-4">
-          <h1 className="dash-title">Catégories</h1>
-          <p className="dash-muted text-sm">Ajoutez, modifiez ou supprimez les catégories disponibles pour les produits.</p>
+    <>
+      <div className="dash-table-container bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+        <div className="p-8 border-b border-slate-100 bg-white">
+          <div className="section-header">
+            <div className="section-title-group">
+              <h1 className="section-title">
+                <div className="bullet"><Tag size={20} /></div>
+                Catégories
+              </h1>
+              <p className="section-description">Gérez les segments de votre catalogue produits.</p>
+            </div>
+            <button onClick={() => setShowForm(true)} className="dash-btn">
+              <Plus size={18} /> Nouvelle Catégorie
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-[1fr_auto] items-end">
-          <label className="space-y-2 text-sm text-slate-700">
-            <span className="font-semibold">Nom de la catégorie</span>
-            <input
-              value={nom}
-              onChange={(e) => setNom(e.target.value)}
-              placeholder="Ex : Claviers"
-              required
-              className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2f7a78]/20 focus:border-[#2f7a78]"
-            />
-          </label>
-          <button type="submit" className="w-full md:w-auto dash-btn">
-            <Plus size={16} /> {editingId ? 'Mettre à jour' : 'Ajouter'}
-          </button>
-        </form>
-      </div>
-
-      <div className="dash-card p-0 overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">ID</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider">Nom</th>
-              <th className="p-4 text-slate-600 text-xs font-semibold uppercase tracking-wider text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200">
-            {categories.length === 0 ? (
+        <div className="overflow-x-auto">
+          <table className="dash-table">
+            <thead>
               <tr>
-                <td colSpan="3" className="py-10 text-center text-slate-500">Aucune catégorie trouvée.</td>
+                <th>ID</th>
+                <th>Nom de la catégorie</th>
+                <th className="text-right">Actions</th>
               </tr>
-            ) : (
-              categories.map((category) => (
-                <tr key={category.id ?? category.nom} className="hover:bg-slate-50">
-                  <td className="p-4 text-slate-700 font-semibold">#{category.id ?? '-'}</td>
-                  <td className="p-4 text-slate-900 font-semibold">{category.nom ?? category}</td>
-                  <td className="p-4 text-right">
-                    <div className="flex justify-end gap-2">
-                    <button type="button" onClick={() => handleEdit(category)} className="dash-btn-ghost">
-                      <Edit size={14} /> Modifier
-                    </button>
-                    <button type="button" onClick={() => handleDelete(category.id)} className="dash-btn-ghost border-red-200 text-red-700 hover:bg-red-50">
-                      <Trash2 size={14} /> Supprimer
-                    </button>
+            </thead>
+            <tbody>
+              {categories.map(c => (
+                <tr key={c.id} className="hover:bg-slate-50 transition-colors group">
+                  <td className="font-mono text-[10px] text-slate-400">#{c.id}</td>
+                  <td>
+                    <div className="flex items-center gap-3">
+                       <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-[#2c767c]/10 group-hover:text-[#2c767c] transition-all">
+                          <Hash size={14} />
+                       </div>
+                       <p className="font-bold text-slate-900">{c.nom}</p>
+                    </div>
+                  </td>
+                  <td className="text-right">
+                    <div className="flex justify-end items-center gap-2">
+                      <button onClick={() => handleEdit(c)} className="p-2.5 text-[#2c767c] hover:text-white hover:bg-[#2c767c] rounded-xl shadow-sm border border-slate-100 bg-slate-50 transition-all">
+                        <Edit size={16} />
+                      </button>
+                      <button onClick={() => setDeleteId(c.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl shadow-sm border border-slate-100 bg-slate-50 transition-all">
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {showForm && (
+        <div className="dash-side-form-container">
+          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <h2 className="text-lg font-black text-slate-900 tracking-tight">
+              {editingCategory ? 'Modifier' : 'Nouvelle catégorie'}
+            </h2>
+            <button onClick={resetForm} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+              <X size={20} />
+            </button>
+          </div>
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <label className="block">
+              <span className="dash-form-label"><FolderPlus size={14} className="inline mr-2"/> Nom de la catégorie</span>
+              <input required className="dash-input" value={formData.nom} onChange={e => setFormData({ nom: e.target.value })} placeholder="Ex: Périphériques" />
+            </label>
+            <div className="flex gap-3 pt-4 border-t border-slate-100">
+              <button type="button" onClick={resetForm} className="dash-btn-outline flex-1">Annuler</button>
+              <button type="submit" className="dash-btn flex-1">
+                Confirmer <ArrowRight size={16} className="ml-2" />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {deleteId && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+           <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-200 animate-in zoom-in-95">
+              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-100">
+                 <Trash2 size={32} />
+              </div>
+              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Supprimer la catégorie ?</h3>
+              <p className="text-slate-500 text-center text-sm font-medium mb-8 leading-relaxed">Cette opération impactera les produits liés à cette catégorie.</p>
+              <div className="flex gap-4">
+                 <button onClick={() => setDeleteId(null)} className="dash-btn-outline flex-1 rounded-2xl">Annuler</button>
+                 <button onClick={executeDelete} className="dash-btn bg-red-600 hover:bg-red-700 flex-1 rounded-2xl">Supprimer</button>
+              </div>
+           </div>
+        </div>
+      )}
+    </>
   );
 }

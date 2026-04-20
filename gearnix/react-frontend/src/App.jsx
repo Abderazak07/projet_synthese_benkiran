@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -45,24 +45,13 @@ const ProtectedRoute = ({ children, roles }) => {
 };
 
 function AppRoutes() {
-  return (
-    <div className="flex flex-col min-h-screen bg-dark text-white">
-      <Navbar />
-      <main className="flex-grow pt-16">
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
+
+  if (isDashboard) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
         <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />
-          <Route path="/produits" element={<Products />} />
-          <Route path="/produits/:id" element={<ProductDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-          {/* Client, Fournisseur et Admin peuvent passer des commandes */}
-          <Route path="/panier" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/mes-commandes" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-          <Route path="/mes-commandes/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-
           {/* Admin */}
           <Route path="/admin" element={<ProtectedRoute roles={['ADMIN']}><AdminLayout /></ProtectedRoute>}>
             <Route index element={<AdminDashboard />} />
@@ -80,6 +69,32 @@ function AppRoutes() {
             <Route path="produits" element={<FournisseurProducts />} />
             <Route path="commandes" element={<FournisseurOrders />} />
           </Route>
+        </Routes>
+        <Toaster position="bottom-right" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen bg-dark text-white">
+      <Navbar />
+      <main className="flex-grow pt-16">
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Home />} />
+          <Route path="/produits" element={<Products />} />
+          <Route path="/produits/:id" element={<ProductDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Client */}
+          <Route path="/panier" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/mes-commandes" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+          <Route path="/mes-commandes/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
       <Footer />

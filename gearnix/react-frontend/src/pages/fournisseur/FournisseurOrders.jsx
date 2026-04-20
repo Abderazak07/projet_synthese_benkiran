@@ -1,40 +1,174 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { Package, Eye, X, ShoppingCart, User, List } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function FournisseurOrders() {
   const [commandes, setCommandes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    api.get('/fournisseur/commandes').then(res => setCommandes(res.data)).catch(() => {});
+    fetchOrders();
   }, []);
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/fournisseur/commandes');
+      setCommandes(res.data);
+    } catch (err) {
+      toast.error("Erreur de chargement");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openDetails = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const getStatusBadge = (statut) => {
+    switch (statut) {
+      case 'Livrée': return <span className="badge-accepted">Livrée</span>;
+      case 'Annulée': return <span className="badge-rejected">Annulée</span>;
+      case 'En attente': return <span className="badge-review">En attente</span>;
+      default: return <span className="badge-new">{statut}</span>;
+    }
+  };
+
   return (
-    <div>
-      <div className="mb-4">
-        <h1 className="dash-title">Commandes</h1>
-        <p className="dash-muted text-sm">Commandes reçues pour vos produits.</p>
+    <>
+      <div className="dash-table-container shadow-2xl rounded-2xl bg-white border border-slate-200 overflow-hidden">
+        <div className="p-8 border-b border-slate-100 bg-white">
+          <div className="section-header">
+            <div className="section-title-group">
+              <h1 className="section-title">
+                <div className="bullet"><ShoppingCart size={20} /></div>
+                Ventes & Commandes
+              </h1>
+              <p className="section-description">Liste des commandes contenant vos produits.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="dash-table">
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Articles commandés</th>
+                <th>Statut global</th>
+                <th className="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {loading ? (
+                 [...Array(3)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td colSpan="4" className="p-8"><div className="h-4 bg-slate-50 rounded w-full"></div></td>
+                  </tr>
+                ))
+              ) : commandes.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="text-center p-16 text-slate-400 italic font-medium">
+                    Aucune vente enregistrée pour le moment.
+                  </td>
+                </tr>
+              ) : (
+                commandes.map(cmd => (
+                  <tr key={cmd.id} className="hover:bg-slate-50 transition-colors group">
+                    <td className="p-4">
+                      <p className="font-mono text-[10px] text-[#2c767c] font-black tracking-widest leading-none mb-1">#{cmd.id}</p>
+                      <p className="text-slate-900 font-black">{parseFloat(cmd.total).toFixed(2)} €</p>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-col gap-1">
+                        {cmd.produits.map(p => (
+                          <div key={p.id} className="text-xs text-slate-600 flex items-center gap-2">
+                             <div className="w-1 h-1 bg-[#2c767c]/30 rounded-full" />
+                             {p.nom} <span className="text-slate-400 font-bold ml-auto px-2">×{p.pivot.quantite}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      {getStatusBadge(cmd.statut)}
+                    </td>
+                    <td className="p-4 text-right">
+                      <button 
+                        onClick={() => openDetails(cmd)}
+                        className="p-2.5 text-[#2c767c] hover:text-white hover:bg-[#2c767c] rounded-xl shadow-sm border border-slate-100 bg-slate-50 transition-all flex items-center gap-2 ml-auto"
+                      >
+                        <Eye size={18} />
+                        <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Voir</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div className="dash-card p-6">
-        {commandes.length === 0 ? (
-          <p className="text-slate-500">Aucune commande reçue pour le moment.</p>
-        ) : (
-          <div className="space-y-4">
-             {commandes.map(cmd => (
-               <div key={cmd.id} className="border border-slate-200 p-5 rounded-xl bg-white">
-                 <p className="font-semibold text-slate-900 mb-2">
-                  Commande #{cmd.id} — Total: <span className="font-bold">{cmd.total} €</span>
-                 </p>
-                 <ul className="pl-4 space-y-1">
-                   {cmd.produits.map(p => (
-                     <li key={p.id} className="text-sm text-slate-600">• {p.nom} (x{p.pivot.quantite})</li>
-                   ))}
-                 </ul>
-               </div>
-             ))}
+      {/* Détails Commande Fournisseur - Side Panel Design Identique */}
+      {isModalOpen && selectedOrder && (
+        <div className="dash-side-form-container !w-[400px]">
+          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center sticky top-0 bg-white z-10">
+            <h2 className="text-lg font-black text-slate-900 tracking-tight">Récapitulatif Articles</h2>
+            <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+               <X size={20} />
+            </button>
           </div>
-        )}
-      </div>
-    </div>
+          
+          <div className="p-6 space-y-6 overflow-y-auto h-[calc(100vh-140px)] custom-scrollbar">
+             <div className="bg-[#2c767c]/5 border border-[#2c767c]/10 rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                   <p className="text-[10px] font-black text-[#2c767c] uppercase tracking-[0.2em] mb-1">Total vente</p>
+                   <p className="text-xl font-black text-slate-900">{parseFloat(selectedOrder.total).toFixed(2)} €</p>
+                </div>
+                {getStatusBadge(selectedOrder.statut)}
+             </div>
+
+             <div className="space-y-3">
+               <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <List size={12}/> Détail de vos produits
+               </div>
+               {selectedOrder.produits.map(p => (
+                 <div key={p.id} className="flex items-center gap-4 p-4 border border-slate-100 rounded-2xl bg-white shadow-sm hover:border-[#2c767c]/20 transition-all group/item">
+                    <div className="w-14 h-14 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 overflow-hidden shadow-inner group-hover/item:border-[#2c767c]/30">
+                       {p.image ? (
+                        <img src={p.image.startsWith('http') ? p.image : `http://localhost:8000${p.image}`} className="w-full h-full object-cover" />
+                       ) : (
+                        <Package size={20} />
+                       )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                       <p className="font-bold text-slate-900 text-sm truncate">{p.nom}</p>
+                       <p className="text-[10px] text-slate-400 font-mono font-bold">{p.prix_unitaire || p.prix} € / unité</p>
+                    </div>
+                    <div className="text-right px-2 py-1 bg-slate-50 rounded-lg border border-slate-100 font-black text-[#2c767c]">
+                       x{p.pivot.quantite}
+                    </div>
+                 </div>
+               ))}
+             </div>
+
+             <div className="p-5 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+                <p className="text-xs text-slate-500 italic leading-relaxed">
+                   Cette commande est traitée par l'administration globale. Vous serez notifié de la validation finale du paiement.
+                </p>
+             </div>
+          </div>
+
+          <div className="p-6 border-t border-slate-100 bg-white">
+             <button onClick={() => setIsModalOpen(false)} className="dash-btn w-full">Fermer</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
