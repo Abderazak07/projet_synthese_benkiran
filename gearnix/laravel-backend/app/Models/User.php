@@ -9,7 +9,7 @@ class User extends Authenticatable
     use HasApiTokens;
     
     protected $table = 'User';
-    protected $fillable = ['nom', 'email', 'password', 'role'];
+    protected $fillable = ['nom', 'prenom', 'email', 'password', 'role', 'telephone', 'genre', 'sms_code', 'sms_verified_at'];
     protected $hidden = ['password', 'remember_token'];
     
     public function commandes() { 

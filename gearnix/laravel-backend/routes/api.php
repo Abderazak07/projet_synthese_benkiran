@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/verify-sms', [AuthController::class, 'verifySms']);
     Route::get('/me', [AuthController::class, 'me']);
     
     // CLIENT - Commandes
