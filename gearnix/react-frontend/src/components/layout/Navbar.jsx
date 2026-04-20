@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Search, User, Menu, X, LogOut, Package, LayoutDashboard, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -24,9 +24,6 @@ const roleNav = {
   ADMIN: [
     { label: 'Mon panier', to: '/panier' },
     { label: 'Mes commandes', to: '/mes-commandes' },
-    { label: 'Admin', to: '/admin' },
-    { label: 'Utilisateurs', to: '/admin/utilisateurs' },
-    { label: 'Produits', to: '/admin/produits' },
   ],
 };
 
@@ -35,11 +32,15 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout } = useAuth();
   const { count } = useCart();
+  const location = useLocation();
+
+  const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
+  const isAdminOnPublicSite = user?.role === 'ADMIN' && !isDashboard;
 
   const additionalLinks = user ? roleNav[user.role] ?? [] : [];
 
   return (
-    <nav className="fixed w-full z-50 transition-all duration-300 bg-ink/80 backdrop-blur-xl border-b border-white/10">
+    <nav className={`fixed w-full z-50 transition-all duration-300 bg-ink/80 backdrop-blur-xl border-b border-white/10`} style={isAdminOnPublicSite ? { top: '58px' } : { top: 0 }}>
       <div className="lux-container">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center gap-2 group">
