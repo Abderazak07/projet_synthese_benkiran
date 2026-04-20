@@ -51,6 +51,7 @@ function AppRoutes() {
   const { user } = useAuth();
   const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
   const isSpecialUserOnPublicSite = (user?.role === 'ADMIN' || user?.role === 'FOURNISSEUR') && !isDashboard;
+  const hideFooter = location.pathname === '/login' || location.pathname === '/register';
 
   if (isDashboard) {
     return (
@@ -102,7 +103,7 @@ function AppRoutes() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
       <Toaster position="bottom-right" toastOptions={{
           style: {
             background: '#333',
