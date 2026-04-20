@@ -20,13 +20,13 @@ export default function AdminDeliveries() {
 
   const getStatusBadge = (statut) => {
     if (statut === 'Livrée') return <span className="badge-accepted">Livrée</span>;
-    if (statut === 'En cours') return <span className="badge-new bg-indigo-50 text-indigo-600 border-indigo-100">En cours</span>;
-    return <span className="badge-review">{statut}</span>;
+    if (statut === 'En cours') return <span className="badge-new bg-indigo-500/10 text-indigo-400 border-indigo-500/20">En cours</span>;
+    return <span className="badge-new">{statut}</span>;
   };
 
   return (
-    <div className="dash-table-container bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
-      <div className="p-8 border-b border-slate-100 bg-white">
+    <div className="dash-table-container bg-white/[0.03] rounded-2xl border border-white/[0.07] shadow-xl overflow-hidden">
+      <div className="p-8 border-b border-white/5 bg-white/[0.03]">
         <div className="section-header">
           <div className="section-title-group">
             <h1 className="section-title">
@@ -52,20 +52,20 @@ export default function AdminDeliveries() {
           </thead>
           <tbody>
             {deliveries.map(d => (
-              <tr key={d.id} className="hover:bg-slate-50 transition-colors group">
-                <td className="font-mono text-[10px] text-slate-400">#{d.id}</td>
+              <tr key={d.id} className="hover:bg-white/[0.04] transition-colors group">
+                <td className="font-mono text-[10px] text-pearl/40">#{d.id}</td>
                 <td>
-                  <div className="flex items-center gap-2 font-bold text-slate-700">
-                    <Package size={14} className="text-slate-400" /> #{d.commande_id}
+                  <div className="flex items-center gap-2 font-bold text-white/80">
+                    <Package size={14} className="text-pearl/40" /> #{d.commande_id}
                   </div>
                 </td>
                 <td>
                   <div className="flex items-center gap-2 max-w-[250px]">
-                    <MapPin size={14} className="text-[#2c767c] shrink-0" />
-                    <span className="text-xs text-slate-600 truncate font-medium">{d.adresse}</span>
+                    <MapPin size={14} className="text-[#0ea5e9] shrink-0" />
+                    <span className="text-xs text-pearl/60 truncate font-medium">{d.adresse}</span>
                   </div>
                 </td>
-                <td className="text-slate-400 text-[11px] font-bold">
+                <td className="text-pearl/40 text-[11px] font-bold">
                   {new Date(d.updated_at).toLocaleDateString()}
                 </td>
                 <td>{getStatusBadge(d.statut)}</td>

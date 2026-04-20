@@ -17,9 +17,6 @@ const roleNav = {
   FOURNISSEUR: [
     { label: 'Mon panier', to: '/panier' },
     { label: 'Mes commandes', to: '/mes-commandes' },
-    { label: 'Espace fournisseur', to: '/fournisseur' },
-    { label: 'Mes produits', to: '/fournisseur/produits' },
-    { label: 'Commandes', to: '/fournisseur/commandes' },
   ],
   ADMIN: [
     { label: 'Mon panier', to: '/panier' },
@@ -35,16 +32,16 @@ export default function Navbar() {
   const location = useLocation();
 
   const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
-  const isAdminOnPublicSite = user?.role === 'ADMIN' && !isDashboard;
+  const isSpecialUserOnPublicSite = (user?.role === 'ADMIN' || user?.role === 'FOURNISSEUR') && !isDashboard;
 
   const additionalLinks = user ? roleNav[user.role] ?? [] : [];
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 bg-ink/80 backdrop-blur-xl border-b border-white/10`} style={isAdminOnPublicSite ? { top: '58px' } : { top: 0 }}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 bg-ink/80 backdrop-blur-xl border-b border-white/10`} style={isSpecialUserOnPublicSite ? { top: '58px' } : { top: 0 }}>
       <div className="lux-container">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-copper flex items-center justify-center transform group-hover:rotate-12 transition-transform shadow-[0_0_0_1px_rgba(214,178,110,0.25)]">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform shadow-[0_0_0_1px_rgba(14,165,233,0.25)]">
               <span className="font-black text-ink text-lg">G</span>
             </div>
             <span className="font-black text-xl tracking-[0.28em] text-pearl">GEARNIX</span>
@@ -69,14 +66,12 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-gray-200/80 hover:text-gold transition-colors" aria-label="Recherche">
-              <Search size={20} />
-            </button>
 
-            <Link to="/panier" className="text-gray-200/80 hover:text-gold transition-colors relative" aria-label="Panier">
+
+            <Link to="/panier" className="text-gray-200/80 hover:text-sky-500 transition-colors relative" aria-label="Panier">
               <ShoppingCart size={20} />
               {count > 0 && (
-                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-black">
+                <span className="absolute -top-2 -right-2 bg-sky-500 text-ink text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-black">
                   {count}
                 </span>
               )}
@@ -89,8 +84,8 @@ export default function Navbar() {
                   className="flex items-center gap-2 text-gray-200/80 hover:text-pearl transition-colors"
                   aria-label="Menu utilisateur"
                 >
-                  <div className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center border border-white/10 hover:border-gold/30 transition-colors">
-                    <User size={16} className="text-gold" />
+                  <div className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center border border-white/10 hover:border-sky-500/30 transition-colors">
+                    <User size={16} className="text-sky-500" />
                   </div>
                 </button>
 
@@ -102,19 +97,19 @@ export default function Navbar() {
                     </div>
 
                     {user.role === 'ADMIN' && (
-                      <Link to="/admin" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-gold">
+                      <Link to="/admin" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-sky-500">
                         <LayoutDashboard size={16} /> Panneau Admin
                       </Link>
                     )}
 
                     {user.role === 'FOURNISSEUR' && (
-                      <Link to="/fournisseur" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-gold">
+                      <Link to="/fournisseur" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-sky-500">
                         <Package size={16} /> Espace Fournisseur
                       </Link>
                     )}
 
                     {user.role === 'CLIENT' && (
-                      <Link to="/mes-commandes" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-gold">
+                      <Link to="/mes-commandes" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-200 hover:bg-white/[0.06] hover:text-sky-500">
                         <Package size={16} /> Mes commandes
                       </Link>
                     )}
@@ -126,7 +121,7 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="text-xs font-semibold tracking-[0.18em] uppercase text-gray-200 hover:text-pearl border border-white/15 hover:border-gold/35 px-5 py-2.5 rounded-full transition-all bg-white/[0.02] hover:bg-white/[0.04]">
+              <Link to="/login" className="text-xs font-semibold tracking-[0.18em] uppercase text-gray-200 hover:text-pearl border border-white/15 hover:border-sky-500/35 px-5 py-2.5 rounded-full transition-all bg-white/[0.02] hover:bg-white/[0.04]">
                 Connexion
               </Link>
             )}
@@ -136,7 +131,7 @@ export default function Navbar() {
             <Link to="/panier" className="text-white relative" aria-label="Panier">
               <ShoppingCart size={20} />
               {count > 0 && (
-                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-black">
+                <span className="absolute -top-2 -right-2 bg-sky-500 text-ink text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-black">
                   {count}
                 </span>
               )}
@@ -160,7 +155,7 @@ export default function Navbar() {
               Déconnexion
             </button>
           ) : (
-            <Link to="/login" className="block px-3 py-2 text-sm font-semibold tracking-[0.14em] uppercase text-gold hover:bg-white/[0.06] rounded-lg">Connexion</Link>
+            <Link to="/login" className="block px-3 py-2 text-sm font-semibold tracking-[0.14em] uppercase text-sky-500 hover:bg-white/[0.06] rounded-lg">Connexion</Link>
           )}
         </div>
       )}

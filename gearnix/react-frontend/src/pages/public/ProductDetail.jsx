@@ -34,7 +34,7 @@ export default function ProductDetail() {
   return (
     <div className="lux-container py-8">
       <div className="flex items-center justify-between gap-6 mb-8">
-        <Link to="/produits" className="inline-flex items-center gap-2 text-gray-400 hover:text-gold transition-colors">
+        <Link to="/produits" className="inline-flex items-center gap-2 text-gray-400 hover:text-sky-500 transition-colors">
           <ArrowLeft size={16} /> Retour au catalogue
         </Link>
         <div className="hidden md:flex items-center gap-2">
@@ -114,7 +114,7 @@ export default function ProductDetail() {
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <Ruler size={16} className="text-gold" />
+                  <Ruler size={16} className="text-sky-500" />
                   <p className="text-xs font-black tracking-[0.22em] uppercase text-pearl">Size</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -124,8 +124,8 @@ export default function ProductDetail() {
                       onClick={() => setSize(s)}
                       className={`px-3 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase border transition-colors ${
                         size === s
-                          ? 'bg-gold/12 border-gold/30 text-pearl'
-                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-gold/20 hover:bg-white/[0.04]'
+                          ? 'bg-sky-500/12 border-sky-500/30 text-pearl'
+                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
                       }`}
                       type="button"
                     >
@@ -138,23 +138,23 @@ export default function ProductDetail() {
 
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <Palette size={16} className="text-gold" />
+                  <Palette size={16} className="text-sky-500" />
                   <p className="text-xs font-black tracking-[0.22em] uppercase text-pearl">Color</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { label: 'Noir', swatch: 'bg-black' },
                     { label: 'Graphite', swatch: 'bg-zinc-700' },
-                    { label: 'Gold', swatch: 'bg-gold' },
-                    { label: 'Copper', swatch: 'bg-copper' },
+                    { label: 'sky-500', swatch: 'bg-sky-500' },
+                    { label: 'sky-700', swatch: 'bg-sky-700' },
                   ].map((c) => (
                     <button
                       key={c.label}
                       onClick={() => setColor(c.label)}
                       className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase border transition-colors ${
                         color === c.label
-                          ? 'bg-gold/12 border-gold/30 text-pearl'
-                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-gold/20 hover:bg-white/[0.04]'
+                          ? 'bg-sky-500/12 border-sky-500/30 text-pearl'
+                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
                       }`}
                       type="button"
                     >
@@ -220,7 +220,7 @@ export default function ProductDetail() {
               </div>
 
               <div className="mt-5 flex items-center gap-2 text-xs text-gray-400 justify-center">
-                <ShieldCheck size={16} className="text-gold" />
+                <ShieldCheck size={16} className="text-sky-500" />
                 Paiement sécurisé • Retour sous 30 jours
               </div>
             </div>
@@ -240,7 +240,7 @@ export default function ProductDetail() {
             const Icon = f.icon;
             return (
               <div key={f.title} className="lux-card p-6">
-                <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/15 flex items-center justify-center text-gold">
+                <div className="w-10 h-10 rounded-full bg-sky-500/10 border border-sky-500/15 flex items-center justify-center text-sky-500">
                   <Icon size={18} />
                 </div>
                 <h3 className="mt-4 text-sm font-black tracking-wide text-pearl">{f.title}</h3>

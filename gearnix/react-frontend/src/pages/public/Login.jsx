@@ -37,7 +37,7 @@ export default function Login() {
 
       <div className="max-w-md w-full relative z-10 lux-card p-8">
         <div className="text-center mb-10">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-gold to-copper rounded-full flex items-center justify-center mb-6 shadow-[0_0_0_1px_rgba(214,178,110,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-full flex items-center justify-center mb-6 shadow-[0_0_0_1px_rgba(14,165,233,0.2),0_18px_60px_rgba(0,0,0,0.55)]">
             <Gamepad2 size={30} className="text-ink" />
           </div>
           <h2 className="text-3xl font-black text-pearl tracking-[0.28em] uppercase">Connexion</h2>
@@ -53,7 +53,7 @@ export default function Login() {
               <input
                 type="email"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40 focus:border-sky-500/40 transition-colors"
                 placeholder="Adresse email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -67,7 +67,7 @@ export default function Login() {
               <input
                 type="password"
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gold/40 focus:border-gold/40 transition-colors"
+                className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-white/[0.03] text-pearl placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-sky-500/40 focus:border-sky-500/40 transition-colors"
                 placeholder="Mot de passe"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -90,7 +90,7 @@ export default function Login() {
         <div className="mt-8 text-center text-sm">
           <p className="text-gray-400">
             Nouveau sur Gearnix ?{' '}
-            <Link to="/register" className="font-semibold text-gold hover:text-pearl transition-colors">
+            <Link to="/register" className="font-semibold text-sky-500 hover:text-pearl transition-colors">
               Créer un compte
             </Link>
           </p>

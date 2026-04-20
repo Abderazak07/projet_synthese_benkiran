@@ -36,7 +36,7 @@ export default function ProductCard({ product }) {
         </div>
         
         <div className="flex flex-col flex-grow">
-          <p className="text-[11px] text-gold mb-2 uppercase tracking-[0.22em] font-semibold">{product.categorie}</p>
+          <p className="text-[11px] text-sky-500 mb-2 uppercase tracking-[0.22em] font-semibold">{product.categorie}</p>
           <h3 className="text-lg font-black text-pearl mb-3 line-clamp-2 leading-snug">{product.nom}</h3>
           
           <div className="mt-auto flex items-center justify-between">

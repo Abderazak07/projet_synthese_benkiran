@@ -96,9 +96,9 @@ export default function AdminProducts() {
 
   return (
     <>
-      <div className="dash-table-container shadow-2xl rounded-2xl bg-white border border-slate-200 overflow-hidden">
+      <div className="dash-table-container shadow-2xl rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden">
         {/* Header Section */}
-        <div className="p-8 border-b border-slate-100 bg-white">
+        <div className="p-8 border-b border-white/5 bg-white/[0.03]">
           <div className="section-header">
             <div className="section-title-group">
               <h1 className="section-title">
@@ -113,20 +113,20 @@ export default function AdminProducts() {
                <div className="relative">
                  <button 
                    onClick={() => setShowFilterMenu(!showFilterMenu)}
-                   className={`dash-btn-outline ${filterCategory ? 'border-[#2c767c] text-[#2c767c] bg-[#2c767c]/5' : ''}`}
+                   className={`dash-btn-outline ${filterCategory ? 'border-[#0ea5e9] text-[#0ea5e9] bg-[#0ea5e9]/5' : ''}`}
                  >
                    <Filter size={18}/>
                    {filterCategory && <span className="ml-2 text-[10px] font-black uppercase tracking-widest">{filterCategory}</span>}
                  </button>
                  
                  {showFilterMenu && (
-                   <div className="absolute top-full mt-2 right-0 w-64 bg-white rounded-2xl border border-slate-100 shadow-2xl z-50 p-2 animate-in zoom-in-95">
-                      <div className="p-3 border-b border-slate-50 mb-1">
-                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Filtrer par catégorie</p>
+                   <div className="absolute top-full mt-2 right-0 w-64 bg-white/[0.03] rounded-2xl border border-white/5 shadow-2xl z-50 p-2 animate-in zoom-in-95">
+                      <div className="p-3 border-b border-white/[0.03] mb-1">
+                         <p className="text-[10px] font-black text-pearl/40 uppercase tracking-widest">Filtrer par catégorie</p>
                       </div>
                       <button 
                         onClick={() => { setFilterCategory(''); setShowFilterMenu(false); }}
-                        className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${filterCategory === '' ? 'bg-[#2c767c]/10 text-[#2c767c]' : 'hover:bg-slate-50 text-slate-600'}`}
+                        className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${filterCategory === '' ? 'bg-[#0ea5e9]/10 text-[#0ea5e9]' : 'hover:bg-white/[0.04] text-pearl/60'}`}
                       >
                          Tous les produits
                       </button>
@@ -134,7 +134,7 @@ export default function AdminProducts() {
                         <button 
                           key={cat.id}
                           onClick={() => { setFilterCategory(cat.nom); setShowFilterMenu(false); }}
-                          className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${filterCategory === cat.nom ? 'bg-[#2c767c]/10 text-[#2c767c]' : 'hover:bg-slate-50 text-slate-600'}`}
+                          className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${filterCategory === cat.nom ? 'bg-[#0ea5e9]/10 text-[#0ea5e9]' : 'hover:bg-white/[0.04] text-pearl/60'}`}
                         >
                            {cat.nom}
                         </button>
@@ -164,45 +164,45 @@ export default function AdminProducts() {
             </thead>
             <tbody>
               {filteredProduits.map(p => (
-                <tr key={p.id} className="hover:bg-slate-50 transition-colors group">
+                <tr key={p.id} className="hover:bg-white/[0.04] transition-colors group">
                   <td>
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
+                      <div className="h-12 w-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/10 shadow-sm shrink-0">
                          {p.image ? (
                            <img src={p.image.startsWith('http') ? p.image : `http://localhost:8000${p.image}`} className="h-full w-full object-cover" loading="lazy" />
                          ) : (
-                           <ImageIcon size={20} className="text-slate-400" />
+                           <ImageIcon size={20} className="text-pearl/40" />
                          )}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 group-hover:text-[#2c767c] transition-colors">{p.nom}</p>
-                        <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-0.5">#{p.id}</p>
+                        <p className="font-bold text-white group-hover:text-[#0ea5e9] transition-colors">{p.nom}</p>
+                        <p className="text-[10px] font-mono text-pearl/40 uppercase tracking-widest mt-0.5">#{p.id}</p>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                    <span className="px-3 py-1 rounded-full bg-[#0ea5e9]/10 text-[#0ea5e9] text-[10px] font-black uppercase tracking-widest border border-[#0ea5e9]/20">
                       {p.categorie || 'SANS CATEGORIE'}
                     </span>
                   </td>
                   <td>
-                    <p className="font-black text-slate-900">{parseFloat(p.prix).toFixed(2)} €</p>
+                    <p className="font-black text-white">{parseFloat(p.prix).toFixed(2)} €</p>
                   </td>
                   <td>
                     {p.stock <= 0 ? (
                       <span className="badge-rejected">Rupture</span>
                     ) : p.stock <= 5 ? (
-                      <span className="badge-review">Critique ({p.stock})</span>
+                      <span className="badge-new">Critique ({p.stock})</span>
                     ) : (
                       <span className="badge-accepted">{p.stock} unités</span>
                     )}
                   </td>
                   <td className="text-right">
                     <div className="flex justify-end items-center gap-2">
-                      <button onClick={() => handleEdit(p)} className="p-2.5 text-[#2c767c] hover:text-white hover:bg-[#2c767c] rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
+                      <button onClick={() => handleEdit(p)} className="p-2.5 text-[#0ea5e9] hover:text-white hover:bg-[#0ea5e9] rounded-xl transition-all shadow-sm border border-white/5 bg-white/[0.04]">
                          <Edit size={16} />
                       </button>
-                      <button onClick={() => setDeleteId(p.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-slate-100 bg-slate-50">
+                      <button onClick={() => setDeleteId(p.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-white/5 bg-white/[0.04]">
                          <Trash2 size={16} />
                       </button>
                     </div>
@@ -217,11 +217,11 @@ export default function AdminProducts() {
       {/* Side Form Container - Exactement comme le design de référence */}
       {showForm && (
         <div className="dash-side-form-container">
-          <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-            <h2 className="text-lg font-black text-slate-900 tracking-tight">
+          <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+            <h2 className="text-lg font-black text-white tracking-tight">
               {editingProduit ? 'Modifier Produit' : 'Nouveau Produit'}
             </h2>
-            <button onClick={resetForm} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+            <button onClick={resetForm} className="p-2 text-pearl/40 hover:text-red-500 transition-colors">
               <X size={20} />
             </button>
           </div>
@@ -261,16 +261,16 @@ export default function AdminProducts() {
                 <span className="dash-form-label"><ImageIcon size={14} className="inline mr-2"/> Image</span>
                 <div className="relative group/img">
                   <input type="file" className="dash-input opacity-0 absolute inset-0 cursor-pointer z-10" onChange={e => setFormData({...formData, image: e.target.files[0]})} />
-                  <div className="dash-input h-32 flex flex-col items-center justify-center border-dashed border-2 group-hover/img:border-[#2c767c] transition-colors">
-                    <Plus size={24} className="text-slate-300 group-hover/img:text-[#2c767c] mb-2" />
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Choisir un fichier</p>
-                    {formData.image && <p className="mt-2 text-[10px] text-emerald-600 font-bold">{formData.image.name}</p>}
+                  <div className="dash-input h-32 flex flex-col items-center justify-center border-dashed border-2 group-hover/img:border-[#0ea5e9] transition-colors">
+                    <Plus size={24} className="text-slate-300 group-hover/img:text-[#0ea5e9] mb-2" />
+                    <p className="text-xs text-pearl/40 font-bold uppercase tracking-widest">Choisir un fichier</p>
+                    {formData.image && <p className="mt-2 text-[10px] text-emerald-400 font-bold">{formData.image.name}</p>}
                   </div>
                 </div>
               </label>
             </div>
 
-            <div className="pt-6 border-t border-slate-100 flex gap-3">
+            <div className="pt-6 border-t border-white/5 flex gap-3">
               <button type="button" onClick={resetForm} className="dash-btn-outline flex-1">Annuler</button>
               <button type="submit" className="dash-btn flex-1">
                 {editingProduit ? 'Sauvegarder' : 'Ajouter'} <ArrowRight size={16} className="ml-2" />
@@ -282,13 +282,13 @@ export default function AdminProducts() {
 
       {/* Confirmation Modal (Custom alert style) */}
       {deleteId && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
-           <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-200 animate-in zoom-in-95">
-              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-100">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+           <div className="bg-[#12121a] rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-white/10 animate-in zoom-in-95">
+              <div className="w-16 h-16 bg-red-500/10 text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-500/20">
                  <Trash2 size={32} />
               </div>
-              <h3 className="text-xl font-black text-slate-900 text-center mb-2 tracking-tight">Supprimer le produit ?</h3>
-              <p className="text-slate-500 text-center text-sm font-medium mb-8 leading-relaxed">Cette action est irréversible. Le produit sera définitivement retiré du catalogue.</p>
+              <h3 className="text-xl font-black text-white text-center mb-2 tracking-tight">Supprimer le produit ?</h3>
+              <p className="text-gray-400 text-center text-sm font-medium mb-8 leading-relaxed">Cette action est irréversible. Le produit sera définitivement retiré du catalogue.</p>
               <div className="flex gap-4">
                  <button onClick={() => setDeleteId(null)} className="dash-btn-outline flex-1 rounded-2xl">Non, annuler</button>
                  <button onClick={executeDelete} className="dash-btn bg-red-600 hover:bg-red-700 hover:shadow-red-600/20 flex-1 rounded-2xl">Oui, supprimer</button>

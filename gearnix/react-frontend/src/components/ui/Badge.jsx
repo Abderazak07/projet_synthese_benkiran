@@ -1,6 +1,6 @@
 export default function Badge({ children, variant = 'primary', className = '' }) {
   const variants = {
-    primary: 'bg-gold/10 text-gold border-gold/25',
+    primary: 'bg-sky-500/10 text-sky-500 border-sky-500/25',
     success: 'bg-green-500/15 text-green-300 border-green-500/30',
     warning: 'bg-yellow-500/15 text-yellow-200 border-yellow-500/30',
     danger: 'bg-red-500/15 text-red-200 border-red-500/30',
