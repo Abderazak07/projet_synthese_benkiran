@@ -3,10 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import toast from 'react-hot-toast';
-import { Mail, Lock, User, Briefcase, Gamepad2, Phone, Fingerprint } from 'lucide-react';
+import { Mail, Lock, User, Briefcase, Gamepad2, Phone, Fingerprint, Eye, EyeOff } from 'lucide-react';
 
 export default function Register() {
   const [formData, setFormData] = useState({ nom: '', prenom: '', telephone: '', genre: 'HOMME', email: '', password: '', role: 'CLIENT' });
+  const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
   const [smsCode, setSmsCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -176,14 +177,21 @@ export default function Register() {
                   <Lock size={18} className="text-current" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   minLength={6}
-                  className="block w-full pl-11 pr-4 py-4 border border-white/5 rounded-2xl bg-white/[0.02] text-pearl placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-500/50 focus:border-sky-500/50 focus:bg-white/[0.04] transition-all font-medium text-sm"
+                  className="block w-full pl-11 pr-12 py-4 border border-white/5 rounded-2xl bg-white/[0.02] text-pearl placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-sky-500/50 focus:border-sky-500/50 focus:bg-white/[0.04] transition-all font-medium text-sm"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sky-400 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </div>
 

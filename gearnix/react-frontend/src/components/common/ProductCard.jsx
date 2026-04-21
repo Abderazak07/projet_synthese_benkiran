@@ -6,7 +6,7 @@ import Button from '../ui/Button';
 
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
-  
+
   const handleAddToCart = (e) => {
     e.preventDefault(); // allow using link wrapper but stopping button click nav
     addToCart(product);
@@ -23,22 +23,22 @@ export default function ProductCard({ product }) {
       <Link to={`/produits/${product.id}`} className="flex-grow flex flex-col">
         <div className="h-52 w-full rounded-xl overflow-hidden bg-white/[0.03] mb-4 relative border border-white/10">
           {product.image ? (
-             <img
-               src={/^(https?:)?\/\//.test(product.image) ? product.image : `http://localhost:8000${product.image}`}
-               alt={product.nom}
-               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-             />
+            <img
+              src={/^(https?:)?\/\//.test(product.image) ? product.image : `http://localhost:8000${product.image}`}
+              alt={product.nom}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-white/20">Pas d'image</div>
           )}
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent" />
         </div>
-        
+
         <div className="flex flex-col flex-grow">
           <p className="text-[11px] text-sky-500 mb-2 uppercase tracking-[0.22em] font-semibold">{product.categorie}</p>
           <h3 className="text-lg font-black text-pearl mb-3 line-clamp-2 leading-snug">{product.nom}</h3>
-          
+
           <div className="mt-auto flex items-center justify-between">
             <span className="text-xl font-black text-pearl neon-text">{product.prix} €</span>
             <span className="text-[11px] text-gray-500 tracking-[0.22em] uppercase">
@@ -47,7 +47,7 @@ export default function ProductCard({ product }) {
           </div>
         </div>
       </Link>
-      
+
       <Button
         onClick={handleAddToCart}
         disabled={product.stock === 0}

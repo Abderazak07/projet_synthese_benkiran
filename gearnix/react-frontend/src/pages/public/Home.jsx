@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     api.get('/homepage')
       .then(res => setData(res.data))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
