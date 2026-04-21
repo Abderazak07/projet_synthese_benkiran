@@ -25,9 +25,8 @@ export default function Button({
 
   return (
     <button
-      className={`${base} ${sizes[size] ?? sizes.md} ${
-        variants[variant] ?? variants.primary
-      } ${className}`}
+      className={`${base} ${sizes[size] ?? sizes.md} ${variants[variant] ?? variants.primary
+        } ${className}`}
       {...props}
     >
       {children}

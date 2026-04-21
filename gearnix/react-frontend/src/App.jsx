@@ -81,10 +81,10 @@ function AppRoutes() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-dark text-white">
+    <div className="flex flex-col min-h-screen bg-white text-black">
       {isSpecialUserOnPublicSite && <AdminModeBanner />}
       <Navbar />
-      <main className={`flex-grow ${isSpecialUserOnPublicSite ? 'pt-28' : 'pt-16'}`}>
+      <main className="flex-grow">
         <Routes>
           {/* Public */}
           <Route path="/" element={<Home />} />
@@ -98,19 +98,19 @@ function AppRoutes() {
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           <Route path="/mes-commandes" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
           <Route path="/mes-commandes/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-          
+
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
       {!hideFooter && <Footer />}
       <Toaster position="bottom-right" toastOptions={{
-          style: {
-            background: '#333',
-            color: '#fff',
-            border: '1px solid rgba(124,58,237,0.3)',
-          },
-        }} />
+        style: {
+          background: '#333',
+          color: '#fff',
+          border: '1px solid rgba(124,58,237,0.3)',
+        },
+      }} />
     </div>
   );
 }

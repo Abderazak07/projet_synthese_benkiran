@@ -16,11 +16,8 @@ class AuthController extends Controller
             'email' => 'required|email|unique:User',
             'telephone' => 'required|string|max:20',
             'genre' => 'required|string|max:20',
-            'password' => 'required|string|min:6',
-            'role' => 'in:CLIENT,FOURNISSEUR'
+            'password' => 'required|string|min:6'
         ]);
-
-        $smsCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $user = User::create([
             'nom' => $request->nom,
@@ -29,7 +26,7 @@ class AuthController extends Controller
             'genre' => $request->genre,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'CLIENT',
+            'role' => 'CLIENT',
             'sms_code' => null,
             'sms_verified_at' => now()
         ]);
@@ -44,17 +41,20 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        file_put_contents(storage_path('logs/auth_debug.log'), "Login Request: " . $request->email . " | PWD length: " . strlen($request->password) . "\n", FILE_APPEND);
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $email = trim(strtolower($request->email));
+        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Email ou mot de passe incorrect.'],
-            ]);
+            return response()->json([
+                'message' => 'Email ou mot de passe incorrect.',
+                'errors' => ['email' => ['Les identifiants ne correspondent pas à nos enregistrements.']]
+            ], 422);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;

@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../services/api';
+import api, { API_URL } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import Button from '../../components/ui/Button';
-import Badge from '../../components/ui/Badge';
-import { ShoppingCart, Check, ShieldCheck, ArrowLeft, Palette, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Heart, ShieldCheck, ArrowLeft, Truck, ChevronDown, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {
@@ -13,244 +11,194 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantite, setQuantite] = useState(1);
-  const [color, setColor] = useState('Noir');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
 
   useEffect(() => {
-    api.get(`/produits/${id}`).then(res => {
-      setProduct(res.data);
-      setCurrentImageIndex(0);
-    }).finally(() => setLoading(false));
+    const fetchProduct = async () => {
+      try {
+        const res = await api.get(`/produits/${id}`);
+        setProduct(res.data);
+      } catch (err) {
+        toast.error('Produit introuvable');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
   }, [id]);
 
-  if (loading) return <div className="pt-20"><LoadingSpinner /></div>;
-  if (!product) return <div className="text-center pt-20">Produit introuvable</div>;
-
-  // Get all available images
-  const images = [product.image, product.image2, product.image3, product.image4].filter(Boolean);
-  const currentImage = images.length > 0 ? images[currentImageIndex] : null;
-
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
-  const handleThumbnailClick = (index) => {
-    setCurrentImageIndex(index);
-  };
-
   const handleAddToCart = () => {
-    addToCart(product, quantite);
-    toast.success(`${quantite}x ${product.nom} ajouté(s) au panier`);
+    if (product.stock > 0) {
+      addToCart(product, quantite);
+      toast.success(`${product.nom} ajouté au panier`);
+    } else {
+      toast.error('Produit épuisé');
+    }
   };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><LoadingSpinner /></div>;
+  if (!product) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+      <h2 className="text-3xl font-black italic uppercase mb-6">PRODUIT INTROUVABLE</h2>
+      <Link to="/produits" className="adi-btn adi-btn-black px-10">RETOUR AU CATALOGUE</Link>
+    </div>
+  );
+
+  const getImageSrc = (img) => {
+    if (!img) return '';
+    return /^(https?:)?\/\//.test(img) ? img : `${API_URL}${img}`;
+  };
+
+  const images = [product.image, product.image2, product.image3, product.image4].filter(Boolean);
 
   return (
-    <div className="lux-container py-8">
-      <div className="flex items-center justify-between gap-6 mb-8">
-        <Link to="/produits" className="inline-flex items-center gap-2 text-gray-400 hover:text-sky-500 transition-colors">
-          <ArrowLeft size={16} /> Retour au catalogue
-        </Link>
-        <div className="hidden md:flex items-center gap-2">
-          <Badge variant="neutral">Collection</Badge>
-          <Badge>{product.categorie}</Badge>
+    <div className="bg-white min-h-screen pb-20 font-sans">
+      <div className="adi-container">
+        {/* Navigation / Breadcrumbs */}
+        <div className="pt-10 pb-8">
+          <Link to="/produits" className="text-xs font-black uppercase italic flex items-center gap-2 hover:text-adi-gray transition-all">
+            <ArrowLeft size={16} /> RETOUR AU CATALOGUE
+          </Link>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* Left: media */}
-        <div className="lg:col-span-7">
-          <div className="relative overflow-hidden rounded-xl2 border border-white/10 bg-white/[0.03] shadow-soft">
-            <div className="absolute inset-0 opacity-[0.06] bg-lux-grid bg-[size:60px_60px]" />
-            <div className="relative p-4 md:p-5">
-              {/* Main Image with Navigation */}
-              <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-graphite flex items-center justify-center border border-white/10 group">
-                {currentImage ? (
-                  <img
-                    src={/^(https?:)?\/\//.test(currentImage) ? currentImage : `http://localhost:8000${currentImage}`}
-                    alt={product.nom}
-                    className="w-full h-full object-cover transition-transform duration-300"
-                  />
-                ) : (
-                  <span className="text-gray-600">Pas d'image</span>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          {/* Left Column: Media Gallery */}
+          <div className="lg:col-span-8 flex flex-col md:flex-row gap-4">
+            {/* Desktop Thumbnails */}
+            <div className="hidden md:flex flex-col gap-2 w-20 flex-shrink-0">
+              {images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(idx)}
+                  className={`aspect-square border-2 transition-all ${activeImage === idx ? 'border-black' : 'border-transparent bg-adi-silver hover:border-black/50'}`}
+                >
+                  <img src={getImageSrc(img)} className="w-full h-full object-cover" alt="" />
+                </button>
+              ))}
+            </div>
 
-                {/* Navigation Buttons */}
-                {images.length > 1 && (
-                  <>
-                    <button
-                      onClick={handlePrevImage}
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100"
-                      type="button"
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <button
-                      onClick={handleNextImage}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100"
-                      type="button"
-                      aria-label="Next image"
-                    >
-                      <ChevronRight size={20} />
-                    </button>
-                  </>
-                )}
-
-                {/* Image Counter */}
-                {images.length > 1 && (
-                  <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    {currentImageIndex + 1}/{images.length}
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnail Gallery */}
-              {images.length > 1 && (
-                <div className="mt-5 grid grid-cols-4 gap-4">
-                  {images.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleThumbnailClick(idx)}
-                      className={`relative rounded-xl overflow-hidden border-2 aspect-[4/3] transition-all ${
-                        currentImageIndex === idx
-                          ? 'border-sky-500 opacity-100'
-                          : 'border-white/10 opacity-75 hover:opacity-95'
-                      }`}
-                      type="button"
-                    >
-                      <img
-                        src={/^(https?:)?\/\//.test(img) ? img : `http://localhost:8000${img}`}
-                        alt={`Détail ${idx + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-ink/65 to-transparent" />
-                    </button>
-                  ))}
+            {/* Main Image */}
+            <div className="flex-1 bg-adi-silver relative aspect-[1/1] overflow-hidden group">
+              <img
+                src={getImageSrc(images[activeImage])}
+                className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.02]"
+                alt={product.nom}
+              />
+              <button className="absolute top-6 right-6 p-4 bg-white hover:scale-110 transition-transform shadow-sm">
+                <Heart size={24} />
+              </button>
+              {product.stock === 0 && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                  <span className="bg-black text-white font-black italic text-xl px-10 py-4">SÉRIE LIMITÉE - ÉPUISÉ</span>
                 </div>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Right: info/options */}
-        <div className="lg:col-span-5">
-          <div className="lux-card p-7 md:p-8">
-            <p className="text-xs font-semibold tracking-[0.28em] uppercase text-gray-400">New · Gear edition</p>
-            <h1 className="text-3xl md:text-4xl font-black text-pearl mt-4 leading-tight">{product.nom}</h1>
-
-            <div className="mt-6 flex items-center gap-4">
-              <div className="text-3xl font-black text-pearl neon-text">{product.prix} €</div>
-              {product.stock > 0 ? (
-                <Badge variant="success" className="gap-1">
-                  <Check size={14} /> En stock ({product.stock})
-                </Badge>
-              ) : (
-                <Badge variant="danger">Rupture</Badge>
-              )}
-            </div>
-
-            <div className="mt-6 h-px lux-hairline" />
-
-            <p className="text-gray-300 leading-relaxed mt-6 whitespace-pre-line">
-              {product.description || 'Aucune description fournie.'}
-            </p>
-
-            {/* Options (color selection) */}
-            <div className="mt-8">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Palette size={16} className="text-sky-500" />
-                  <p className="text-xs font-black tracking-[0.22em] uppercase text-pearl">Color</p>
+          {/* Right Column: Information & Actions */}
+          <div className="lg:col-span-4 flex flex-col gap-10">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-black italic text-[#4f46e5] uppercase tracking-[0.2em]">{product.categorie}</span>
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-5 h-1.5 bg-black" />)}
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: 'Noir', swatch: 'bg-black' },
-                    { label: 'Graphite', swatch: 'bg-zinc-700' },
-                    { label: 'Bleu', swatch: 'bg-sky-500' },
-                  ].map((c) => (
-                    <button
-                      key={c.label}
-                      onClick={() => setColor(c.label)}
-                      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase border transition-colors ${
-                        color === c.label
-                          ? 'bg-sky-500/12 border-sky-500/30 text-pearl'
-                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
-                      }`}
-                      type="button"
-                    >
-                      <span className={`h-3 w-3 rounded-full ${c.swatch} border border-white/20`} />
-                      {c.label}
-                    </button>
-                  ))}
-                </div>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none mb-6">
+                {product.nom}
+              </h1>
+              <div className="flex items-center gap-4">
+                <span className="text-3xl font-black italic text-adi-red">{parseFloat(product.prix).toFixed(2)} €</span>
+                <span className="text-sm text-adi-gray line-through font-bold">{(parseFloat(product.prix) * 1.2).toFixed(2)} €</span>
+                <span className="bg-adi-red text-white text-[10px] font-black px-3 py-1.5 italic tracking-widest">-20% SALE</span>
               </div>
             </div>
 
-            {/* Quantity + CTA */}
-            <div className="mt-8 lux-card p-5 bg-white/[0.02]">
-              <div className="flex items-end gap-5">
-                <div className="w-36">
-                  <label className="block text-xs font-semibold tracking-[0.22em] uppercase text-gray-400 mb-2">
-                    Quantité
-                  </label>
-                  <div className="flex items-center border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
-                    <button
-                      onClick={() => setQuantite(Math.max(1, quantite - 1))}
-                      className="px-4 py-2.5 text-gray-300 hover:text-pearl hover:bg-white/[0.06] transition-colors"
-                      type="button"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      value={quantite}
-                      onChange={e =>
-                        setQuantite(
-                          Math.max(1, Math.min(product.stock, parseInt(e.target.value) || 1))
-                        )
-                      }
-                      className="w-full text-center bg-transparent border-none focus:ring-0 p-2 font-black text-pearl"
-                      min="1"
-                      max={product.stock}
-                    />
-                    <button
-                      onClick={() => setQuantite(Math.min(product.stock, quantite + 1))}
-                      className="px-4 py-2.5 text-gray-300 hover:text-pearl hover:bg-white/[0.06] transition-colors"
-                      type="button"
-                    >
-                      +
-                    </button>
+            {/* Selection Logic */}
+            <div className="space-y-10">
+               <div>
+                  <label className="block text-[11px] font-black uppercase tracking-widest mb-4">SÉLECTIONNER LA QUANTITÉ</label>
+                  <div className="grid grid-cols-5 gap-2">
+                     {[1,2,3,4,5].map(q => (
+                       <button
+                         key={q}
+                         onClick={() => setQuantite(q)}
+                         disabled={q > product.stock}
+                         className={`py-5 border-2 font-black italic transition-all ${quantite === q 
+                           ? 'bg-black text-white border-black shadow-lg translate-y-[-2px]' 
+                           : 'bg-white text-black border-adi-silver hover:border-black'} 
+                           ${q > product.stock ? 'opacity-20 cursor-not-allowed border-dashed' : ''}`}
+                       >
+                         {q}
+                       </button>
+                     ))}
                   </div>
-                </div>
+               </div>
 
-                <div className="flex-1">
-                  <Button
+               <div className="flex flex-col gap-3">
+                  <button 
                     onClick={handleAddToCart}
                     disabled={product.stock === 0}
-                    className="w-full py-4 text-base font-black"
-                    size="lg"
+                    className="w-full adi-btn adi-btn-black py-6 text-xl flex items-center justify-center gap-4 group disabled:opacity-20"
                   >
-                    <ShoppingCart size={20} />
-                    {product.stock > 0 ? 'Add to bag' : 'Indisponible'}
-                  </Button>
-                  <p className="mt-3 text-[11px] text-gray-500 tracking-[0.18em] uppercase">
-                    Couleur: {color}
-                  </p>
-                </div>
-              </div>
+                    AJOUTER AU PANIER <ShoppingCart size={24} className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <button className="w-full h-16 border-2 border-adi-silver text-black font-black italic uppercase tracking-widest flex items-center justify-center gap-3 hover:border-black transition-all">
+                    WISHLIST <Heart size={20} />
+                  </button>
+               </div>
+            </div>
 
-              <div className="mt-5 flex items-center gap-2 text-xs text-gray-400 justify-center">
-                <ShieldCheck size={16} className="text-sky-500" />
-                Paiement sécurisé • Retour sous 30 jours
-              </div>
+            {/* Trust Propositions */}
+            <div className="border-y border-adi-silver py-8 space-y-6">
+               <div className="flex items-center gap-4">
+                  <Truck size={22} />
+                  <span className="text-xs font-bold uppercase tracking-tight leading-tight">Livraison express gratuite sur cet article d'élite</span>
+               </div>
+               <div className="flex items-center gap-4">
+                  <ShieldCheck size={22} />
+                  <span className="text-xs font-bold uppercase tracking-tight leading-tight">Authenticité Gearnix Performance Garantie 2 Ans</span>
+               </div>
+               <div className="flex items-center gap-4">
+                  <Info size={22} />
+                  <span className="text-xs font-bold uppercase tracking-tight leading-tight">Paiement ultra-sécurisé & Retours gratuits sous 30 jours</span>
+               </div>
+            </div>
+
+            {/* Accordion mockup */}
+            <div className="space-y-1">
+               {['DESCRIPTION TECHNIQUE', 'SPÉCIFICATIONS DÉTAILLÉES', 'CONSEILS D\'UTILISATION'].map(title => (
+                 <button key={title} className="w-full flex items-center justify-between py-6 border-b border-adi-silver group hover:border-black transition-all text-left">
+                    <span className="text-xs font-black uppercase italic tracking-widest">{title}</span>
+                    <ChevronDown size={18} className="text-adi-gray group-hover:text-black transition-colors" />
+                 </button>
+               ))}
             </div>
           </div>
         </div>
+
+        {/* Extended Description Section */}
+        <div className="mt-32 max-w-4xl border-l-[12px] border-black pl-12">
+           <h2 className="text-5xl md:text-6xl font-black italic tracking-tighter uppercase leading-[0.85] mb-10">
+             {product.nom} <br /> 
+             <span className="text-adi-gray">LA PERFORMANCE SANS COMPROMIS.</span>
+           </h2>
+           <p className="text-xl md:text-2xl font-bold text-black/90 leading-snug mb-12 italic tracking-tight">
+             {product.description || 'Conçu pour briser les records, cet équipement redéfinit les standards de la compétition. Une ingénierie de précision au service d\'une réactivité sans faille et d\'une durabilité exceptionnelle.'}
+           </p>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-adi-silver p-12">
+              <div className="space-y-3">
+                 <h4 className="text-lg font-black italic uppercase tracking-wider">INGÉNIERIE D'ÉLITE</h4>
+                 <p className="text-sm font-medium text-adi-gray leading-relaxed">Matériaux premium sélectionnés pour leur durabilité extrême et leur légèreté incomparable. Chaque watt est optimisé.</p>
+              </div>
+              <div className="space-y-3">
+                 <h4 className="text-lg font-black italic uppercase tracking-wider">DESIGN MINIMALISTE</h4>
+                 <p className="text-sm font-medium text-adi-gray leading-relaxed">Optimisé pour une prise en main instinctive et une fatigue réduite lors des sessions prolongées. L'esthétique au service du sport.</p>
+              </div>
+           </div>
+        </div>
+
       </div>
     </div>
   );
