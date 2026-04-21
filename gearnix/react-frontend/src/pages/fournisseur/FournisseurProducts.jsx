@@ -13,6 +13,8 @@ export default function FournisseurProducts() {
   const [editingProduit, setEditingProduit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkDeleteMode, setBulkDeleteMode] = useState(false);
 
   const [formData, setFormData] = useState({
     nom: '', description: '', prix: '', stock: '', categorie: '', image: null, image2: null, image3: null, image4: null
@@ -88,14 +90,61 @@ export default function FournisseurProducts() {
   };
 
   const [deleteId, setDeleteId] = useState(null);
+
+  const toggleSelectProduct = (productId) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(productId)) {
+        next.delete(productId);
+      } else {
+        next.add(productId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredProduits.length && filteredProduits.length > 0) {
+      setSelectedIds(new Set());
+      return;
+    }
+
+    setSelectedIds(new Set(filteredProduits.map((p) => p.id)));
+  };
+
   const executeDelete = async () => {
     const loadingToast = toast.loading('Suppression...');
     try {
       await api.delete(`/produits/${deleteId}`);
       toast.success('Retiré du catalogue', { id: loadingToast });
       setDeleteId(null);
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        next.delete(deleteId);
+        return next;
+      });
       fetchData();
     } catch (e) { toast.error('Erreur', { id: loadingToast }); }
+  };
+
+  const executeBulkDelete = async () => {
+    if (selectedIds.size === 0) {
+      setBulkDeleteMode(false);
+      return;
+    }
+
+    const loadingToast = toast.loading('Suppression des produits sélectionnés...');
+    const idsToDelete = Array.from(selectedIds);
+
+    try {
+      await Promise.all(idsToDelete.map((id) => api.delete(`/produits/${id}`)));
+      toast.success(`${idsToDelete.length} produit(s) supprimé(s)`, { id: loadingToast });
+      setBulkDeleteMode(false);
+      setSelectedIds(new Set());
+      fetchData();
+    } catch (e) {
+      toast.error('Erreur lors de la suppression multiple', { id: loadingToast });
+    }
   };
 
   return (
@@ -157,6 +206,14 @@ export default function FournisseurProducts() {
           <table className="dash-table">
             <thead>
               <tr>
+                <th className="w-12">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.size === filteredProduits.length && filteredProduits.length > 0}
+                    onChange={toggleSelectAll}
+                    className="rounded border-white/20 bg-white/[0.05] text-[#0ea5e9] focus:ring-[#0ea5e9] focus:ring-2"
+                  />
+                </th>
                 <th>Produit</th>
                 <th>Catégorie</th>
                 <th>Prix de vente</th>
@@ -166,7 +223,15 @@ export default function FournisseurProducts() {
             </thead>
             <tbody>
               {filteredProduits.map(p => (
-                <tr key={p.id} className="hover:bg-white/[0.04] transition-colors group">
+                <tr key={p.id} className={`hover:bg-white/[0.04] transition-colors group ${selectedIds.has(p.id) ? 'bg-[#0ea5e9]/5' : ''}`}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(p.id)}
+                      onChange={() => toggleSelectProduct(p.id)}
+                      className="rounded border-white/20 bg-white/[0.05] text-[#0ea5e9] focus:ring-[#0ea5e9] focus:ring-2"
+                    />
+                  </td>
                   <td>
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/10 shadow-sm shrink-0">
@@ -300,6 +365,23 @@ export default function FournisseurProducts() {
               <div className="flex gap-4">
                  <button onClick={() => setDeleteId(null)} className="dash-btn-outline flex-1 rounded-2xl">Annuler</button>
                  <button onClick={executeDelete} className="dash-btn bg-red-600 hover:bg-red-700 flex-1 rounded-2xl">Confirmer</button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {bulkDeleteMode && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+           <div className="bg-[#12121a] rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-white/10 animate-in zoom-in-95">
+              <div className="w-16 h-16 bg-red-500/10 text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-500/20">
+                 <Trash2 size={32} />
+              </div>
+              <h3 className="text-xl font-black text-white text-center mb-2 tracking-tight">Retirer {selectedIds.size} article(s) ?</h3>
+              <p className="text-gray-400 text-center text-sm font-medium mb-8 leading-relaxed">Cette action supprimera les offres sélectionnées du magasin. Vous devrez les recréer si vous changez d'avis.</p>
+              <div className="flex gap-4">
+                 <button onClick={() => { setBulkDeleteMode(false); setSelectedIds(new Set()); }} className="dash-btn-outline flex-1 rounded-2xl">Annuler</button>
+                 <button onClick={executeBulkDelete} className="dash-btn bg-red-600 hover:bg-red-700 flex-1 rounded-2xl">Confirmer</button>
               </div>
            </div>
         </div>

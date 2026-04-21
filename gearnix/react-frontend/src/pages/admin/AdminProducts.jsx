@@ -13,6 +13,8 @@ export default function AdminProducts() {
   const [editingProduit, setEditingProduit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkDeleteMode, setBulkDeleteMode] = useState(false);
 
   const [formData, setFormData] = useState({
     nom: '', description: '', prix: '', stock: '', categorie: '', image: null, image2: null, image3: null, image4: null
@@ -94,6 +96,38 @@ export default function AdminProducts() {
     } catch (e) { toast.error('Erreur', { id: loadingToast }); }
   };
 
+  const toggleSelectProduct = (id) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredProduits.length) {
+      setSelectedIds(new Set());
+    } else {
+      const allIds = new Set(filteredProduits.map(p => p.id));
+      setSelectedIds(allIds);
+    }
+  };
+
+  const executeBulkDelete = async () => {
+    const loadingToast = toast.loading('Suppression en cours...');
+    try {
+      await Promise.all(Array.from(selectedIds).map(id => api.delete(`/produits/${id}`)));
+      toast.success(`${selectedIds.size} produit(s) supprimé(s)`, { id: loadingToast });
+      setSelectedIds(new Set());
+      setBulkDeleteMode(false);
+      fetchData();
+    } catch (e) { 
+      toast.error('Erreur lors de la suppression', { id: loadingToast }); 
+    }
+  };
+
   const approveProduit = async (id) => {
     const loadingToast = toast.loading('Approbation en cours...');
     try {
@@ -164,6 +198,15 @@ export default function AdminProducts() {
                  )}
                </div>
 
+               {selectedIds.size > 0 && (
+                 <button
+                   onClick={() => setBulkDeleteMode(true)}
+                   className="dash-btn bg-red-600 hover:bg-red-700 hover:shadow-red-600/20"
+                 >
+                   <Trash2 size={18} /> Supprimer ({selectedIds.size})
+                 </button>
+               )}
+
                <button onClick={() => setShowForm(true)} className="dash-btn">
                  <Plus size={18} /> Ajouter un produit
                </button>
@@ -176,6 +219,14 @@ export default function AdminProducts() {
           <table className="dash-table">
             <thead>
               <tr>
+                <th className="w-12">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.size === filteredProduits.length && filteredProduits.length > 0}
+                    onChange={toggleSelectAll}
+                    className="rounded border-white/20 bg-white/[0.05] text-[#0ea5e9] focus:ring-[#0ea5e9] focus:ring-2"
+                  />
+                </th>
                 <th>Produit</th>
                 <th>Catégorie</th>
                 <th>Prix</th>
@@ -186,7 +237,15 @@ export default function AdminProducts() {
             </thead>
             <tbody>
               {filteredProduits.map(p => (
-                <tr key={p.id} className="hover:bg-white/[0.04] transition-colors group">
+                <tr key={p.id} className={`hover:bg-white/[0.04] transition-colors group ${selectedIds.has(p.id) ? 'bg-[#0ea5e9]/5' : ''}`}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(p.id)}
+                      onChange={() => toggleSelectProduct(p.id)}
+                      className="rounded border-white/20 bg-white/[0.05] text-[#0ea5e9] focus:ring-[#0ea5e9] focus:ring-2"
+                    />
+                  </td>
                   <td>
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/10 shadow-sm shrink-0">
@@ -345,6 +404,23 @@ export default function AdminProducts() {
               <div className="flex gap-4">
                  <button onClick={() => setDeleteId(null)} className="dash-btn-outline flex-1 rounded-2xl">Non, annuler</button>
                  <button onClick={executeDelete} className="dash-btn bg-red-600 hover:bg-red-700 hover:shadow-red-600/20 flex-1 rounded-2xl">Oui, supprimer</button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {bulkDeleteMode && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+           <div className="bg-[#12121a] rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-white/10 animate-in zoom-in-95">
+              <div className="w-16 h-16 bg-red-500/10 text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-500/20">
+                 <Trash2 size={32} />
+              </div>
+              <h3 className="text-xl font-black text-white text-center mb-2 tracking-tight">Supprimer {selectedIds.size} produit(s) ?</h3>
+              <p className="text-gray-400 text-center text-sm font-medium mb-8 leading-relaxed">Cette action est irréversible. Les produits sélectionnés seront définitivement retirés du catalogue.</p>
+              <div className="flex gap-4">
+                 <button onClick={() => { setBulkDeleteMode(false); setSelectedIds(new Set()); }} className="dash-btn-outline flex-1 rounded-2xl">Non, annuler</button>
+                 <button onClick={executeBulkDelete} className="dash-btn bg-red-600 hover:bg-red-700 hover:shadow-red-600/20 flex-1 rounded-2xl">Oui, supprimer</button>
               </div>
            </div>
         </div>
