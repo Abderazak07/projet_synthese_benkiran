@@ -18,4 +18,11 @@ class User extends Authenticatable
     public function produits() { 
         return $this->hasMany(Produit::class, 'fournisseur_id'); 
     }
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 }

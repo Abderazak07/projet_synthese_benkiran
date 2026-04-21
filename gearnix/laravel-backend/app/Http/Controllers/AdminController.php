@@ -16,9 +16,14 @@ class AdminController extends Controller
 
     public function updateUser(Request $request, $id) {
         $user = User::findOrFail($id);
-        if ($request->has('role')) $user->role = $request->role;
-        // other fields
-        $user->save();
+        
+        $data = $request->only(['nom', 'prenom', 'email', 'telephone', 'genre', 'role']);
+        
+        if ($request->filled('password')) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+        
+        $user->update($data);
         return response()->json($user);
     }
 

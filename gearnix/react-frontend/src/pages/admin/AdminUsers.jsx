@@ -1,35 +1,65 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
-import { Users, Plus, Trash2, Shield, X, ArrowRight, Mail, User } from 'lucide-react';
+import { Users, Plus, Trash2, Shield, X, ArrowRight, Mail, User, Edit3, Phone, UserCircle, Eye, EyeOff } from 'lucide-react';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ nom: '', email: '', password: '', role: 'CLIENT' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [formData, setFormData] = useState({ 
+    nom: '', 
+    prenom: '',
+    email: '', 
+    telephone: '',
+    genre: 'M',
+    password: '', 
+    role: 'CLIENT' 
+  });
   const [deleteId, setDeleteId] = useState(null);
 
   useEffect(() => { fetchUsers(); }, []);
   const fetchUsers = () => api.get('/admin/users').then(res => setUsers(res.data)).catch(() => toast.error("Erreur de chargement"));
 
-  const changeRole = async (id, role) => {
-    try {
-      await api.put(`/admin/users/${id}`, { role });
-      toast.success('Rôle mis à jour');
-      fetchUsers();
-    } catch (err) { toast.error('Erreur'); }
+  const handleEditClick = (user) => {
+    setEditId(user.id);
+    setShowPassword(false);
+    setFormData({
+      nom: user.nom || '',
+      prenom: user.prenom || '',
+      email: user.email || '',
+      telephone: user.telephone || '',
+      genre: user.genre || 'M',
+      password: '', // On ne remplit pas le mot de passe par défaut
+      role: user.role || 'CLIENT'
+    });
+    setShowForm(true);
   };
 
-  const handleAddUser = async (e) => {
+  const handleOpenAdd = () => {
+    setEditId(null);
+    setShowPassword(false);
+    setFormData({ nom: '', prenom: '', email: '', telephone: '', genre: 'M', password: '', role: 'CLIENT' });
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const loadingToast = toast.loading('Création...');
+    const loadingToast = toast.loading(editId ? 'Mise à jour...' : 'Création...');
     try {
-      await api.post('/register', formData);
-      toast.success('Compte créé', { id: loadingToast });
+      if (editId) {
+        await api.put(`/admin/users/${editId}`, formData);
+        toast.success('Compte mis à jour', { id: loadingToast });
+      } else {
+        await api.post('/register', formData);
+        toast.success('Compte créé', { id: loadingToast });
+      }
       setShowForm(false);
-      setFormData({ nom: '', email: '', password: '', role: 'CLIENT' });
       fetchUsers();
-    } catch (err) { toast.error(err.response?.data?.message || 'Erreur', { id: loadingToast }); }
+    } catch (err) { 
+      toast.error(err.response?.data?.message || 'Erreur', { id: loadingToast }); 
+    }
   };
 
   const executeDelete = async () => {
@@ -54,7 +84,7 @@ export default function AdminUsers() {
               </h1>
               <p className="section-description">Gérez les comptes clients, fournisseurs et administrateurs.</p>
             </div>
-            <button onClick={() => setShowForm(true)} className="dash-btn">
+            <button onClick={handleOpenAdd} className="dash-btn">
               <Plus size={18} /> Nouveau Compte
             </button>
           </div>
@@ -78,25 +108,31 @@ export default function AdminUsers() {
                       <div className="h-10 w-10 rounded-xl bg-white/[0.05] flex items-center justify-center font-bold text-gray-400 border border-white/10 uppercase">
                         {u.nom.slice(0, 2)}
                       </div>
-                      <p className="font-bold text-white">{u.nom}</p>
+                      <div>
+                        <p className="font-bold text-white">{u.nom} {u.prenom}</p>
+                        <p className="text-[10px] text-gray-500 font-medium">{u.telephone || 'Pas de numéro'}</p>
+                      </div>
                     </div>
                   </td>
                   <td className="text-gray-400 font-medium">{u.email}</td>
                   <td>
-                    <select 
-                      className="dash-input !py-1.5 !px-3 font-bold !text-[11px] uppercase tracking-wider w-auto"
-                      value={u.role}
-                      onChange={(e) => changeRole(u.id, e.target.value)}
-                    >
-                      <option value="CLIENT">Client</option>
-                      <option value="FOURNISSEUR">Fournisseur</option>
-                      <option value="ADMIN">Admin</option>
-                    </select>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      u.role === 'ADMIN' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                      u.role === 'FOURNISSEUR' ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20' :
+                      'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                    }`}>
+                      {u.role}
+                    </span>
                   </td>
                   <td className="text-right">
-                    <button onClick={() => setDeleteId(u.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-white/5 bg-white/[0.04]">
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => handleEditClick(u)} className="p-2.5 text-sky-400 hover:text-white hover:bg-sky-500 rounded-xl transition-all shadow-sm border border-white/5 bg-white/[0.04]">
+                        <Edit3 size={16} />
+                      </button>
+                      <button onClick={() => setDeleteId(u.id)} className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 rounded-xl transition-all shadow-sm border border-white/5 bg-white/[0.04]">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -108,23 +144,64 @@ export default function AdminUsers() {
       {showForm && (
         <div className="dash-side-form-container">
           <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
-            <h2 className="text-lg font-black text-white tracking-tight">Utilisateur</h2>
+            <h2 className="text-lg font-black text-white tracking-tight">
+              {editId ? 'Modifier Utilisateur' : 'Nouveau Compte'}
+            </h2>
             <button onClick={() => setShowForm(false)} className="p-2 text-pearl/40 hover:text-red-500 transition-colors">
               <X size={20} />
             </button>
           </div>
-          <form onSubmit={handleAddUser} className="p-6 space-y-5">
-            <label className="block">
-              <span className="dash-form-label"><User size={14} className="inline mr-2"/> Nom complet</span>
-              <input required className="dash-input" value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} placeholder="Jean Dupont" />
-            </label>
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <label className="block">
+                <span className="dash-form-label">Nom</span>
+                <input required className="dash-input" value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} placeholder="Dupont" />
+              </label>
+              <label className="block">
+                <span className="dash-form-label">Prénom</span>
+                <input required className="dash-input" value={formData.prenom} onChange={e => setFormData({...formData, prenom: e.target.value})} placeholder="Jean" />
+              </label>
+            </div>
+            
             <label className="block">
               <span className="dash-form-label"><Mail size={14} className="inline mr-2"/> Email</span>
               <input required type="email" className="dash-input" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="jean@example.com" />
             </label>
+
+            <div className="grid grid-cols-2 gap-4">
+              <label className="block">
+                <span className="dash-form-label"><Phone size={14} className="inline mr-2"/> Téléphone</span>
+                <input className="dash-input" value={formData.telephone} onChange={e => setFormData({...formData, telephone: e.target.value})} placeholder="06..." />
+              </label>
+              <label className="block">
+                <span className="dash-form-label"><UserCircle size={14} className="inline mr-2"/> Genre</span>
+                <select className="dash-input" value={formData.genre} onChange={e => setFormData({...formData, genre: e.target.value})}>
+                  <option value="M">Homme</option>
+                  <option value="F">Femme</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </label>
+            </div>
+
             <label className="block">
-              <span className="dash-form-label">Mot de passe</span>
-              <input required type="password" placeholder="Min. 8 caractères" className="dash-input" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+              <span className="dash-form-label">Mot de passe {editId && '(Laisser vide pour ne pas changer)'}</span>
+              <div className="relative">
+                <input 
+                  required={!editId} 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="********" 
+                  className="dash-input pr-12" 
+                  value={formData.password} 
+                  onChange={e => setFormData({...formData, password: e.target.value})} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-sky-400 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </label>
             <label className="block">
               <span className="dash-form-label"><Shield size={14} className="inline mr-2"/> Rôle assigné</span>
@@ -136,9 +213,9 @@ export default function AdminUsers() {
             </label>
 
             <div className="pt-6 border-t border-white/5 flex gap-3">
-              <button type="button" onClick={() => setShowForm(false)} className="dash-btn-outline flex-1">Fermer</button>
+              <button type="button" onClick={() => setShowForm(false)} className="dash-btn-outline flex-1">Annuler</button>
               <button type="submit" className="dash-btn flex-1">
-                Créer compte <ArrowRight size={16} className="ml-2" />
+                {editId ? 'Enregistrer' : 'Créer'} <ArrowRight size={16} className="ml-2" />
               </button>
             </div>
           </form>
