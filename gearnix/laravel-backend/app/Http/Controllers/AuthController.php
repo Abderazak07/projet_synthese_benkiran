@@ -17,11 +17,8 @@ class AuthController extends Controller
             'email' => 'required|email|unique:User',
             'telephone' => 'required|string|max:20',
             'genre' => 'required|string|max:20',
-            'password' => 'required|string|min:6',
-            'role' => 'in:CLIENT,FOURNISSEUR'
+            'password' => 'required|string|min:6'
         ]);
-
-        $smsCode = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $user = User::create([
             'nom' => $request->nom,
@@ -30,7 +27,7 @@ class AuthController extends Controller
             'genre' => $request->genre,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'CLIENT',
+            'role' => 'CLIENT',
             'sms_code' => null,
             'sms_verified_at' => now()
         ]);

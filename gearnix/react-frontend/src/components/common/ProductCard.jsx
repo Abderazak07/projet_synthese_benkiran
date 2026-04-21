@@ -1,63 +1,76 @@
-import { ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ShoppingCart, Heart, Plus } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { API_URL } from '../../services/api';
 import toast from 'react-hot-toast';
-import Button from '../ui/Button';
 
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
-  
+
   const handleAddToCart = (e) => {
-    e.preventDefault(); // allow using link wrapper but stopping button click nav
-    addToCart(product);
-    toast.success(`${product.nom} ajouté au panier !`);
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    if (product.stock > 0) {
+      addToCart(product, 1);
+      toast.success(`${product.nom} ajouté au panier`);
+    } else {
+      toast.error('Produit épuisé');
+    }
+  };
+
+  const imageSrc = product.image?.startsWith('http') ? product.image : `${API_URL}${product.image}`;
 
   return (
-    <div className="product-card p-4 flex flex-col h-full relative overflow-hidden group">
-      {product.stock === 0 && (
-        <div className="absolute top-3 right-3 bg-red-500/70 text-white text-[11px] px-3 py-1 rounded-full z-10 font-black backdrop-blur border border-red-500/20">
-          Rupture
-        </div>
-      )}
-      <Link to={`/produits/${product.id}`} className="flex-grow flex flex-col">
-        <div className="h-52 w-full rounded-xl overflow-hidden bg-white/[0.03] mb-4 relative border border-white/10">
-          {product.image ? (
-             <img
-               src={/^(https?:)?\/\//.test(product.image) ? product.image : `http://localhost:8000${product.image}`}
-               alt={product.nom}
-               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-             />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-white/20">Pas d'image</div>
-          )}
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent" />
-        </div>
+    <Link to={`/produits/${product.id}`} className="group block relative bg-transparent border border-transparent hover:border-black transition-all duration-200">
+      {/* Product Image Wrapper */}
+      <div className="relative aspect-[1/1] overflow-hidden bg-adi-silver">
+        <img
+          src={imageSrc}
+          alt={product.nom}
+          className="w-full h-full object-cover"
+        />
         
-        <div className="flex flex-col flex-grow">
-          <p className="text-[11px] text-sky-500 mb-2 uppercase tracking-[0.22em] font-semibold">{product.categorie}</p>
-          <h3 className="text-lg font-black text-pearl mb-3 line-clamp-2 leading-snug">{product.nom}</h3>
-          
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-xl font-black text-pearl neon-text">{product.prix} €</span>
-            <span className="text-[11px] text-gray-500 tracking-[0.22em] uppercase">
-              {product.stock > 0 ? `Stock ${product.stock}` : 'Indisponible'}
-            </span>
+        {/* Wishlist Button - Top Right */}
+        <button className="absolute top-3 right-3 p-1 text-black hover:scale-110 transition-all opacity-0 group-hover:opacity-100">
+          <Heart size={20} strokeWidth={2.5} />
+        </button>
+
+        {/* Badges - Top Left */}
+        {product.stock === 0 ? (
+          <div className="absolute top-0 left-0 bg-adi-gray text-white text-[10px] font-black uppercase px-2 py-1 italic">
+            ÉPUISÉ
           </div>
-        </div>
-      </Link>
-      
-      <Button
-        onClick={handleAddToCart}
-        disabled={product.stock === 0}
-        className="mt-4 w-full"
-        size="sm"
-        variant={product.stock > 0 ? 'primary' : 'outline'}
-      >
-        <ShoppingCart size={18} />
-        {product.stock > 0 ? 'Ajouter' : 'Indisponible'}
-      </Button>
-    </div>
+        ) : product.prix > 200 ? (
+          <div className="absolute top-0 left-0 bg-adi-red text-white text-[10px] font-black uppercase px-2 py-1 italic tracking-widest">
+            NOUVEAUTÉ
+          </div>
+        ) : null}
+
+        {/* Price Tag - Bottom Left Floating (Adidas Style) */}
+        {product.stock > 0 && (
+          <div className="absolute bottom-2 left-2 bg-white px-2 py-1 text-[11px] font-black italic tracking-tighter z-10">
+            {parseFloat(product.prix).toFixed(2)} €
+          </div>
+        )}
+
+        {/* Quick Buy Plus - Bottom Right */}
+        <button 
+          onClick={handleAddToCart}
+          className="absolute bottom-3 right-3 w-10 h-10 bg-white border border-adi-silver flex items-center justify-center text-black opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all hover:bg-black hover:text-white"
+        >
+          <Plus size={20} />
+        </button>
+      </div>
+
+      {/* Product Details - Clean Padding */}
+      <div className="py-4 px-3 flex flex-col gap-1 min-h-[80px]">
+        <h3 className="text-[13px] font-bold uppercase italic tracking-tighter text-black leading-tight line-clamp-2">
+          {product.nom}
+        </h3>
+        <p className="text-[10px] font-bold text-adi-gray uppercase tracking-widest leading-none">
+          {product.categorie}
+        </p>
+      </div>
+    </Link>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../services/api';
+import api, { API_URL } from '../../services/api';
 import { Package, Eye, X, ShoppingCart, User, List } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -141,7 +141,7 @@ export default function FournisseurOrders() {
                  <div key={p.id} className="flex items-center gap-4 p-4 border border-white/5 rounded-2xl bg-white/[0.03] shadow-sm hover:border-[#0ea5e9]/20 transition-all group/item">
                     <div className="w-14 h-14 rounded-xl bg-white/[0.04] border border-white/5 flex items-center justify-center text-slate-300 overflow-hidden shadow-inner group-hover/item:border-[#0ea5e9]/30">
                        {p.image ? (
-                        <img src={p.image.startsWith('http') ? p.image : `http://localhost:8000${p.image}`} className="w-full h-full object-cover" />
+                        <img src={p.image.startsWith('http') ? p.image : `${API_URL}${p.image}`} className="w-full h-full object-cover" />
                        ) : (
                         <Package size={20} />
                        )}

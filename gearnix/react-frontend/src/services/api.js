@@ -1,7 +1,8 @@
 import axios from 'axios';
+export const API_URL = 'http://localhost:9000';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // Laravel standard local port
+  baseURL: `${API_URL}/api`,
   headers: {
     'Accept': 'application/json'
   }

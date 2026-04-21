@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import api from '../../services/api';
+import api, { API_URL } from '../../services/api';
 import toast from 'react-hot-toast';
 import { 
   Package, Plus, Filter, Trash2, Edit, X, Search,
@@ -171,7 +171,7 @@ export default function FournisseurProducts() {
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/10 shadow-sm shrink-0">
                          {p.image ? (
-                           <img src={p.image.startsWith('http') ? p.image : `http://localhost:8000${p.image}`} className="h-full w-full object-cover" loading="lazy" />
+                           <img src={p.image.startsWith('http') ? p.image : `${API_URL}${p.image}`} className="h-full w-full object-cover" loading="lazy" />
                          ) : (
                            <ImageIcon size={20} className="text-pearl/40" />
                          )}

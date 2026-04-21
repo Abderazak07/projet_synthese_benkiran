@@ -3,100 +3,155 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --adi-black: #000000;
+    --adi-white: #ffffff;
+    --adi-silver: #ebedee;
+    --adi-red: #e11d48;
+    --adi-gray: #767677;
+    --adi-beige: #edece3; /* adiClub section */
+  }
+
   body {
-    @apply bg-ink text-pearl font-sans antialiased;
-    background-color: #070709;
+    @apply antialiased font-sans bg-white text-black;
+    zoom: 0.9;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-black uppercase italic tracking-tighter;
+    font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+  }
+
+  /* Pixel Perfect Reset */
+  button, input, select, textarea, div, section, a {
+    border-radius: 0 !important;
   }
 
   ::selection {
-    background: rgba(14,165,233,0.25);
+    @apply bg-black text-white;
   }
-
-  /* Custom Animations to fix build errors without tailwindcss-animate plugin */
-  @keyframes slideInRight {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes zoomIn95 {
-    from { transform: scale(0.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-
-  .animate-in {
-    animation-duration: 300ms;
-    animation-fill-mode: both;
-  }
-
-  .duration-200 { animation-duration: 200ms; }
-  .duration-300 { animation-duration: 300ms; }
-
-  .fade-in { animation-name: fadeIn; }
-  .slide-in-from-right { animation-name: slideInRight; }
-  .zoom-in-95 { animation-name: zoomIn95; }
 }
 
 @layer components {
-  .lux-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  .adi-container {
+    @apply max-w-[1440px] mx-auto px-4 md:px-10;
   }
 
-  .lux-section {
-    @apply py-20;
+  .adi-section {
+    @apply py-12 md:py-16;
   }
 
-  .lux-card {
-    @apply rounded-xl2 bg-surface border border-stroke backdrop-blur-md;
-    box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+  .adi-btn {
+    @apply inline-flex items-center justify-center font-black uppercase italic tracking-wider transition-all duration-200 px-6 py-4 relative border-2 text-sm;
   }
 
-  .lux-card-hover {
-    @apply transition-all duration-300;
-  }
-  .lux-card-hover:hover {
-    transform: translateY(-6px);
+  .adi-btn-black {
+    @apply bg-black text-white border-black hover:bg-white hover:text-black;
   }
 
-  .lux-pill {
-    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold tracking-wide transition-all duration-300;
+  .adi-btn-white {
+    @apply bg-white text-black border-black hover:bg-black hover:text-white;
   }
 
-  .glow-btn {
-    background: linear-gradient(135deg, rgba(14,165,233,1), rgba(2,132,199,1));
-    box-shadow: 0 0 0 1px rgba(14,165,233,0.18), 0 18px 60px rgba(0,0,0,0.55);
-    transition: all 0.3s ease;
-  }
-  .glow-btn:hover {
-    box-shadow: 0 0 0 1px rgba(14,165,233,0.28), 0 22px 70px rgba(0,0,0,0.62);
-    transform: translateY(-2px);
-    filter: saturate(1.05);
+  .adi-nav-link {
+    @apply text-sm font-black uppercase italic tracking-tighter transition-all text-black border-none;
+    position: relative;
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 
-  .glass-card {
-    @apply rounded-xl2 bg-surface border border-stroke backdrop-blur-md;
+  .adi-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: black;
+    transition: width 0.2s ease;
   }
 
-  .product-card {
-    @apply lux-card lux-card-hover;
+  .adi-nav-link:hover::after {
+    width: 100%;
   }
 
-  .product-card:hover {
-    border-color: rgba(14,165,233,0.30);
-    box-shadow: 0 0 0 1px rgba(14,165,233,0.18), 0 18px 60px rgba(0,0,0,0.60);
+  .adi-price {
+    @apply font-black text-lg text-black italic;
   }
 
-  .neon-text {
-    text-shadow: 0 0 18px rgba(14,165,233,0.25);
+  .adi-price-sale {
+    color: var(--adi-red);
   }
 
-  .lux-hairline {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+  /* Specific Header Tiers */
+  .adidas-header-tier-1 {
+    @apply h-8 bg-white flex items-center justify-end px-10 gap-6 text-[11px] font-bold text-black;
+    border-bottom: 1px solid var(--adi-silver);
   }
+
+  .adidas-header-tier-2 {
+    @apply h-16 md:h-20 bg-white flex items-center px-10;
+    border-bottom: 1px solid var(--adi-silver);
+  }
+
+  .adidas-header-tier-3 {
+    @apply h-10 flex items-center justify-center text-[12px] font-black uppercase tracking-widest text-black;
+    background-color: var(--adi-silver);
+  }
+
+  /* --- ADIDAS 10000% CLONE UTILITIES --- */
+  
+  .adi-login-container {
+    @apply w-full max-w-[460px] mx-auto px-4 py-16;
+  }
+
+  .gl-input-group {
+    @apply relative mb-6;
+  }
+
+  .gl-input {
+    @apply w-full h-[50px] bg-white px-4 pt-4 pb-1 text-sm font-bold outline-none transition-all;
+    border: 1px solid var(--adi-gray);
+    border-radius: 0 !important;
+  }
+
+  .gl-input:focus {
+    @apply border-black;
+  }
+
+  .gl-label {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-bold uppercase pointer-events-none transition-all;
+    color: var(--adi-gray);
+  }
+
+  /* Floating label logic */
+  .gl-input:focus + .gl-label,
+  .gl-input:not(:placeholder-shown) + .gl-label {
+    @apply top-2 text-[10px] -translate-y-0 text-black;
+  }
+
+  .gl-cta {
+    @apply w-full h-[50px] bg-black text-white font-black uppercase italic text-sm px-6 flex items-center justify-between relative transition-all;
+    border: none;
+  }
+
+  .gl-cta::after {
+    content: '';
+    @apply absolute top-1 left-1 w-full h-full border border-black -z-10 transition-all;
+  }
+
+  .gl-cta:hover::after {
+    @apply top-0 left-0;
+  }
+
+  .gl-social-btn {
+    @apply flex items-center justify-center p-4 hover:border-black transition-all bg-white shadow-none;
+    border: 1px solid var(--adi-silver);
+  }
+}
 
   /* Dashboard (admin/fournisseur) - Full Dark Luxury Theme */
   .dash-shell {
@@ -259,9 +314,8 @@
     @apply block text-[10px] font-bold uppercase tracking-widest mb-2;
     color: rgba(255,255,255,0.4);
   }
-}
 
-/* Custom Scrollbar for Luxury looks */
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }

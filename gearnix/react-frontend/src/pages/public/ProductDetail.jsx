@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../services/api';
+import api, { API_URL } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import Button from '../../components/ui/Button';
-import Badge from '../../components/ui/Badge';
-import { ShoppingCart, Check, ShieldCheck, ArrowLeft, Ruler, Palette, Sparkles } from 'lucide-react';
+import { ShoppingCart, Heart, ShieldCheck, ArrowLeft, Truck, RotateCcw, Share2, Ruler, ChevronDown, Plus, Minus, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {
@@ -13,8 +11,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantite, setQuantite] = useState(1);
-  const [size, setSize] = useState('M');
-  const [color, setColor] = useState('Noir');
+  const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -23,233 +20,193 @@ export default function ProductDetail() {
     }).finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="pt-20"><LoadingSpinner /></div>;
-  if (!product) return <div className="text-center pt-20">Produit introuvable</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <LoadingSpinner />
+    </div>
+  );
+
+  if (!product) return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-4">Produit introuvable</h2>
+        <Link to="/produits" className="adi-btn adi-btn-black">Retour au catalogue</Link>
+      </div>
+    </div>
+  );
 
   const handleAddToCart = () => {
     addToCart(product, quantite);
     toast.success(`${quantite}x ${product.nom} ajouté(s) au panier`);
   };
 
+  const getImageSrc = (img) => {
+    if (!img) return null;
+    return /^(https?:)?\/\//.test(img) ? img : `${API_URL}${img}`;
+  };
+
+  const images = [
+    product.image,
+    'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=1000&q=80',
+    'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1000&q=80',
+    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000&q=80',
+  ].filter(Boolean);
+
   return (
-    <div className="lux-container py-8">
-      <div className="flex items-center justify-between gap-6 mb-8">
-        <Link to="/produits" className="inline-flex items-center gap-2 text-gray-400 hover:text-sky-500 transition-colors">
-          <ArrowLeft size={16} /> Retour au catalogue
-        </Link>
-        <div className="hidden md:flex items-center gap-2">
-          <Badge variant="neutral">Collection</Badge>
-          <Badge>{product.categorie}</Badge>
+    <div className="bg-white min-h-screen pb-20 font-sans">
+      <div className="adi-container">
+        
+        {/* Breadcrumb & Navigation */}
+        <div className="py-6 flex items-center justify-between border-b border-adi-silver mb-8">
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase text-adi-gray italic tracking-widest">
+            <Link to="/" className="hover:text-black">Accueil</Link>
+            <span>/</span>
+            <Link to="/produits" className="hover:text-black">Equipement</Link>
+            <span>/</span>
+            <span className="text-black">{product.nom}</span>
+          </div>
+          <Link to="/produits" className="text-[10px] font-black uppercase underline flex items-center gap-2">
+            <ArrowLeft size={12} /> RETOUR
+          </Link>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* Left: media */}
-        <div className="lg:col-span-7">
-          <div className="relative overflow-hidden rounded-xl2 border border-white/10 bg-white/[0.03] shadow-soft">
-            <div className="absolute inset-0 opacity-[0.06] bg-lux-grid bg-[size:60px_60px]" />
-            <div className="relative p-4 md:p-5">
-              <div className="aspect-[4/3] rounded-xl overflow-hidden bg-graphite flex items-center justify-center relative border border-white/10">
-                {product.image ? (
-                  <img
-                    src={/^(https?:)?\/\//.test(product.image) ? product.image : `http://localhost:8000${product.image}`}
-                    alt={product.nom}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-600">Pas d'image</span>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
-              </div>
-
-              {/* mini gallery (details-like) */}
-              <div className="mt-5 grid grid-cols-3 gap-4">
-                {[
-                  product.image,
-                  'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&q=80',
-                  'https://images.unsplash.com/photo-1511467687858-23d3ce510e1cb?w=800&q=80',
-                ].map((img, idx) => (
-                  <div key={idx} className="relative rounded-xl overflow-hidden border border-white/10 bg-white/[0.02] aspect-[4/3]">
-                    {img ? (
-                      <img
-                        src={/^(https?:)?\/\//.test(img) ? img : `http://localhost:8000${img}`}
-                        alt={`Détail ${idx + 1}`}
-                        className="h-full w-full object-cover opacity-75 hover:opacity-95 transition-opacity"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-white/20">—</div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/65 to-transparent" />
-                  </div>
-                ))}
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          
+          {/* Left Column: Massive Image Display */}
+          <div className="lg:col-span-8 flex flex-col md:flex-row gap-4">
+            {/* Desktop Thumbnails */}
+            <div className="hidden md:flex flex-col gap-2 w-20 flex-shrink-0">
+              {images.map((img, idx) => (
+                <button 
+                  key={idx}
+                  onClick={() => setActiveImage(idx)}
+                  className={`aspect-square border-2 ${activeImage === idx ? 'border-black' : 'border-transparent bg-adi-silver'}`}
+                >
+                  <img src={getImageSrc(img)} className="w-full h-full object-cover" alt="" />
+                </button>
+              ))}
+            </div>
+            
+            {/* Main Image */}
+            <div className="flex-1 bg-adi-silver relative aspect-[1/1] overflow-hidden">
+               <img 
+                 src={getImageSrc(images[activeImage])} 
+                 className="w-full h-full object-cover" 
+                 alt={product.nom} 
+               />
+               <button className="absolute top-6 right-6 p-3 bg-white hover:scale-110 transition-transform">
+                 <Heart size={24} />
+               </button>
+               {product.stock === 0 && (
+                 <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                    <span className="bg-black text-white font-black italic text-xl px-10 py-4">SÉRIE LIMITÉE - ÉPUISÉ</span>
+                 </div>
+               )}
             </div>
           </div>
-        </div>
 
-        {/* Right: info/options */}
-        <div className="lg:col-span-5">
-          <div className="lux-card p-7 md:p-8">
-            <p className="text-xs font-semibold tracking-[0.28em] uppercase text-gray-400">New · Gear edition</p>
-            <h1 className="text-3xl md:text-4xl font-black text-pearl mt-4 leading-tight">{product.nom}</h1>
-
-            <div className="mt-6 flex items-center gap-4">
-              <div className="text-3xl font-black text-pearl neon-text">{product.prix} €</div>
-              {product.stock > 0 ? (
-                <Badge variant="success" className="gap-1">
-                  <Check size={14} /> En stock ({product.stock})
-                </Badge>
-              ) : (
-                <Badge variant="danger">Rupture</Badge>
-              )}
+          {/* Right Column: Product Actions */}
+          <div className="lg:col-span-4 flex flex-col gap-8">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-black italic text-[#4f46e5] uppercase tracking-[0.2em]">{product.categorie}</span>
+                <div className="flex gap-0.5">
+                   {[1,2,3,4,5].map(i => <div key={i} className="w-4 h-1 bg-black" />)}
+                </div>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none mb-4">
+                {product.nom}
+              </h1>
+              <div className="flex items-center gap-4">
+                 <span className="text-3xl font-black italic text-adi-red">{parseFloat(product.prix).toFixed(2)} €</span>
+                 <span className="text-sm text-adi-gray line-through font-bold">{(parseFloat(product.prix) * 1.2).toFixed(2)} €</span>
+                 <span className="bg-adi-red text-white text-[10px] font-black px-2 py-1 italic">-20% SALE</span>
+              </div>
             </div>
 
-            <div className="mt-6 h-px lux-hairline" />
-
-            <p className="text-gray-300 leading-relaxed mt-6 whitespace-pre-line">
-              {product.description || 'Aucune description fournie.'}
-            </p>
-
-            {/* Options (visual only) */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {/* Product Selector Logic (Quantité in Adidas style) */}
+            <div className="space-y-6">
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Ruler size={16} className="text-sky-500" />
-                  <p className="text-xs font-black tracking-[0.22em] uppercase text-pearl">Size</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {['XS', 'S', 'M', 'L', 'XL'].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setSize(s)}
-                      className={`px-3 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase border transition-colors ${
-                        size === s
-                          ? 'bg-sky-500/12 border-sky-500/30 text-pearl'
-                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
-                      }`}
-                      type="button"
+                <label className="block text-[11px] font-black uppercase tracking-widest mb-3">SÉLECTIONNER LA QUANTITÉ</label>
+                <div className="grid grid-cols-5 gap-2">
+                  {[1, 2, 3, 4, 5].map(q => (
+                    <button 
+                      key={q}
+                      onClick={() => setQuantite(q)}
+                      disabled={q > product.stock}
+                      className={`py-4 border-2 font-black italic transition-all ${
+                        quantite === q 
+                          ? 'bg-black text-white border-black' 
+                          : 'bg-white text-black border-adi-silver hover:border-black'
+                      } ${q > product.stock ? 'opacity-20 cursor-not-allowed border-dashed' : ''}`}
                     >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-                <p className="mt-2 text-xs text-gray-500">Guide des tailles</p>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Palette size={16} className="text-sky-500" />
-                  <p className="text-xs font-black tracking-[0.22em] uppercase text-pearl">Color</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: 'Noir', swatch: 'bg-black' },
-                    { label: 'Graphite', swatch: 'bg-zinc-700' },
-                    { label: 'sky-500', swatch: 'bg-sky-500' },
-                    { label: 'sky-700', swatch: 'bg-sky-700' },
-                  ].map((c) => (
-                    <button
-                      key={c.label}
-                      onClick={() => setColor(c.label)}
-                      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold tracking-[0.18em] uppercase border transition-colors ${
-                        color === c.label
-                          ? 'bg-sky-500/12 border-sky-500/30 text-pearl'
-                          : 'bg-white/[0.02] border-white/10 text-gray-300 hover:border-sky-500/20 hover:bg-white/[0.04]'
-                      }`}
-                      type="button"
-                    >
-                      <span className={`h-3 w-3 rounded-full ${c.swatch} border border-white/20`} />
-                      {c.label}
+                      {q}
                     </button>
                   ))}
                 </div>
               </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={product.stock === 0}
+                  className="w-full adi-btn adi-btn-black py-5 text-lg flex items-center justify-center gap-4 group"
+                >
+                  AJOUTER AU PANIER <ShoppingCart size={20} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <button className="w-full adi-btn adi-btn-white py-5 flex items-center justify-center gap-3">
+                  WISHLIST <Heart size={20} />
+                </button>
+              </div>
             </div>
 
-            {/* Quantity + CTA */}
-            <div className="mt-8 lux-card p-5 bg-white/[0.02]">
-              <div className="flex items-end gap-5">
-                <div className="w-36">
-                  <label className="block text-xs font-semibold tracking-[0.22em] uppercase text-gray-400 mb-2">
-                    Quantité
-                  </label>
-                  <div className="flex items-center border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
-                    <button
-                      onClick={() => setQuantite(Math.max(1, quantite - 1))}
-                      className="px-4 py-2.5 text-gray-300 hover:text-pearl hover:bg-white/[0.06] transition-colors"
-                      type="button"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      value={quantite}
-                      onChange={e =>
-                        setQuantite(
-                          Math.max(1, Math.min(product.stock, parseInt(e.target.value) || 1))
-                        )
-                      }
-                      className="w-full text-center bg-transparent border-none focus:ring-0 p-2 font-black text-pearl"
-                      min="1"
-                      max={product.stock}
-                    />
-                    <button
-                      onClick={() => setQuantite(Math.min(product.stock, quantite + 1))}
-                      className="px-4 py-2.5 text-gray-300 hover:text-pearl hover:bg-white/[0.06] transition-colors"
-                      type="button"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex-1">
-                  <Button
-                    onClick={handleAddToCart}
-                    disabled={product.stock === 0}
-                    className="w-full py-4 text-base font-black"
-                    size="lg"
-                  >
-                    <ShoppingCart size={20} />
-                    {product.stock > 0 ? 'Add to bag' : 'Indisponible'}
-                  </Button>
-                  <p className="mt-3 text-[11px] text-gray-500 tracking-[0.18em] uppercase">
-                    Choix: size {size} · color {color}
-                  </p>
-                </div>
+            {/* Trust Points */}
+            <div className="border-y border-adi-silver py-6 space-y-4">
+              <div className="flex items-center gap-4">
+                 <Truck size={20} />
+                 <span className="text-xs font-bold uppercase tracking-tight">Livraison gratuite et retours sous 30 jours</span>
               </div>
-
-              <div className="mt-5 flex items-center gap-2 text-xs text-gray-400 justify-center">
-                <ShieldCheck size={16} className="text-sky-500" />
-                Paiement sécurisé • Retour sous 30 jours
+              <div className="flex items-center gap-4">
+                 <ShieldCheck size={20} />
+                 <span className="text-xs font-bold uppercase tracking-tight">Garantie Gearnix Performance 2 Ans</span>
               </div>
+              <div className="flex items-center gap-4">
+                 <Info size={20} />
+                 <span className="text-xs font-bold uppercase tracking-tight">Paiement 100% sécurisé (SSL Encryption)</span>
+              </div>
+            </div>
+
+            {/* Accordion mockup */}
+            <div className="space-y-0.5">
+               {['DESCRIPTION', 'SPÉCIFICATIONS TECHNIQUES', 'CONSEILS D\'UTILISATION'].map(title => (
+                 <button key={title} className="w-full flex items-center justify-between py-4 border-b border-adi-silver group hover:border-black transition-all">
+                    <span className="text-xs font-black uppercase italic tracking-widest">{title}</span>
+                    <ChevronDown size={16} className="text-adi-gray group-hover:text-black" />
+                 </button>
+               ))}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Feature strip (details-like sections) */}
-      <section className="mt-14">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-          {[
-            { title: 'Performance', desc: 'Conçu pour une réactivité maximale et une prise en main confortable.', icon: Sparkles },
-            { title: 'Confort', desc: 'Des matériaux sélectionnés pour réduire la fatigue sur les longues sessions.', icon: Sparkles },
-            { title: 'Durabilité', desc: 'Assemblage robuste et finitions premium.', icon: Sparkles },
-            { title: 'Design', desc: 'Un rendu dark/luxury cohérent avec ton setup.', icon: Sparkles },
-          ].map((f) => {
-            const Icon = f.icon;
-            return (
-              <div key={f.title} className="lux-card p-6">
-                <div className="w-10 h-10 rounded-full bg-sky-500/10 border border-sky-500/15 flex items-center justify-center text-sky-500">
-                  <Icon size={18} />
-                </div>
-                <h3 className="mt-4 text-sm font-black tracking-wide text-pearl">{f.title}</h3>
-                <p className="mt-2 text-sm text-gray-400 leading-relaxed">{f.desc}</p>
+        {/* Product Long Description */}
+        <div className="mt-24 max-w-4xl">
+           <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-6">{product.nom} : LA PERFORMANCE À L'ÉTAT PUR</h2>
+           <p className="text-lg font-bold text-black/80 leading-relaxed mb-6">
+             {product.description || 'Conçu pour l\'élite, cet équipement allie une ingénierie de pointe à une esthétique minimaliste. Chaque composant a été optimisé pour offrir une réactivité maximale et une durabilité exceptionnelle dans les conditions les plus intenses.'}
+           </p>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 bg-adi-silver p-10">
+              <div>
+                <h4 className="font-black italic uppercase mb-2">PERFORMANCE OPTIMISÉE</h4>
+                <p className="text-sm font-medium text-adi-gray">Technologie de pointe intégrée pour une précision accrue.</p>
               </div>
-            );
-          })}
+              <div>
+                <h4 className="font-black italic uppercase mb-2">DESIGN ICONIQUE</h4>
+                <p className="text-sm font-medium text-adi-gray">Look épuré inspiré par les standards professionnels.</p>
+              </div>
+           </div>
         </div>
-      </section>
+
+      </div>
     </div>
   );
 }
