@@ -9,11 +9,11 @@ class LivraisonController extends Controller
 {
     public function show(Request $request, $commandeId)
     {
-        $livraison = Livraison::where('commande_id', $commandeId)->firstOrFail();
+        $livraison = Livraison::where('id_commande', $commandeId)->firstOrFail();
         
         if ($request->user()->role === 'CLIENT') {
             $commande = Commande::findOrFail($commandeId);
-            if ($commande->client_id !== $request->user()->id) {
+            if ($commande->id_client !== $request->user()->id) {
                 return response()->json(['message' => 'Non autorisé'], 403);
             }
         }

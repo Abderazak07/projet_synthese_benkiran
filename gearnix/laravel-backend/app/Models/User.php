@@ -13,9 +13,9 @@ class User extends Authenticatable
     protected $hidden = ['password', 'remember_token'];
     
     public function commandes() { 
-        return $this->hasMany(Commande::class, 'client_id'); 
+        return $this->hasMany(Commande::class, 'id_client'); 
     }
     public function produits() { 
-        return $this->hasMany(Produit::class, 'fournisseur_id'); 
+        return $this->hasMany(Produit::class, 'id_fournisseur'); 
     }
 }

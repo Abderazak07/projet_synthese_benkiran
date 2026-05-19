@@ -13,6 +13,7 @@ export default function AdminProducts() {
   const [editingProduit, setEditingProduit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const [formData, setFormData] = useState({
     nom: '', description: '', prix: '', stock: '', categorie: '', image: null
@@ -66,15 +67,37 @@ export default function AdminProducts() {
     e.preventDefault();
     const loadingToast = toast.loading(editingProduit ? 'Mise à jour...' : 'Création...');
     
-    const data = new FormData();
-    Object.keys(formData).forEach(key => {
-      if (formData[key] !== null) data.append(key, formData[key]);
-    });
-    if (editingProduit) data.append('_method', 'PUT');
-
     try {
+      const isMultipart = formData.image instanceof File;
       const url = editingProduit ? `/produits/${editingProduit.id}` : '/produits';
-      await api.post(url, data, { headers: { 'Content-Type': 'multipart/form-data' } });
+      
+      if (isMultipart) {
+        const data = new FormData();
+        Object.keys(formData).forEach(key => {
+          if (formData[key] !== null) data.append(key, formData[key]);
+        });
+        if (editingProduit) data.append('_method', 'PUT');
+        await api.post(url, data);
+      } else {
+        if (editingProduit) {
+          await api.put(url, {
+            nom: formData.nom,
+            description: formData.description,
+            prix: formData.prix,
+            stock: formData.stock,
+            categorie: formData.categorie
+          });
+        } else {
+          await api.post(url, {
+            nom: formData.nom,
+            description: formData.description,
+            prix: formData.prix,
+            stock: formData.stock,
+            categorie: formData.categorie
+          });
+        }
+      }
+      
       toast.success(editingProduit ? 'Produit modifié' : 'Produit ajouté', { id: loadingToast });
       resetForm();
       fetchData();
@@ -94,9 +117,38 @@ export default function AdminProducts() {
     } catch (e) { toast.error('Erreur', { id: loadingToast }); }
   };
 
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredProduits.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredProduits.map(p => p.id));
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(x => x !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Voulez-vous supprimer les ${selectedIds.length} produit(s) sélectionné(s) ?`)) return;
+    const loadingToast = toast.loading('Suppression en cours...');
+    try {
+      await Promise.all(selectedIds.map(id => api.delete(`/produits/${id}`)));
+      toast.success('Sélection supprimée', { id: loadingToast });
+      setSelectedIds([]);
+      fetchData();
+    } catch (e) {
+      toast.error('Erreur lors de la suppression', { id: loadingToast });
+    }
+  };
+
   return (
     <>
-      <div className="dash-table-container shadow-2xl rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden">
+      <div className="dash-table-container shadow-2xl rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden mb-12">
         {/* Header Section */}
         <div className="p-8 border-b border-white/5 bg-white/[0.03]">
           <div className="section-header">
@@ -155,6 +207,14 @@ export default function AdminProducts() {
           <table className="dash-table">
             <thead>
               <tr>
+                <th className="w-12 text-center">
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 rounded border-gray-300 text-[#0ea5e9] focus:ring-[#0ea5e9] cursor-pointer"
+                    checked={filteredProduits.length > 0 && selectedIds.length === filteredProduits.length}
+                    onChange={toggleSelectAll}
+                  />
+                </th>
                 <th>Produit</th>
                 <th>Catégorie</th>
                 <th>Prix</th>
@@ -165,6 +225,14 @@ export default function AdminProducts() {
             <tbody>
               {filteredProduits.map(p => (
                 <tr key={p.id} className="hover:bg-white/[0.04] transition-colors group">
+                  <td className="text-center">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-gray-300 text-[#0ea5e9] focus:ring-[#0ea5e9] cursor-pointer"
+                      checked={selectedIds.includes(p.id)}
+                      onChange={() => toggleSelectOne(p.id)}
+                    />
+                  </td>
                   <td>
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/10 shadow-sm shrink-0">
@@ -175,8 +243,8 @@ export default function AdminProducts() {
                          )}
                       </div>
                       <div>
-                        <p className="font-bold text-white group-hover:text-[#0ea5e9] transition-colors">{p.nom}</p>
-                        <p className="text-[10px] font-mono text-pearl/40 uppercase tracking-widest mt-0.5">#{p.id}</p>
+                        <p className="font-bold text-gray-900 group-hover:text-[#0ea5e9] transition-colors">{p.nom}</p>
+                        <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-0.5">#{p.id}</p>
                       </div>
                     </div>
                   </td>
@@ -186,7 +254,7 @@ export default function AdminProducts() {
                     </span>
                   </td>
                   <td>
-                    <p className="font-black text-white">{parseFloat(p.prix).toFixed(2)} €</p>
+                    <p className="font-black text-gray-900">{parseFloat(p.prix).toFixed(2)} MAD</p>
                   </td>
                   <td>
                     {p.stock <= 0 ? (
@@ -214,7 +282,22 @@ export default function AdminProducts() {
         </div>
       </div>
 
-      {/* Side Form Container - Exactement comme le design de référence */}
+      {/* Floating Bulk Actions Bar */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border-2 border-black shadow-2xl rounded-2xl px-8 py-4 flex items-center gap-8 z-50 animate-in slide-in-from-bottom duration-300">
+          <p className="text-xs font-black uppercase text-black tracking-wider flex items-center gap-2">
+            <Package size={16} /> {selectedIds.length} sélectionné(s)
+          </p>
+          <button 
+            onClick={handleBulkDelete}
+            className="flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-lg hover:shadow-red-600/20"
+          >
+            <Trash2 size={14} /> Supprimer la sélection
+          </button>
+        </div>
+      )}
+
+      {/* Side Form Container */}
       {showForm && (
         <div className="dash-side-form-container">
           <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
@@ -243,7 +326,7 @@ export default function AdminProducts() {
 
               <div className="grid grid-cols-2 gap-4">
                 <label className="block">
-                  <span className="dash-form-label"><DollarSign size={14} className="inline mr-2"/> Prix (€)</span>
+                  <span className="dash-form-label"><DollarSign size={14} className="inline mr-2"/> Prix (MAD)</span>
                   <input required type="number" step="0.01" className="dash-input" value={formData.prix} onChange={e => setFormData({...formData, prix: e.target.value})} />
                 </label>
                 <label className="block">
@@ -280,7 +363,7 @@ export default function AdminProducts() {
         </div>
       )}
 
-      {/* Confirmation Modal (Custom alert style) */}
+      {/* Confirmation Modal */}
       {deleteId && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
            <div className="bg-[#12121a] rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-white/10 animate-in zoom-in-95">

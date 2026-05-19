@@ -28,6 +28,13 @@ module.exports = {
         darker: '#050505',
         'card-bg': 'rgba(255,255,255,0.05)',
         'border-glow': 'rgba(124,58,237,0.3)',
+
+        // Adidas Brand Colors
+        'adi-black': '#000000',
+        'adi-white': '#ffffff',
+        'adi-silver': '#ebedee',
+        'adi-red': '#e11d48',
+        'adi-gray': '#767677',
       },
       fontFamily: {
         sans: ['ui-sans-serif', 'system-ui', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],

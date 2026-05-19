@@ -5,10 +5,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Paiement extends Model
 {
-    protected $table = 'Paiement';
-    protected $fillable = ['commande_id', 'date', 'montant', 'statut', 'methode'];
+    protected $table = 'paiement';
+    protected $primaryKey = 'id_paiement';
+    public $timestamps = false;
+    protected $fillable = ['id_commande', 'date', 'montant', 'statut'];
+    protected $appends = ['methode'];
+
+    public function getMethodeAttribute()
+    {
+        return 'Carte bancaire';
+    }
     
     public function commande() { 
-        return $this->belongsTo(Commande::class, 'commande_id'); 
+        return $this->belongsTo(Commande::class, 'id_commande'); 
     }
 }

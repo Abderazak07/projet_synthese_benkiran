@@ -74,7 +74,9 @@ export default function Orders() {
                   <div className="flex items-center justify-between md:justify-end gap-12 flex-grow md:flex-grow-0 border-t md:border-t-0 pt-4 md:pt-0">
                     <div className="text-right">
                       <p className="text-[10px] font-black uppercase text-adi-gray mb-1 italic">Total</p>
-                      <p className="text-2xl font-black italic">{parseFloat(cmd.total).toFixed(2)} €</p>
+                      <p className="text-2xl font-black italic">
+                        {parseFloat(cmd.total).toFixed(2)} MAD
+                      </p>
                     </div>
                     <div className="flex items-center gap-6">
                       <Badge variant={getStatusVariant(cmd.statut)} className="px-4 py-1.5 text-[10px] font-black italic uppercase border-2">{cmd.statut}</Badge>

@@ -27,7 +27,7 @@ class ProduitController extends Controller
             $query->limit($request->limit);
         }
         
-        return response()->json($query->orderBy('id', 'desc')->get());
+        return response()->json($query->orderBy('id_produit', 'desc')->get());
     }
 
     public function show($id)
@@ -54,12 +54,12 @@ class ProduitController extends Controller
         $data = $request->all();
 
         if ($request->hasFile('image')) {
-            $data['image'] = url(Storage::url($request->file('image')->store('produits', 'public')));
+            $data['image'] = Storage::url($request->file('image')->store('produits', 'public'));
         }
 
         // Si c'est un fournisseur, on force son ID
         if ($request->user()->role === 'FOURNISSEUR') {
-            $data['fournisseur_id'] = $request->user()->id;
+            $data['id_fournisseur'] = $request->user()->id;
         }
 
         $produit = Produit::create($data);
@@ -71,7 +71,7 @@ class ProduitController extends Controller
         $produit = Produit::findOrFail($id);
         
         // Check permission if Fournisseur
-        if ($request->user()->role === 'FOURNISSEUR' && $produit->fournisseur_id && $produit->fournisseur_id !== $request->user()->id) {
+        if ($request->user()->role === 'FOURNISSEUR' && $produit->id_fournisseur && $produit->id_fournisseur !== $request->user()->id) {
             return response()->json(['message' => 'Non autorisé : ce produit ne vous appartient pas.'], 403);
         }
         
@@ -82,12 +82,25 @@ class ProduitController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('image')) {
-            $produit->image = url(Storage::url($request->file('image')->store('produits', 'public')));
+        if ($request->has('prix')) {
+            $newPrice = floatval($request->prix);
+            $currentPrice = floatval($produit->prix);
+            if ($newPrice < $currentPrice) {
+                // Diminution du prix : on garde l'ancien prix
+                $produit->prix_original = $produit->prix_original ?? $currentPrice;
+            } else if ($newPrice >= ($produit->prix_original ?? $currentPrice)) {
+                // Remontée du prix au-dessus ou égal à l'original : on annule la promotion
+                $produit->prix_original = null;
+            }
+            $produit->prix = $newPrice;
         }
 
-        // On exclut les champs techniques et l'image déjà traitée
-        $produit->update($request->except(['image', '_method']));
+        if ($request->hasFile('image')) {
+            $produit->image = Storage::url($request->file('image')->store('produits', 'public'));
+        }
+
+        // Fill all other fields except technical ones
+        $produit->fill($request->except(['image', '_method', 'prix_original', 'prix']));
         $produit->save();
 
         return response()->json($produit);
@@ -104,8 +117,8 @@ class ProduitController extends Controller
         }
 
         // Check permission if Fournisseur
-        if ($request->user()->role === 'FOURNISSEUR' && $produit->fournisseur_id) {
-            if ($produit->fournisseur_id !== $request->user()->id) {
+        if ($request->user()->role === 'FOURNISSEUR' && $produit->id_fournisseur) {
+            if ($produit->id_fournisseur !== $request->user()->id) {
                 return response()->json(['message' => 'Non autorisé : vous n\'êtes pas le propriétaire de ce produit.'], 403);
             }
         }

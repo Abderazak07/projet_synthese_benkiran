@@ -82,14 +82,14 @@ export default function FournisseurOrders() {
                   <tr key={cmd.id} className="hover:bg-white/[0.04] transition-colors group">
                     <td className="p-4">
                       <p className="font-mono text-[10px] text-[#0ea5e9] font-black tracking-widest leading-none mb-1">#{cmd.id}</p>
-                      <p className="text-white font-black">{parseFloat(cmd.total).toFixed(2)} €</p>
+                      <p className="text-gray-900 font-black">{parseFloat(cmd.total).toFixed(2)} MAD</p>
                     </td>
                     <td className="p-4">
                       <div className="flex flex-col gap-1">
                         {cmd.produits.map(p => (
-                          <div key={p.id} className="text-xs text-pearl/60 flex items-center gap-2">
+                          <div key={p.id} className="text-xs text-gray-700 flex items-center gap-2">
                              <div className="w-1 h-1 bg-[#0ea5e9]/30 rounded-full" />
-                             {p.nom} <span className="text-pearl/40 font-bold ml-auto px-2">×{p.pivot.quantite}</span>
+                             {p.nom} <span className="text-gray-400 font-bold ml-auto px-2">×{p.pivot.quantite}</span>
                           </div>
                         ))}
                       </div>
@@ -128,7 +128,7 @@ export default function FournisseurOrders() {
              <div className="bg-[#0ea5e9]/5 border border-[#0ea5e9]/10 rounded-2xl p-4 flex items-center justify-between">
                 <div>
                    <p className="text-[10px] font-black text-[#0ea5e9] uppercase tracking-[0.2em] mb-1">Total vente</p>
-                   <p className="text-xl font-black text-white">{parseFloat(selectedOrder.total).toFixed(2)} €</p>
+                   <p className="text-xl font-black text-white">{parseFloat(selectedOrder.total).toFixed(2)} MAD</p>
                 </div>
                 {getStatusBadge(selectedOrder.statut)}
              </div>
@@ -148,7 +148,7 @@ export default function FournisseurOrders() {
                     </div>
                     <div className="flex-1 min-w-0">
                        <p className="font-bold text-white text-sm truncate">{p.nom}</p>
-                       <p className="text-[10px] text-pearl/40 font-mono font-bold">{p.prix_unitaire || p.prix} € / unité</p>
+                       <p className="text-[10px] text-pearl/40 font-mono font-bold">{p.prix_unitaire || p.prix} MAD / unité</p>
                     </div>
                     <div className="text-right px-2 py-1 bg-white/[0.04] rounded-lg border border-white/5 font-black text-[#0ea5e9]">
                        x{p.pivot.quantite}

@@ -63,7 +63,9 @@ export default function Cart() {
                     <Link to={`/produits/${item.id}`} className="text-lg md:text-xl font-black italic text-black uppercase tracking-tighter hover:bg-black hover:text-white inline-block px-1 -ml-1 transition-all">
                       {item.nom}
                     </Link>
-                    <p className="text-sm font-black italic mt-2">{parseFloat(item.prix).toFixed(2)} €</p>
+                    <p className="text-sm font-black italic mt-2">
+                      {parseFloat(item.prix).toFixed(2)} MAD
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-6 mt-4 md:mt-0">
@@ -97,7 +99,7 @@ export default function Cart() {
                     <Truck size={18} />
                     <span className="text-xs font-black uppercase italic">LIVRAISON GRATUITE</span>
                   </div>
-                  <p className="text-[10px] font-bold text-adi-gray leading-tight">PROFITEZ DE LA LIVRAISON STANDARD OFFERTE POUR TOUTE COMMANDE SUPÉRIEURE À 100€.</p>
+                  <p className="text-[10px] font-bold text-adi-gray leading-tight">PROFITEZ DE LA LIVRAISON STANDARD OFFERTE POUR TOUTE COMMANDE SUPÉRIEURE À 1000 MAD.</p>
                </div>
                <div className="bg-adi-silver p-6 flex flex-col gap-2">
                   <div className="flex items-center gap-3">
@@ -118,7 +120,9 @@ export default function Cart() {
                    <div className="space-y-4 mb-8">
                       <div className="flex justify-between text-sm">
                         <span className="font-bold uppercase text-adi-gray tracking-tight">{count} ARTICLE{count > 1 ? 'S' : ''}</span>
-                        <span className="font-black italic">{total.toFixed(2)} €</span>
+                        <span className="font-black italic">
+                          {total.toFixed(2)} MAD
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="font-bold uppercase text-adi-gray tracking-tight">LIVRAISON</span>
@@ -128,7 +132,9 @@ export default function Cart() {
 
                    <div className="border-t-2 border-black pt-6 mb-8 flex justify-between items-end">
                       <span className="text-lg font-black italic uppercase">TOTAL</span>
-                      <span className="text-2xl font-black italic">{total.toFixed(2)} €</span>
+                      <span className="text-2xl font-black italic">
+                        {total.toFixed(2)} MAD
+                      </span>
                    </div>
 
                    <Link to="/checkout" className="block w-full">

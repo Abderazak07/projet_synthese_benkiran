@@ -10,35 +10,34 @@ class PaiementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'commande_id' => 'required|exists:Commande,id',
+            'commande_id' => 'required|exists:commande,id_commande',
             'montant' => 'required|numeric',
             'methode' => 'required|string'
         ]);
 
         $commande = Commande::findOrFail($request->commande_id);
-        if ($commande->client_id !== $request->user()->id) {
+        if ($commande->id_client !== $request->user()->id) {
             return response()->json(['message' => 'Non autorisé'], 403);
         }
 
         $paiement = Paiement::create([
-            'commande_id' => $commande->id,
+            'id_commande' => $commande->id_commande,
             'montant' => $request->montant,
-            'methode' => $request->methode,
-            'statut' => 'Validé' // Simulons un paiement direct
+            'statut' => 'valide' // Simulons un paiement direct (valide dans l'enum)
         ]);
         
-        $commande->update(['statut' => 'Payée']);
+        $commande->update(['statut' => 'confirmee']);
 
         return response()->json($paiement, 201);
     }
 
     public function show(Request $request, $commandeId)
     {
-        $paiement = Paiement::where('commande_id', $commandeId)->firstOrFail();
+        $paiement = Paiement::where('id_commande', $commandeId)->firstOrFail();
         
         if ($request->user()->role === 'CLIENT') {
             $commande = Commande::findOrFail($commandeId);
-            if ($commande->client_id !== $request->user()->id) {
+            if ($commande->id_client !== $request->user()->id) {
                 return response()->json(['message' => 'Non autorisé'], 403);
             }
         }

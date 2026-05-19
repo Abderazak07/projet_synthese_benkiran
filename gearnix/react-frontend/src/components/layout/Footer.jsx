@@ -4,11 +4,11 @@ import { Heart, Globe, Info, Package, ArrowRight, MapPin, MessageCircle } from '
 const FOOTER_DATA = [
   {
     title: 'PRODUITS',
-    links: ['Chaussures', 'Vêtements', 'Accessoires', 'Nouveautés', 'Sorties de la semaine']
+    links: ['AirPods', 'Coques iPhone', 'Casques Bluetooth', 'Accessoires Tech', 'Nouveautés']
   },
   {
-    title: 'SPORTS',
-    links: ['Football', 'Running', 'Basketball', 'Training', 'Outdoor']
+    title: 'TECH',
+    links: ['Audio', 'Protection', 'Chargeurs', 'Gaming Gear', 'Gadgets']
   },
   {
     title: 'ASSISTANCE',

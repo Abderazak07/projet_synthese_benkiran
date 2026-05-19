@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $fillable = ['nom', 'image', 'description', 'is_featured', 'display_order'];
+    protected $fillable = ['nom', 'image', 'description', 'is_featured'];
 
     protected $table = 'categories';
 
     protected $casts = [
         'is_featured' => 'boolean',
-        'display_order' => 'integer',
     ];
 
     public function getImageAttribute($value)

@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import api, { API_URL } from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { ShoppingCart, Heart, ShieldCheck, ArrowLeft, Truck, RotateCcw, Share2, Ruler, ChevronDown, Plus, Minus, Info } from 'lucide-react';
+import { ShoppingCart, ShieldCheck, ArrowLeft, Truck, RotateCcw, Share2, Ruler, ChevronDown, Plus, Minus, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantite, setQuantite] = useState(1);
@@ -36,6 +39,11 @@ export default function ProductDetail() {
   );
 
   const handleAddToCart = () => {
+    if (!user) {
+      toast.error('Veuillez vous connecter pour ajouter au panier');
+      navigate('/login');
+      return;
+    }
     addToCart(product, quantite);
     toast.success(`${quantite}x ${product.nom} ajouté(s) au panier`);
   };
@@ -47,9 +55,9 @@ export default function ProductDetail() {
 
   const images = [
     product.image,
-    'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=1000&q=80',
-    'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1000&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000&q=80',
+    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1000&q=80',
+    'https://images.unsplash.com/photo-1588423770574-910ae26c85e7?w=1000&q=80',
+    'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=1000&q=80',
   ].filter(Boolean);
 
   return (
@@ -94,9 +102,7 @@ export default function ProductDetail() {
                  className="w-full h-full object-cover" 
                  alt={product.nom} 
                />
-               <button className="absolute top-6 right-6 p-3 bg-white hover:scale-110 transition-transform">
-                 <Heart size={24} />
-               </button>
+
                {product.stock === 0 && (
                  <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
                     <span className="bg-black text-white font-black italic text-xl px-10 py-4">SÉRIE LIMITÉE - ÉPUISÉ</span>
@@ -117,10 +123,21 @@ export default function ProductDetail() {
               <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none mb-4">
                 {product.nom}
               </h1>
-              <div className="flex items-center gap-4">
-                 <span className="text-3xl font-black italic text-adi-red">{parseFloat(product.prix).toFixed(2)} €</span>
-                 <span className="text-sm text-adi-gray line-through font-bold">{(parseFloat(product.prix) * 1.2).toFixed(2)} €</span>
-                 <span className="bg-adi-red text-white text-[10px] font-black px-2 py-1 italic">-20% SALE</span>
+              <div className="flex flex-col gap-2 mb-2">
+                <div className="flex items-center gap-4">
+                   <span className="text-3xl font-black italic text-adi-red">{parseFloat(product.prix).toFixed(2)} MAD</span>
+                   {product.prix_original && (
+                     <span className="bg-adi-red text-white text-[10px] font-black px-2.5 py-1 italic tracking-widest uppercase animate-pulse">
+                        SOLD
+                     </span>
+                   )}
+                </div>
+                {product.prix_original && (
+                  <div className="flex items-center gap-3 text-sm text-adi-gray font-bold leading-none mt-1">
+                    <span>Ancien prix :</span>
+                    <span className="line-through">{parseFloat(product.prix_original).toFixed(2)} MAD</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -153,9 +170,6 @@ export default function ProductDetail() {
                   className="w-full adi-btn adi-btn-black py-5 text-lg flex items-center justify-center gap-4 group"
                 >
                   AJOUTER AU PANIER <ShoppingCart size={20} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button className="w-full adi-btn adi-btn-white py-5 flex items-center justify-center gap-3">
-                  WISHLIST <Heart size={20} />
                 </button>
               </div>
             </div>

@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { ArrowLeft } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
@@ -9,6 +10,7 @@ import Products from './pages/public/Products';
 import ProductDetail from './pages/public/ProductDetail';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
+import Contact from './pages/public/Contact';
 
 // Pages client
 import Cart from './pages/client/Cart';
@@ -25,6 +27,7 @@ import AdminCategories from './pages/admin/AdminCategories';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminDeliveries from './pages/admin/AdminDeliveries';
+import AdminContacts from './pages/admin/AdminContacts';
 
 // Pages fournisseur
 import FournisseurDashboard from './pages/fournisseur/FournisseurDashboard';
@@ -50,8 +53,9 @@ function AppRoutes() {
   const location = useLocation();
   const { user } = useAuth();
   const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/fournisseur');
+  const authPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-sms'];
+  const hideLayout = authPaths.includes(location.pathname);
   const isSpecialUserOnPublicSite = (user?.role === 'ADMIN' || user?.role === 'FOURNISSEUR') && !isDashboard;
-  const hideFooter = location.pathname === '/login' || location.pathname === '/register';
 
   if (isDashboard) {
     return (
@@ -66,6 +70,7 @@ function AppRoutes() {
             <Route path="commandes" element={<AdminOrders />} />
             <Route path="paiements" element={<AdminPayments />} />
             <Route path="livraisons" element={<AdminDeliveries />} />
+            <Route path="messages" element={<AdminContacts />} />
           </Route>
 
           {/* Fournisseur */}
@@ -82,14 +87,22 @@ function AppRoutes() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
-      {isSpecialUserOnPublicSite && <AdminModeBanner />}
-      <Navbar />
+      {isSpecialUserOnPublicSite && !hideLayout && <AdminModeBanner />}
+      {!hideLayout && <Navbar />}
+      {hideLayout && (
+        <header className="w-full p-8 flex justify-start">
+          <Link to="/" className="text-xs font-black uppercase italic tracking-widest flex items-center gap-2 hover:text-adi-gray transition-colors">
+            <ArrowLeft size={16} /> RETOUR À L'ACCUEIL
+          </Link>
+        </header>
+      )}
       <main className="flex-grow">
         <Routes>
           {/* Public */}
           <Route path="/" element={<Home />} />
           <Route path="/produits" element={<Products />} />
           <Route path="/produits/:id" element={<ProductDetail />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -103,7 +116,7 @@ function AppRoutes() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
-      {!hideFooter && <Footer />}
+      {!hideLayout && <Footer />}
       <Toaster position="bottom-right" toastOptions={{
         style: {
           background: '#333',

@@ -14,7 +14,7 @@ class HomepageController extends Controller
     public function index()
     {
         // 1. All categories with product count
-        $allCategories = Category::orderBy('display_order')->orderBy('nom')->get();
+        $allCategories = Category::orderBy('nom')->get();
 
         $categories = $allCategories->map(function ($cat) {
             // If category has its own image, use it; otherwise find a product image
@@ -33,7 +33,7 @@ class HomepageController extends Controller
                 'description' => $cat->description,
                 'image' => $catImage,
                 'is_featured' => (bool) $cat->is_featured,
-                'display_order' => $cat->display_order,
+                'display_order' => null,
                 'product_count' => Produit::where('categorie', $cat->nom)->count(),
             ];
         });

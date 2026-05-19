@@ -8,18 +8,26 @@ import { Search, Filter, X, ChevronDown, ListFilter } from 'lucide-react';
 export default function Products() {
   const [params, setParams] = useSearchParams();
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories] = useState(['AirPods', 'Chargeurs', 'Casques']);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   
-  const [searchTerm, setSearchTerm] = useState(params.get('search') || '');
-  const [selectedCat, setSelectedCat] = useState(params.get('categorie') || '');
+  const searchTerm = params.get('search') || '';
+  const selectedCat = params.get('categorie') || '';
 
-  useEffect(() => {
-    api.get('/categories')
-      .then(res => setCategories(Array.isArray(res.data) ? res.data : []))
-      .catch(() => setCategories([]));
-  }, []);
+  const setSelectedCat = (cat) => {
+    const newParams = new URLSearchParams(params);
+    if (cat) newParams.set('categorie', cat);
+    else newParams.delete('categorie');
+    setParams(newParams, { replace: true });
+  };
+
+  const setSearchTerm = (term) => {
+    const newParams = new URLSearchParams(params);
+    if (term) newParams.set('search', term);
+    else newParams.delete('search');
+    setParams(newParams, { replace: true });
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -29,7 +37,6 @@ export default function Products() {
         const query = new URLSearchParams();
         if (selectedCat) query.append('categorie', selectedCat);
         if (searchTerm) query.append('search', searchTerm);
-        setParams(query, { replace: true });
         
         const res = await api.get(`/produits?${query.toString()}`);
         if (isMounted) setProducts(Array.isArray(res.data) ? res.data : []);
@@ -44,8 +51,7 @@ export default function Products() {
   }, [selectedCat, searchTerm]);
 
   const handleReset = () => {
-    setSearchTerm('');
-    setSelectedCat('');
+    setParams(new URLSearchParams(), { replace: true });
   };
 
   return (
@@ -94,7 +100,7 @@ export default function Products() {
             <aside className="w-full lg:w-64 space-y-10 animate-in slide-in-from-left duration-300">
               {/* Category Filter */}
               <div>
-                <h3 className="text-sm font-black uppercase italic border-b-2 border-black pb-2 mb-4">Collections</h3>
+                <h3 className="text-sm font-black uppercase italic border-b-2 border-black pb-2 mb-4">Catégories</h3>
                 <div className="flex flex-col gap-2">
                   <button 
                     onClick={() => setSelectedCat('')}
@@ -120,15 +126,15 @@ export default function Products() {
                 <div className="flex flex-col gap-2">
                    <label className="flex items-center gap-3 cursor-pointer group">
                       <input type="checkbox" className="w-5 h-5 border-2 border-black rounded-none appearance-none checked:bg-black transition-all" />
-                      <span className="text-xs font-bold uppercase">0€ - 50€</span>
+                      <span className="text-xs font-bold uppercase">0 MAD - 100 MAD</span>
                    </label>
                    <label className="flex items-center gap-3 cursor-pointer group">
                       <input type="checkbox" className="w-5 h-5 border-2 border-black rounded-none appearance-none checked:bg-black transition-all" />
-                      <span className="text-xs font-bold uppercase">50€ - 200€</span>
+                      <span className="text-xs font-bold uppercase">100 MAD - 500 MAD</span>
                    </label>
                    <label className="flex items-center gap-3 cursor-pointer group">
                       <input type="checkbox" className="w-5 h-5 border-2 border-black rounded-none appearance-none checked:bg-black transition-all" />
-                      <span className="text-xs font-bold uppercase">200€+</span>
+                      <span className="text-xs font-bold uppercase">500 MAD+</span>
                    </label>
                 </div>
               </div>

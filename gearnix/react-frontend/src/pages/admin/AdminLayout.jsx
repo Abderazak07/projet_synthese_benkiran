@@ -1,15 +1,16 @@
 import { Outlet } from 'react-router-dom';
-import { LayoutDashboard, Users, Package, ShoppingCart, CreditCard, Truck, Tag, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, Package, ShoppingCart, CreditCard, Truck, Tag, Sparkles, Mail } from 'lucide-react';
 import DashboardShell from '../../components/layout/DashboardShell';
 
 const adminLinks = [
   { label: 'Tableau de bord', to: '/admin', icon: LayoutDashboard },
   { label: 'Utilisateurs', to: '/admin/utilisateurs', icon: Users },
   { label: 'Produits', to: '/admin/produits', icon: Package },
-  { label: 'Collections', to: '/admin/categories', icon: Sparkles },
+  { label: 'Catégories', to: '/admin/categories', icon: Sparkles },
   { label: 'Commandes', to: '/admin/commandes', icon: ShoppingCart },
   { label: 'Paiements', to: '/admin/paiements', icon: CreditCard },
   { label: 'Livraisons', to: '/admin/livraisons', icon: Truck },
+  { label: 'Messages', to: '/admin/messages', icon: Mail },
 ];
 
 export default function AdminLayout() {

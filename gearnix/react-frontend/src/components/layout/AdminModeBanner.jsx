@@ -15,22 +15,22 @@ export default function AdminModeBanner() {
         {/* Left: Badge + status */}
         <div className="admin-mode-badge-group">
           <div className="admin-mode-icon-wrapper">
-            {isAdmin ? <ShieldCheck size={18} /> : <Store size={18} />}
+            <ShieldCheck size={24} strokeWidth={2.5} />
             <span className="admin-pulse-dot" />
           </div>
           <div className="admin-mode-text">
             <span className="admin-mode-label">{label}</span>
             <span className="admin-mode-sublabel">
-              <Eye size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
-              Navigation client active — session {isAdmin ? 'admin' : 'vendeur'} préservée
+              <Eye size={10} className="inline mr-1" />
+              SÉCURITÉ ACTIVE — NAVIGATION CLIENT RÉEL
             </span>
           </div>
         </div>
 
         {/* Right: Return button */}
-        <Link to={dashboardLink} className="admin-mode-return-btn">
-          <ArrowLeft size={16} />
-          <span>Tableau de bord</span>
+        <Link to={dashboardLink} className="admin-mode-return-btn group">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+          <span>ACCÉDER AU DASHBOARD</span>
         </Link>
       </div>
     </div>

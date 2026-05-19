@@ -5,11 +5,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Produit extends Model
 {
-    protected $table = 'Produit';
-    protected $fillable = ['nom', 'description', 'prix', 'stock', 'image', 'categorie', 'fournisseur_id'];
+    protected $table = 'produit';
+    protected $primaryKey = 'id_produit';
+    protected $fillable = ['nom', 'description', 'prix', 'stock', 'image', 'categorie', 'id_fournisseur', 'prix_original'];
+    protected $appends = ['id'];
     
     public function fournisseur() { 
-        return $this->belongsTo(User::class, 'fournisseur_id'); 
+        return $this->belongsTo(User::class, 'id_fournisseur'); 
+    }
+
+    public function getIdAttribute()
+    {
+        return $this->id_produit;
     }
 
     public function getImageAttribute($value)
@@ -26,8 +33,7 @@ class Produit extends Model
     }
     
     public function commandes() { 
-        return $this->belongsToMany(Commande::class, 'Commande_Produit', 'produit_id', 'commande_id')
-                    ->withPivot('quantite', 'prix_unitaire')
-                    ->withTimestamps(); 
+        return $this->belongsToMany(Commande::class, 'commande_produit', 'id_produit', 'id_commande')
+                    ->withPivot('quantite', 'prix_unitaire'); 
     }
 }

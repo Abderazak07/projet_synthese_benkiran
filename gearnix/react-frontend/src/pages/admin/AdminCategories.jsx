@@ -3,16 +3,16 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import {
   Tag, Plus, Trash2, Edit, X, ArrowRight, FolderPlus,
-  Hash, Image as ImageIcon, Star, StarOff, GripVertical,
-  Eye, EyeOff, Package
+  Image as ImageIcon, Star, StarOff, Star as StarIcon
 } from 'lucide-react';
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [formData, setFormData] = useState({
-    nom: '', description: '', image: null, is_featured: false, display_order: 0
+    nom: '', description: '', image: null, is_featured: false
   });
 
   useEffect(() => { fetchCategories(); }, []);
@@ -24,15 +24,14 @@ export default function AdminCategories() {
       nom: c.nom,
       description: c.description || '',
       image: null,
-      is_featured: c.is_featured,
-      display_order: c.display_order || 0
+      is_featured: c.is_featured
     });
     setShowForm(true);
   };
 
   const resetForm = () => {
     setEditingCategory(null);
-    setFormData({ nom: '', description: '', image: null, is_featured: false, display_order: 0 });
+    setFormData({ nom: '', description: '', image: null, is_featured: false });
     setShowForm(false);
   };
 
@@ -40,26 +39,34 @@ export default function AdminCategories() {
     e.preventDefault();
     const loadingToast = toast.loading('Enregistrement...');
 
-    const data = new FormData();
-    data.append('nom', formData.nom);
-    data.append('description', formData.description || '');
-    data.append('is_featured', formData.is_featured ? '1' : '0');
-    data.append('display_order', formData.display_order);
-    if (formData.image) data.append('image', formData.image);
-
     try {
-      if (editingCategory) {
-        data.append('_method', 'PUT');
-        await api.post(`/categories/${editingCategory.id}`, data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        toast.success('Collection modifiée', { id: loadingToast });
+      const isMultipart = formData.image instanceof File;
+      const url = editingCategory ? `/categories/${editingCategory.id}` : '/categories';
+
+      if (isMultipart) {
+        const data = new FormData();
+        data.append('nom', formData.nom);
+        data.append('description', formData.description || '');
+        data.append('is_featured', formData.is_featured ? '1' : '0');
+        data.append('image', formData.image);
+        if (editingCategory) data.append('_method', 'PUT');
+        await api.post(url, data);
       } else {
-        await api.post('/categories', data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        toast.success('Collection ajoutée', { id: loadingToast });
+        if (editingCategory) {
+          await api.put(url, {
+            nom: formData.nom,
+            description: formData.description,
+            is_featured: formData.is_featured
+          });
+        } else {
+          await api.post(url, {
+            nom: formData.nom,
+            description: formData.description,
+            is_featured: formData.is_featured
+          });
+        }
       }
+      toast.success(editingCategory ? 'Catégorie modifiée' : 'Catégorie ajoutée', { id: loadingToast });
       resetForm();
       fetchCategories();
     } catch (err) {
@@ -80,23 +87,52 @@ export default function AdminCategories() {
     const loadingToast = toast.loading('Suppression...');
     try {
       await api.delete(`/categories/${deleteId}`);
-      toast.success('Collection supprimée', { id: loadingToast });
+      toast.success('Catégorie supprimée', { id: loadingToast });
       setDeleteId(null);
       fetchCategories();
     } catch (e) { toast.error('Erreur', { id: loadingToast }); }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === categories.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(categories.map(c => c.id));
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(x => x !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Voulez-vous supprimer les ${selectedIds.length} catégorie(s) sélectionnée(s) ?`)) return;
+    const loadingToast = toast.loading('Suppression en cours...');
+    try {
+      await Promise.all(selectedIds.map(id => api.delete(`/categories/${id}`)));
+      toast.success('Sélection supprimée', { id: loadingToast });
+      setSelectedIds([]);
+      fetchCategories();
+    } catch (e) {
+      toast.error('Erreur lors de la suppression', { id: loadingToast });
+    }
   };
 
   const featuredCount = categories.filter(c => c.is_featured).length;
 
   return (
     <>
-      <div className="dash-table-container bg-white/[0.03] rounded-2xl border border-white/[0.07] shadow-xl overflow-hidden">
+      <div className="dash-table-container bg-white/[0.03] rounded-2xl border border-white/[0.07] shadow-xl overflow-hidden mb-12">
         <div className="p-8 border-b border-white/5 bg-white/[0.03]">
           <div className="section-header">
             <div className="section-title-group">
               <h1 className="section-title">
                 <div className="bullet"><Tag size={20} /></div>
-                Collections & Catégories
+                Catégories
               </h1>
               <p className="section-description">
                 Gérez vos catégories et choisissez celles à afficher sur la page d'accueil.
@@ -106,7 +142,7 @@ export default function AdminCategories() {
               </p>
             </div>
             <button onClick={() => setShowForm(true)} className="dash-btn">
-              <Plus size={18} /> Nouvelle Collection
+              <Plus size={18} /> Nouvelle Catégorie
             </button>
           </div>
         </div>
@@ -115,10 +151,16 @@ export default function AdminCategories() {
           <table className="dash-table">
             <thead>
               <tr>
-                <th>Ordre</th>
-                <th>Collection</th>
+                <th className="w-12 text-center">
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 rounded border-gray-300 text-[#0ea5e9] focus:ring-[#0ea5e9] cursor-pointer"
+                    checked={categories.length > 0 && selectedIds.length === categories.length}
+                    onChange={toggleSelectAll}
+                  />
+                </th>
+                <th>Catégorie</th>
                 <th>Description</th>
-                <th>Produits</th>
                 <th>Accueil</th>
                 <th className="text-right">Actions</th>
               </tr>
@@ -126,11 +168,13 @@ export default function AdminCategories() {
             <tbody>
               {categories.map(c => (
                 <tr key={c.id} className="hover:bg-white/[0.04] transition-colors group">
-                  <td>
-                    <span className="inline-flex items-center gap-1 text-pearl/40 font-mono text-xs">
-                      <GripVertical size={14} className="text-slate-300" />
-                      {c.display_order}
-                    </span>
+                  <td className="text-center">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-gray-300 text-[#0ea5e9] focus:ring-[#0ea5e9] cursor-pointer"
+                      checked={selectedIds.includes(c.id)}
+                      onChange={() => toggleSelectOne(c.id)}
+                    />
                   </td>
                   <td>
                     <div className="flex items-center gap-4">
@@ -142,8 +186,8 @@ export default function AdminCategories() {
                         )}
                       </div>
                       <div>
-                        <p className="font-bold text-white group-hover:text-[#0ea5e9] transition-colors">{c.nom}</p>
-                        <p className="text-[10px] font-mono text-pearl/40 uppercase tracking-widest mt-0.5">#{c.id}</p>
+                        <p className="font-bold text-gray-900 group-hover:text-[#0ea5e9] transition-colors">{c.nom}</p>
+                        <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-0.5">#{c.id}</p>
                       </div>
                     </div>
                   </td>
@@ -151,12 +195,6 @@ export default function AdminCategories() {
                     <p className="text-sm text-gray-400 max-w-[200px] truncate">
                       {c.description || <span className="italic text-slate-300">Aucune description</span>}
                     </p>
-                  </td>
-                  <td>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.05] text-pearl/60 text-[10px] font-black uppercase tracking-widest border border-white/10">
-                      <Package size={12} />
-                      {c.product_count ?? 0}
-                    </span>
                   </td>
                   <td>
                     <button
@@ -185,10 +223,10 @@ export default function AdminCategories() {
               ))}
               {categories.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="text-center py-12 text-pearl/40">
+                  <td colSpan="5" className="text-center py-12 text-pearl/40">
                     <Tag size={32} className="mx-auto mb-3 text-slate-300" />
-                    <p className="font-bold">Aucune collection</p>
-                    <p className="text-sm mt-1">Créez votre première collection pour commencer.</p>
+                    <p className="font-bold">Aucune catégorie</p>
+                    <p className="text-sm mt-1">Créez votre première catégorie pour commencer.</p>
                   </td>
                 </tr>
               )}
@@ -197,12 +235,27 @@ export default function AdminCategories() {
         </div>
       </div>
 
+      {/* Floating Bulk Actions Bar */}
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white border-2 border-black shadow-2xl rounded-2xl px-8 py-4 flex items-center gap-8 z-50 animate-in slide-in-from-bottom duration-300">
+          <p className="text-xs font-black uppercase text-black tracking-wider flex items-center gap-2">
+            <TagIcon size={16} /> {selectedIds.length} sélectionné(s)
+          </p>
+          <button 
+            onClick={handleBulkDelete}
+            className="flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-lg hover:shadow-red-600/20"
+          >
+            <Trash2 size={14} /> Supprimer la sélection
+          </button>
+        </div>
+      )}
+
       {/* Side Form for Create/Edit */}
       {showForm && (
         <div className="dash-side-form-container">
           <div className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
             <h2 className="text-lg font-black text-white tracking-tight">
-              {editingCategory ? 'Modifier la collection' : 'Nouvelle collection'}
+              {editingCategory ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
             </h2>
             <button onClick={resetForm} className="p-2 text-pearl/40 hover:text-red-500 transition-colors">
               <X size={20} />
@@ -211,13 +264,13 @@ export default function AdminCategories() {
           <form onSubmit={handleSubmit} className="p-6 space-y-5 flex flex-col h-[calc(100vh-140px)]">
             <div className="flex-1 space-y-5 overflow-y-auto pr-2 custom-scrollbar">
               <label className="block">
-                <span className="dash-form-label"><FolderPlus size={14} className="inline mr-2"/> Nom de la collection</span>
+                <span className="dash-form-label"><FolderPlus size={14} className="inline mr-2"/> Nom de la catégorie</span>
                 <input
                   required
                   className="dash-input"
                   value={formData.nom}
                   onChange={e => setFormData({...formData, nom: e.target.value})}
-                  placeholder="Ex: Claviers Gaming"
+                  placeholder="Ex: AirPods"
                 />
               </label>
 
@@ -227,7 +280,7 @@ export default function AdminCategories() {
                   className="dash-input min-h-[80px] resize-none"
                   value={formData.description}
                   onChange={e => setFormData({...formData, description: e.target.value})}
-                  placeholder="Brève description de la collection..."
+                  placeholder="Brève description de la catégorie..."
                   maxLength={500}
                 />
                 <p className="text-[10px] text-pearl/40 mt-1 text-right">{(formData.description || '').length}/500</p>
@@ -257,17 +310,7 @@ export default function AdminCategories() {
                 </div>
               </label>
 
-              <div className="grid grid-cols-2 gap-4">
-                <label className="block">
-                  <span className="dash-form-label">Ordre d'affichage</span>
-                  <input
-                    type="number"
-                    className="dash-input"
-                    value={formData.display_order}
-                    onChange={e => setFormData({...formData, display_order: parseInt(e.target.value) || 0})}
-                    min={0}
-                  />
-                </label>
+              <div className="grid grid-cols-1 gap-4">
                 <div className="flex flex-col">
                   <span className="dash-form-label">Page d'accueil</span>
                   <button
@@ -303,7 +346,7 @@ export default function AdminCategories() {
               <div className="w-16 h-16 bg-red-500/10 text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner border border-red-500/20">
                  <Trash2 size={32} />
               </div>
-              <h3 className="text-xl font-black text-white text-center mb-2 tracking-tight">Supprimer la collection ?</h3>
+              <h3 className="text-xl font-black text-white text-center mb-2 tracking-tight">Supprimer la catégorie ?</h3>
               <p className="text-gray-400 text-center text-sm font-medium mb-8 leading-relaxed">
                 Cette opération impactera les produits liés à cette catégorie.
               </p>
@@ -316,4 +359,9 @@ export default function AdminCategories() {
       )}
     </>
   );
+}
+
+// Simple internal icon mapper
+function TagIcon(props) {
+  return <Tag {...props} />;
 }

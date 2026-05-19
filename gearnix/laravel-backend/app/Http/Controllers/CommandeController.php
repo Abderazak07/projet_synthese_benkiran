@@ -10,12 +10,12 @@ class CommandeController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json($request->user()->commandes()->with('produits', 'paiement', 'livraison')->orderBy('id','desc')->get());
+        return response()->json($request->user()->commandes()->with('produits', 'paiement', 'livraison')->orderBy('id_commande','desc')->get());
     }
 
     public function show(Request $request, $id)
     {
-        $commande = Commande::with('produits', 'paiement', 'livraison')->where('client_id', $request->user()->id)->findOrFail($id);
+        $commande = Commande::with('produits', 'paiement', 'livraison')->where('id_client', $request->user()->id)->findOrFail($id);
         return response()->json($commande);
     }
 
@@ -23,7 +23,7 @@ class CommandeController extends Controller
     {
         $request->validate([
             'produits' => 'required|array',
-            'produits.*.id' => 'required|exists:Produit,id',
+            'produits.*.id' => 'required|exists:produit,id_produit',
             'produits.*.quantite' => 'required|integer|min:1',
             'adresse_livraison' => 'required|string'
         ]);
@@ -41,13 +41,12 @@ class CommandeController extends Controller
         }
 
         $commande = Commande::create([
-            'client_id' => $request->user()->id,
-            'statut' => 'En attente',
-            'total' => $total
+            'id_client' => $request->user()->id,
+            'statut' => 'en_attente'
         ]);
 
         foreach ($items as $item) {
-            $commande->produits()->attach($item['produit']->id, [
+            $commande->produits()->attach($item['produit']->id_produit, [
                 'quantite' => $item['quantite'],
                 'prix_unitaire' => $item['produit']->prix
             ]);
@@ -55,9 +54,9 @@ class CommandeController extends Controller
         }
 
         Livraison::create([
-            'commande_id' => $commande->id,
+            'id_commande' => $commande->id_commande,
             'adresse' => $request->adresse_livraison,
-            'statut' => 'En préparation'
+            'statut' => 'planifiee'
         ]);
 
         return response()->json($commande->load('produits', 'livraison'), 201);
@@ -66,10 +65,10 @@ class CommandeController extends Controller
     public function fournisseurCommandes(Request $request)
     {
         // Pour le fournisseur, on veut les commandes contenant ses produits
-        $produitsIds = $request->user()->produits()->pluck('id');
+        $produitsIds = $request->user()->produits()->pluck('id_produit');
         $commandes = Commande::whereHas('produits', function($q) use ($produitsIds) {
-            $q->whereIn('Produit.id', $produitsIds);
-        })->with('produits')->orderBy('id','desc')->get();
+            $q->whereIn('produit.id_produit', $produitsIds);
+        })->with('produits')->orderBy('id_commande','desc')->get();
         
         return response()->json($commandes);
     }

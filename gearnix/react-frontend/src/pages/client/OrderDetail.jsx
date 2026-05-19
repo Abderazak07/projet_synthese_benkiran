@@ -100,9 +100,9 @@ export default function OrderDetail() {
                     <div className="flex-grow min-w-0 flex flex-col justify-between">
                       <div>
                         <h4 className="text-lg font-black italic uppercase tracking-tighter truncate group-hover:bg-black group-hover:text-white inline-block px-1 -ml-1 transition-all">{prod.nom}</h4>
-                        <p className="text-[10px] font-bold text-adi-gray uppercase mt-1">QUANTITÉ: {prod.pivot.quantite} | PRIX UNITAIRE: {prod.pivot.prix_unitaire} €</p>
+                        <p className="text-[10px] font-bold text-adi-gray uppercase mt-1">QUANTITÉ: {prod.pivot.quantite} | PRIX UNITAIRE: {prod.pivot.prix_unitaire} MAD</p>
                       </div>
-                      <p className="text-lg font-black italic">{(prod.pivot.prix_unitaire * prod.pivot.quantite).toFixed(2)} €</p>
+                      <p className="text-lg font-black italic">{(prod.pivot.prix_unitaire * prod.pivot.quantite).toFixed(2)} MAD</p>
                     </div>
                   </div>
                 ))}
@@ -111,7 +111,7 @@ export default function OrderDetail() {
               <div className="mt-12 pt-8 border-t-2 border-black flex justify-end">
                 <div className="text-right">
                    <p className="text-[10px] font-black uppercase text-adi-gray italic mb-2 tracking-widest">TOTAL RÉGLÉ</p>
-                   <p className="text-5xl font-black italic">{parseFloat(commande.total).toFixed(2)} €</p>
+                    <p className="text-5xl font-black italic">{parseFloat(commande.total).toFixed(2)} MAD</p>
                 </div>
               </div>
             </div>

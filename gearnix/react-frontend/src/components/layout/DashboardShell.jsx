@@ -19,19 +19,27 @@ export default function DashboardShell({
   };
   return (
     <div className="dash-shell">
-      {/* Sidebar - Design Identique au projet de référence */}
-      <aside className="dash-sidebar shrink-0 hidden lg:flex flex-col shadow-2xl z-40">
-        <div className="h-20 flex items-center px-6 mb-4">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#38bdf8] flex items-center justify-center font-black text-xl text-ink border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.3)]">
-            {brand?.slice?.(0, 1) ?? 'G'}
-          </div>
-          <div className="ml-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 leading-none mb-1">Espace</p>
-            <p className="text-lg font-black tracking-tight text-white leading-none">{brand}</p>
+      {/* Sidebar - Adidas Brand Aesthetic */}
+      <aside className="dash-sidebar shrink-0 hidden lg:flex flex-col">
+        <div className="sidebar-profile">
+          <Link to="/" className="flex items-center gap-2 mb-6 group">
+             <div className="bg-black text-white p-1 transition-transform group-hover:rotate-90">
+                <Search size={20} strokeWidth={3} />
+             </div>
+             <span className="text-2xl font-[900] italic uppercase tracking-tighter text-black">GEARNIX</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 bg-black flex items-center justify-center font-black text-white">
+              {brand?.slice?.(0, 1) ?? 'G'}
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-adi-gray leading-none mb-1">Système</p>
+              <p className="text-sm font-black uppercase italic tracking-tighter text-black leading-none">{brand}</p>
+            </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto custom-scrollbar">
           {navItems.map((it) => {
             const Icon = it.icon;
             return (
@@ -40,65 +48,60 @@ export default function DashboardShell({
                 to={it.to}
                 end={it.end}
                 className={({ isActive }) =>
-                  `flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 group
-                  ${isActive 
-                    ? 'bg-white/10 shadow-lg shadow-black/20 text-sky border border-sky/20' 
-                    : 'text-white/60 hover:bg-white/[0.06] hover:text-white'}`
+                  `sidebar-link ${isActive ? 'sidebar-link-active' : 'text-black/60'}`
                 }
               >
-                {Icon ? <Icon size={20} className={`transition-transform duration-300 group-hover:scale-110`} /> : null}
-                <span className="tracking-wide">{it.label}</span>
-                {/* Petit indicateur pour l'actif */}
-                {/* <div className={`ml-auto w-1.5 h-1.5 rounded-full bg-white opacity-0 transition-opacity`} /> */}
+                {Icon ? <Icon size={18} /> : null}
+                <span>{it.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="mt-auto px-4 py-6 space-y-3 border-t border-white/10">
+        <div className="mt-auto border-t border-adi-silver">
           {/* Mode Client — View Live Site Button */}
           <Link
             to="/"
-            id="sidebar-view-live-site"
-            className="sidebar-live-btn group"
+            className="sidebar-link hover:bg-black hover:text-white group"
           >
-            <div className="sidebar-live-btn-glow" />
-            <Eye size={18} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
-            <span className="relative z-10 tracking-wide">Mode Client</span>
-            <span className="sidebar-live-btn-badge">LIVE</span>
+            <Eye size={18} />
+            <span>Mode Client</span>
+            <div className="ml-auto px-2 py-0.5 bg-adi-red text-[8px] text-white font-black italic">LIVE</div>
           </Link>
 
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-4 w-full px-5 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm hover:bg-red-500/20 hover:text-red-200 transition-all border border-white/5 group"
+            className="sidebar-link w-full text-left hover:bg-adi-red hover:text-white"
           >
-            <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
-            Se déconnecter
+            <LogOut size={18} />
+            <span>Déconnexion</span>
           </button>
         </div>
       </aside>
 
-      <div className="dash-main flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        {/* Topbar - Design Identique */}
-        <header className="dash-topbar flex-shrink-0">
-          <div className="flex flex-col min-w-0">
+      <div className="dash-main">
+        {/* Topbar - Clean Adidas Header */}
+        <header className="dash-topbar">
+          <div className="flex flex-col">
             {headerTitle ? (
-              <h2 className="text-xl font-black text-white tracking-tight truncate">{headerTitle}</h2>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter text-black">{headerTitle}</h2>
             ) : null}
             {headerSubtitle ? (
-              <p className="text-xs text-gray-500 font-semibold tracking-wide truncate">{headerSubtitle}</p>
+              <p className="text-[10px] text-adi-gray font-black uppercase tracking-widest">{headerSubtitle}</p>
             ) : null}
           </div>
 
           <div className="flex items-center gap-6">
             {actions ? <div className="flex items-center gap-3">{actions}</div> : null}
-            
-
+            <div className="flex items-center gap-2 px-4 py-2 bg-adi-silver text-[11px] font-black uppercase tracking-widest">
+               <UserCircle size={16} />
+               <span>Admin Account</span>
+            </div>
           </div>
         </header>
 
         {/* Dynamic Content Area */}
-        <div className="dash-content-area custom-scrollbar">
+        <div className="dash-content-area custom-scrollbar overflow-y-auto">
           {children}
         </div>
       </div>

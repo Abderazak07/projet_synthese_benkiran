@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import api, { API_URL } from '../../services/api';
 import Button from '../../components/ui/Button';
@@ -126,7 +126,7 @@ export default function Checkout() {
               {loading ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                <>VALIDER ET PAYER {total.toFixed(2)} € <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
+                <>VALIDER ET PAYER {total.toFixed(2)} MAD <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" /></>
               )}
             </button>
           </form>
@@ -144,8 +144,10 @@ export default function Checkout() {
                       </div>
                       <div className="flex-grow min-w-0">
                         <p className="text-[10px] font-black italic text-black uppercase truncate">{item.nom}</p>
-                        <p className="text-[10px] font-bold text-adi-gray">QTÉ: {item.quantite} | {item.prix} €/u</p>
-                        <p className="text-[11px] font-black italic mt-1">{(item.prix * item.quantite).toFixed(2)} €</p>
+                        <p className="text-[10px] font-bold text-adi-gray">QTÉ: {item.quantite} | {item.prix} MAD/u</p>
+                        <p className="text-[11px] font-black italic mt-1">
+                          {(item.prix * item.quantite).toFixed(2)} MAD
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -154,7 +156,9 @@ export default function Checkout() {
                 <div className="mt-6 space-y-3">
                    <div className="flex justify-between text-xs font-bold uppercase text-adi-gray">
                       <span>SOUS-TOTAL</span>
-                      <span className="font-black italic text-black">{total.toFixed(2)} €</span>
+                      <span className="font-black italic text-black">
+                        {total.toFixed(2)} MAD
+                      </span>
                    </div>
                    <div className="flex justify-between text-xs font-bold uppercase text-adi-gray">
                       <span>LIVRAISON</span>
@@ -162,7 +166,9 @@ export default function Checkout() {
                    </div>
                    <div className="border-t-2 border-black pt-4 mt-4 flex justify-between items-end">
                       <span className="text-lg font-black italic uppercase">TOTAL</span>
-                      <span className="text-2xl font-black italic">{total.toFixed(2)} €</span>
+                      <span className="text-2xl font-black italic">
+                        {total.toFixed(2)} MAD
+                      </span>
                    </div>
                 </div>
              </div>

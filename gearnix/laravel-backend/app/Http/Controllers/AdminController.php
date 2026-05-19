@@ -28,7 +28,7 @@ class AdminController extends Controller
     }
 
     public function commandes() {
-        return response()->json(Commande::with('client')->orderBy('id', 'desc')->get());
+        return response()->json(Commande::with('client', 'paiement')->orderBy('id_commande', 'desc')->get());
     }
 
     public function showCommande($id) {
@@ -42,7 +42,7 @@ class AdminController extends Controller
     }
 
     public function paiements() {
-        return response()->json(Paiement::orderBy('id', 'desc')->get());
+        return response()->json(Paiement::orderBy('id_paiement', 'desc')->get());
     }
 
     public function updatePaiementStatut(Request $request, $id) {
@@ -52,7 +52,7 @@ class AdminController extends Controller
     }
 
     public function livraisons() {
-        return response()->json(Livraison::orderBy('id', 'desc')->get());
+        return response()->json(Livraison::orderBy('id_livraison', 'desc')->get());
     }
 
     public function updateLivraisonStatut(Request $request, $id) {
@@ -67,8 +67,8 @@ class AdminController extends Controller
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
             $dayName = now()->subDays($i)->translatedFormat('D');
-            $sum = Paiement::where('statut', 'Validé')
-                ->whereDate('created_at', $date)
+            $sum = Paiement::where('statut', 'valide')
+                ->whereDate('date', $date)
                 ->sum('montant');
             $revenueData[] = ['name' => ucfirst($dayName), 'revenue' => $sum];
         }
@@ -77,7 +77,7 @@ class AdminController extends Controller
             'total_users' => User::count(),
             'total_produits' => Produit::count(),
             'total_commandes' => Commande::count(),
-            'revenue_total' => Paiement::where('statut', 'Validé')->sum('montant'),
+            'revenue_total' => Paiement::where('statut', 'valide')->sum('montant'),
             'revenue_chart' => $revenueData,
             'user_breakdown' => [
                 'admin' => User::where('role', 'ADMIN')->count(),
@@ -86,5 +86,26 @@ class AdminController extends Controller
             ],
             'recent_users' => User::orderBy('id', 'desc')->take(5)->get()
         ]);
+    }
+
+    public function deleteCommande($id) {
+        $commande = Commande::findOrFail($id);
+        $commande->produits()->detach();
+        $commande->paiement()->delete();
+        $commande->livraison()->delete();
+        $commande->delete();
+        return response()->json(['message' => 'Commande supprimée avec succès']);
+    }
+
+    public function deletePaiement($id) {
+        $paiement = Paiement::findOrFail($id);
+        $paiement->delete();
+        return response()->json(['message' => 'Paiement supprimé avec succès']);
+    }
+
+    public function deleteLivraison($id) {
+        $livraison = Livraison::findOrFail($id);
+        $livraison->delete();
+        return response()->json(['message' => 'Livraison supprimée avec succès']);
     }
 }

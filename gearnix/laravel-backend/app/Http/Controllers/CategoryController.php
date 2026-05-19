@@ -25,12 +25,7 @@ class CategoryController extends Controller
     // Admin: returns full category objects with all fields
     public function adminIndex()
     {
-        $categories = Category::orderBy('display_order')->orderBy('nom')->get();
-
-        // Add product count to each category
-        $categories->each(function ($cat) {
-            $cat->product_count = Produit::where('categorie', $cat->nom)->count();
-        });
+        $categories = Category::orderBy('nom')->get();
 
         return response()->json($categories);
     }
@@ -42,20 +37,17 @@ class CategoryController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|image|max:2048',
             'is_featured' => 'nullable|boolean',
-            'display_order' => 'nullable|integer',
         ]);
 
-        $data = $request->only(['nom', 'description', 'is_featured', 'display_order']);
+        $data = $request->only(['nom', 'description', 'is_featured']);
 
         if ($request->hasFile('image')) {
             $data['image'] = Storage::url($request->file('image')->store('collections', 'public'));
         }
 
         $data['is_featured'] = $request->boolean('is_featured', false);
-        $data['display_order'] = $request->input('display_order', 0);
 
         $category = Category::create($data);
-        $category->product_count = 0;
 
         return response()->json($category, 201);
     }
@@ -69,7 +61,6 @@ class CategoryController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|image|max:2048',
             'is_featured' => 'nullable',
-            'display_order' => 'nullable|integer',
         ]);
 
         $category->nom = $request->nom;
@@ -86,12 +77,7 @@ class CategoryController extends Controller
             $category->is_featured = filter_var($request->is_featured, FILTER_VALIDATE_BOOLEAN);
         }
 
-        if ($request->has('display_order')) {
-            $category->display_order = (int) $request->display_order;
-        }
-
         $category->save();
-        $category->product_count = Produit::where('categorie', $category->nom)->count();
 
         return response()->json($category);
     }

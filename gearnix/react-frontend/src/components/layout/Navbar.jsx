@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Search, User, Menu, X, Heart, Settings, HelpCircle, Box } from 'lucide-react';
+import { ShoppingCart, Search, User, Menu, X, Settings, HelpCircle, Box } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 
 const NAV_LINKS = [
   { label: 'ACCUEIL', to: '/' },
   { label: 'PRODUITS', to: '/produits' },
-  { label: 'SOLDE', to: '/produits?promo=true' },
-  { label: 'À PROPOS', to: '/about' },
+  { label: 'AIRPODS', to: '/produits?categorie=AirPods' },
+  { label: 'CHARGEURS', to: '/produits?categorie=Chargeurs' },
+  { label: 'CASQUES', to: '/produits?categorie=Casques' },
+  { label: 'CONTACT US', to: '/contact' },
 ];
 
 export default function Navbar() {
@@ -73,10 +75,6 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link to="/wishlist" className="p-2 hover:bg-adi-silver transition-all hidden md:block">
-                <Heart size={22} strokeWidth={2} />
-              </Link>
-
               <Link to="/panier" className="relative p-2 hover:bg-adi-silver transition-all">
                 <ShoppingCart size={22} strokeWidth={2.5} />
                 {count > 0 && (
@@ -114,11 +112,6 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-
-      {/* Tier 3: Promotion Bar */}
-      <div className="adidas-header-tier-3">
-        LIVRAISON GRATUITE SUR TOUTES LES COMMANDES DE PLUS DE 100€
-      </div>
 
       {/* Mobile Drawer (Pixel Perfect Slide-in) */}
       {isOpen && (

@@ -177,8 +177,8 @@ export default function FournisseurProducts() {
                          )}
                       </div>
                       <div>
-                        <p className="font-bold text-white group-hover:text-[#0ea5e9] transition-colors">{p.nom}</p>
-                        <p className="text-[10px] font-mono text-pearl/40 uppercase tracking-widest mt-0.5">#{p.id}</p>
+                        <p className="font-bold text-gray-900 group-hover:text-[#0ea5e9] transition-colors">{p.nom}</p>
+                        <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-0.5">#{p.id}</p>
                       </div>
                     </div>
                   </td>
@@ -188,7 +188,7 @@ export default function FournisseurProducts() {
                     </span>
                   </td>
                   <td>
-                    <p className="font-black text-white">{parseFloat(p.prix).toFixed(2)} €</p>
+                    <p className="font-black text-gray-900">{parseFloat(p.prix).toFixed(2)} MAD</p>
                   </td>
                   <td>
                     {p.stock <= 0 ? (
@@ -242,7 +242,7 @@ export default function FournisseurProducts() {
 
               <div className="grid grid-cols-2 gap-4">
                 <label className="block">
-                  <span className="dash-form-label"><DollarSign size={14} className="inline mr-2"/> Prix Public (€)</span>
+                  <span className="dash-form-label"><DollarSign size={14} className="inline mr-2"/> Prix Public (MAD)</span>
                   <input required type="number" step="0.01" className="dash-input" value={formData.prix} onChange={e => setFormData({...formData, prix: e.target.value})} />
                 </label>
                 <label className="block">

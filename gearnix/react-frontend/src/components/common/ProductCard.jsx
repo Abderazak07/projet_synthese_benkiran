@@ -1,15 +1,25 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Heart, Plus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Plus } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { API_URL } from '../../services/api';
 import toast from 'react-hot-toast';
 
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!user) {
+      toast.error('Veuillez vous connecter pour ajouter au panier');
+      navigate('/login');
+      return;
+    }
+
     if (product.stock > 0) {
       addToCart(product, 1);
       toast.success(`${product.nom} ajouté au panier`);
@@ -30,15 +40,14 @@ export default function ProductCard({ product }) {
           className="w-full h-full object-cover"
         />
         
-        {/* Wishlist Button - Top Right */}
-        <button className="absolute top-3 right-3 p-1 text-black hover:scale-110 transition-all opacity-0 group-hover:opacity-100">
-          <Heart size={20} strokeWidth={2.5} />
-        </button>
-
         {/* Badges - Top Left */}
         {product.stock === 0 ? (
           <div className="absolute top-0 left-0 bg-adi-gray text-white text-[10px] font-black uppercase px-2 py-1 italic">
             ÉPUISÉ
+          </div>
+        ) : product.prix_original ? (
+          <div className="absolute top-0 left-0 bg-[#e11d48] text-white text-[10px] font-black uppercase px-3 py-1 italic tracking-widest animate-pulse">
+            SOLD
           </div>
         ) : product.prix > 200 ? (
           <div className="absolute top-0 left-0 bg-adi-red text-white text-[10px] font-black uppercase px-2 py-1 italic tracking-widest">
@@ -48,8 +57,19 @@ export default function ProductCard({ product }) {
 
         {/* Price Tag - Bottom Left Floating (Adidas Style) */}
         {product.stock > 0 && (
-          <div className="absolute bottom-2 left-2 bg-white px-2 py-1 text-[11px] font-black italic tracking-tighter z-10">
-            {parseFloat(product.prix).toFixed(2)} €
+          <div className="absolute bottom-2 left-2 bg-white px-2.5 py-1.5 text-[11px] font-black italic tracking-tighter z-10 flex flex-col items-start leading-none shadow-sm rounded-md border border-black/5">
+            {product.prix_original && (
+              <div className="flex items-center gap-1 mb-0.5 opacity-60">
+                <span className="text-gray-400 line-through font-bold text-[9px]">
+                  {parseFloat(product.prix_original).toFixed(2)} MAD
+                </span>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5">
+              <span className={product.prix_original ? "text-[#e11d48]" : "text-black"}>
+                {parseFloat(product.prix).toFixed(2)} MAD
+              </span>
+            </div>
           </div>
         )}
 

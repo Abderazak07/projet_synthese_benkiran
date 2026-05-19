@@ -10,6 +10,7 @@ use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\LivraisonController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\ContactController;
 
 // Auth publiques
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,6 +23,9 @@ Route::get('/categories', [CategoryController::class, 'index']);
 
 // Homepage data (public)
 Route::get('/homepage', [HomepageController::class, 'index']);
+
+// Contact (public submission)
+Route::post('/contacts', [ContactController::class, 'store']);
 
 // Routes protégées
 Route::middleware('auth:sanctum')->group(function () {
@@ -59,12 +63,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/commandes', [AdminController::class, 'commandes']);
         Route::get('/admin/commandes/{id}', [AdminController::class, 'showCommande']);
         Route::put('/admin/commandes/{id}/statut', [AdminController::class, 'updateStatut']);
+        Route::delete('/admin/commandes/{id}', [AdminController::class, 'deleteCommande']);
         
         Route::get('/admin/paiements', [AdminController::class, 'paiements']);
         Route::put('/admin/paiements/{id}/statut', [AdminController::class, 'updatePaiementStatut']);
+        Route::delete('/admin/paiements/{id}', [AdminController::class, 'deletePaiement']);
         
         Route::get('/admin/livraisons', [AdminController::class, 'livraisons']);
         Route::put('/admin/livraisons/{id}/statut', [AdminController::class, 'updateLivraisonStatut']);
+        Route::delete('/admin/livraisons/{id}', [AdminController::class, 'deleteLivraison']);
 
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);
@@ -72,5 +79,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
         
         Route::get('/admin/stats', [AdminController::class, 'stats']);
+        
+        // ADMIN - Messages Contacts
+        Route::get('/admin/contacts', [ContactController::class, 'index']);
+        Route::delete('/admin/contacts/{id}', [ContactController::class, 'destroy']);
     });
 });
